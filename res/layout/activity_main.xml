@@ -15,7 +15,7 @@
     <Button
         android:id="@+id/goBtn"
         android:layout_width="wrap_content"
-        android:layout_height="35dp"
+        android:layout_height="40dp"
         android:layout_alignParentRight="true"
         android:layout_below="@+id/progressBar"
         android:onClick="goBtnClick"
@@ -24,22 +24,23 @@
     <EditText
         android:id="@+id/uText"
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="40dp"
         android:layout_alignBaseline="@+id/goBtn"
         android:layout_alignBottom="@+id/goBtn"
         android:layout_toLeftOf="@+id/goBtn"
         android:ellipsize="end"
         android:hint="@string/urlHint"
+        android:imeOptions="actionGo"
         android:inputType="textUri"
         android:singleLine="true"
-        android:text="@string/defaultUrl"
-        android:imeOptions="actionGo" />
+        android:text="@string/defaultUrl" />
 
     <WebView
         android:id="@+id/webView1"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentLeft="true"
-        android:layout_below="@id/uText" />
+        android:layout_below="@id/uText"
+        android:longClickable="true" />
 
 </RelativeLayout>

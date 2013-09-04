@@ -1,5 +1,10 @@
 package com.yh.web.cache;
 
+import java.util.regex.Pattern;
+
+import android.app.Activity;
+import android.widget.Toast;
+
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
 
@@ -10,42 +15,53 @@ import com.loopj.android.http.BinaryHttpResponseHandler;
 public class HttpUtil {
 	private static AsyncHttpClient client = new AsyncHttpClient();
 
+	public static boolean isUrl(String url){
+		String regex = "(([\\w]+:)?//)?(([\\d\\w]|%[a-fA-f\\d]{2,2})+(:([\\d\\w]|%[a-fA-f\\d]{2,2})+)?@)?([\\d\\w][-\\d\\w]{0,253}[\\d\\w]\\.)+[\\w]{2,4}(:[\\d]+)?(/([-+_~.\\d\\w]|%[a-fA-f\\d]{2,2})*)*(\\?(&?([-+_~.\\d\\w]|%[a-fA-f\\d]{2,2})=?)*)?(#([-+_~.\\d\\w]|%[a-fA-f\\d]{2,2})*)?";
+		if(Pattern.matches(regex, url)){
+			return true;
+		}
+		return false;
+	}
+	
 	/**
 	 * 下载URL的内容到文件
 	 * 
 	 * @param url
 	 * @param fileName
 	 */
-	public static void downUrlToFile(String url, String fileName) {
+	public static void downUrlToFile(Activity act, String url, String fileName) {
 		String[] allowedContentTypes = new String[] { "text/html;charset=utf-8",
 				"image/png", "image/jpeg" };
-		client.get(url, new MyBinaryHttpResponseHandler(allowedContentTypes,
+		client.get(url, new MyBinaryHttpResponseHandler(allowedContentTypes, act,
 				fileName));
 	}
 
 	static class MyBinaryHttpResponseHandler extends BinaryHttpResponseHandler {
+		private Activity act;
 		private String fileName;
 
-		public MyBinaryHttpResponseHandler(String[] allowedContentTypes,
+		public MyBinaryHttpResponseHandler(String[] allowedContentTypes,Activity act,
 				String fileName) {
 			super(allowedContentTypes);
+			this.act = act;
 			this.fileName = fileName;
 		}
 
 		@Override
 		public void onSuccess(byte[] fileData) {
 			CacheUtil.writeExternalFile(fileName, fileData);
-			System.out.println("down ok, size: " + fileData.length);
+			System.out.println();
+			Toast.makeText(act, "down ok, size: " + fileData.length, Toast.LENGTH_LONG).show();
 		}
 
 		@Override
 		public void onFailure(Throwable e) {
-			System.out.println("down fail " + e);
+			Toast.makeText(act, "down fail " + e, Toast.LENGTH_LONG).show();
 		}
 
 		@Override
 		public void onFailure(Throwable e, String response) {
-			System.out.println("down fail " + e + "\r\n" + response);
+			Toast.makeText(act, "down fail " + e + "\r\n" + response, Toast.LENGTH_LONG).show();
 		}
 	}
 }

@@ -1,11 +1,9 @@
 package com.yh.web.view;
 
-import com.yh.web.R;
-import com.yh.web.cache.CacheObject;
-import com.yh.web.cache.HttpUtil;
-
 import android.annotation.SuppressLint;
 import android.app.AlertDialog.Builder;
+import android.content.ClipData;
+import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
@@ -13,10 +11,17 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnLongClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.webkit.WebView;
+import android.webkit.WebView.HitTestResult;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.yh.web.R;
+import com.yh.web.cache.CacheObject;
+import com.yh.web.cache.HttpUtil;
 
 public class MainActivity extends BaseActivity {
 
@@ -25,7 +30,7 @@ public class MainActivity extends BaseActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
-		
+
 		// 添加事件，点击GO的时候自动调用GoBtn方法跳到指定URL
 		EditText uText = (EditText) findViewById(R.id.uText);
 		uText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
@@ -44,6 +49,23 @@ public class MainActivity extends BaseActivity {
 		web.setWebViewClient(new MyWebViewClient(this));
 		web.setWebChromeClient(new MyWebChromeClient(this));
 		web.getSettings().setJavaScriptEnabled(true);
+		web.setOnLongClickListener(new OnLongClickListener() {
+			@Override
+			public boolean onLongClick(View view) {
+				HitTestResult result = ((WebView) view).getHitTestResult();
+				if (result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
+					// 处理长按图片的菜单项
+					ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
+					ClipData textCd = ClipData.newPlainText("ImageUrl",
+							result.getExtra());
+					clipboard.setPrimaryClip(textCd);
+					Toast.makeText(view.getContext(), "图片URL已拷贝",
+							Toast.LENGTH_LONG).show();
+					return true;
+				}
+				return false;
+			}
+		});
 	}
 
 	@Override
@@ -52,7 +74,7 @@ public class MainActivity extends BaseActivity {
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-	
+
 	/**
 	 * 菜单选择处理
 	 */
@@ -62,10 +84,11 @@ public class MainActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.action_download:
 			// 下载URL的数据
-			String url = ((EditText)findViewById(R.id.uText)).getText().toString();
+			String url = ((EditText) findViewById(R.id.uText)).getText()
+					.toString();
 			String fileName = CacheObject.getFileName(url);
 			System.out.println("start save: " + url + " to " + fileName);
-			HttpUtil.downUrlToFile(url, fileName);
+			HttpUtil.downUrlToFile(this, url, fileName);
 			System.out.println("end save: " + url + " to " + fileName);
 			return true;
 		case R.id.action_settings:
@@ -110,8 +133,12 @@ public class MainActivity extends BaseActivity {
 	 */
 	public boolean goBtnClick(View view) {
 		String url = ((EditText) findViewById(R.id.uText)).getText().toString();
-		if (!url.startsWith("http://") && !url.startsWith("https://")) {
-			url = "http://" + url;
+		if (HttpUtil.isUrl(url)) {
+			if (!url.startsWith("http://") && !url.startsWith("https://")) {
+				url = "http://" + url;
+			}
+		} else {
+			url = "http://www.google.com.hk/search?q=" + url;
 		}
 		WebView web = (WebView) findViewById(R.id.webView1);
 		web.loadUrl(url);
