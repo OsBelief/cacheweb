@@ -6,7 +6,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.util.Locale;
 
@@ -23,7 +25,7 @@ import android.webkit.WebResourceResponse;
 /**
  * @author gudh 缓存Util
  */
-public class CacheUtil {
+public class IOUtil {
 
 	/**
 	 * 写KeyValue数据库
@@ -99,7 +101,7 @@ public class CacheUtil {
 	public static void writeExternalFile(String fileName, byte[] bytes) {
 		try {
 			File parent = new File(fileName).getParentFile();
-			if (!parent.exists()){
+			if (!parent.exists()) {
 				parent.mkdirs();
 			}
 			FileOutputStream outputStream = new FileOutputStream(fileName);
@@ -190,6 +192,26 @@ public class CacheUtil {
 			return resources.openRawResource(id);
 		}
 		return null;
+	}
+
+	/**
+	 * 从流中读取文本
+	 * 
+	 * @param in
+	 * @return
+	 * @throws IOException
+	 */
+	public static String readStream(InputStream in) throws IOException {
+		InputStreamReader reader = new InputStreamReader(in, "utf-8");
+		StringBuffer sb = new StringBuffer();
+		int len = -1;
+		char[] buf = new char[2048];
+		while ((len = reader.read(buf)) != -1) {
+			sb.append(buf, 0, len);
+		}
+		reader.close();
+		in.close();
+		return sb.toString();
 	}
 
 	/**

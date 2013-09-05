@@ -2,10 +2,7 @@ package com.yh.web.cache;
 
 import java.io.InputStream;
 
-import com.yh.web.R;
-
 import android.app.Activity;
-import android.content.res.Resources;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
@@ -25,18 +22,30 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getResource(Activity act, WebView web,
 			String url) {
+		
+		CacheObject obj = new CacheObject(url);
+		System.out.println(obj.getType() + " " + obj.getMime() + " | " + url);
+
 		WebResourceResponse res = null;
-		if (url.endsWith(".png") || url.endsWith(".jpg")) {
-			System.out.println("##image: " + url);
-			res = getImage(act.getResources(), url, null);
-		} else if (url.contains(".html")) {
-			System.out.println("##html: " + url);
-		} else if (url.contains(".js")) {
-			System.out.println("##js: " + url);
-		} else if (url.contains(".css")) {
-			System.out.println("##css: " + url);
-		} else{
-			System.out.println("##other: " + url);
+		if (obj.getMime().startsWith("image")) {
+			// 图片处理
+			res = getImage(url, obj.getMime(), null);
+			
+		} else if (obj.getMime() == "text/html") {
+			// HTML 处理
+			
+		} else if (obj.getMime() == "application/x-javascript") {
+			// JS 处理
+			
+		} else if (obj.getMime() == "text/css") {
+			// CSS 处理
+			
+		} else if (MIME.fileTypes.contains(obj.getType())) {
+			// 文件处理
+			
+		} else if (obj.getMime() == "none"){
+			// 没找到MIME
+			
 		}
 		return res;
 	}
@@ -46,18 +55,25 @@ public class CacheControl {
 		String html = url;
 
 		String mime = "text/html";
-		InputStream is = CacheUtil.getInputStreamFromString(html, encoding);
-		return CacheUtil.generateResource(mime, encoding, is);
+		InputStream is = IOUtil.getInputStreamFromString(html, encoding);
+		return IOUtil.generateResource(mime, encoding, is);
 	}
-
-	public static WebResourceResponse getImage(Resources resources, String url,
+	
+	/**
+	 * 获取图片缓存
+	 * @param resources
+	 * @param url
+	 * @param encoding
+	 * @return
+	 */
+	public static WebResourceResponse getImage(String url, String mime,
 			String encoding) {
-		// 此处写获取html缓存的方法
-		String mime = "image/png";
-		InputStream is = CacheUtil.getInputStreamFromID(resources,
-				R.drawable.ic_launcher);
-		// is 不为空可以更改为自己想要替换的内容
-		is = null;
-		return CacheUtil.generateResource(mime, encoding, is);
+		// 获取缓存路径
+		String fileName = CacheObject.getCacheFileName(url, mime);
+		InputStream is = IOUtil.readExternalFile(fileName);
+		if (is != null){
+			System.out.println("Come From Cache: " + url);
+		}
+		return IOUtil.generateResource(mime, encoding, is);
 	}
 }

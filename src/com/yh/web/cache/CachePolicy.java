@@ -28,4 +28,15 @@ public class CachePolicy {
 	public void setCacheTime(long cacheTime) {
 		this.cacheTime = cacheTime;
 	}
+	
+	/**
+	 * 根据类型获取缓存策略
+	 * @param url
+	 * @param type
+	 * @param mime
+	 * @return
+	 */
+	public static CachePolicy getCachePolicy(String url, String type, String mime){
+		return new CachePolicy();
+	}
 }

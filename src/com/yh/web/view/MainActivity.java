@@ -22,6 +22,7 @@ import android.widget.Toast;
 import com.yh.web.R;
 import com.yh.web.cache.CacheObject;
 import com.yh.web.cache.HttpUtil;
+import com.yh.web.cache.MIME;
 
 public class MainActivity extends BaseActivity {
 
@@ -36,8 +37,7 @@ public class MainActivity extends BaseActivity {
 		uText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
 			public boolean onEditorAction(TextView view, int actionId,
 					KeyEvent event) {
-				if (actionId == EditorInfo.IME_NULL
-						&& event.getAction() == KeyEvent.ACTION_UP) {
+				if (actionId == EditorInfo.IME_ACTION_GO) {
 					goBtnClick(null);
 				}
 				return true;
@@ -49,6 +49,7 @@ public class MainActivity extends BaseActivity {
 		web.setWebViewClient(new MyWebViewClient(this));
 		web.setWebChromeClient(new MyWebChromeClient(this));
 		web.getSettings().setJavaScriptEnabled(true);
+		web.getSettings().setDomStorageEnabled(true);
 		web.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
@@ -66,6 +67,11 @@ public class MainActivity extends BaseActivity {
 				return false;
 			}
 		});
+		// web 获得焦点
+		web.requestFocus();
+		
+		// 初始化MIME
+		MIME.initMIME(this);
 	}
 
 	@Override
@@ -86,7 +92,7 @@ public class MainActivity extends BaseActivity {
 			// 下载URL的数据
 			String url = ((EditText) findViewById(R.id.uText)).getText()
 					.toString();
-			String fileName = CacheObject.getFileName(url);
+			String fileName = CacheObject.getCacheFileName(url);
 			System.out.println("start save: " + url + " to " + fileName);
 			HttpUtil.downUrlToFile(this, url, fileName);
 			System.out.println("end save: " + url + " to " + fileName);
@@ -132,13 +138,15 @@ public class MainActivity extends BaseActivity {
 	 * @return
 	 */
 	public boolean goBtnClick(View view) {
-		String url = ((EditText) findViewById(R.id.uText)).getText().toString();
+		EditText uText = (EditText) findViewById(R.id.uText);
+		String url = uText.getText().toString();
 		if (HttpUtil.isUrl(url)) {
 			if (!url.startsWith("http://") && !url.startsWith("https://")) {
 				url = "http://" + url;
 			}
 		} else {
 			url = "http://www.google.com.hk/search?q=" + url;
+			uText.setText(url);
 		}
 		WebView web = (WebView) findViewById(R.id.webView1);
 		web.loadUrl(url);

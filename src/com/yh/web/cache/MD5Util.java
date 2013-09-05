@@ -11,7 +11,7 @@ import java.security.NoSuchAlgorithmException;
  * @author yh
  * 创建时间：2012-4-19
  */
-public class MD5 {
+public class MD5Util {
 
 	private static MessageDigest md = null;
 	private static int BUFF_SIZE = 1024 * 4;

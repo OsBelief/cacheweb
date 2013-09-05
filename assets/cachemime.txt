@@ -1,0 +1,15 @@
+
+html
+
+js
+css
+
+jpg
+png
+gif
+
+pdf
+doc
+xls
+
+fileTypes=pdf|doc|xls
