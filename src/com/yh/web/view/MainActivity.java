@@ -13,6 +13,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnLongClickListener;
 import android.view.inputmethod.EditorInfo;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.widget.EditText;
@@ -26,7 +27,6 @@ import com.yh.web.cache.MIME;
 
 public class MainActivity extends BaseActivity {
 
-	@SuppressLint("SetJavaScriptEnabled")
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -48,8 +48,8 @@ public class MainActivity extends BaseActivity {
 		WebView web = (WebView) findViewById(R.id.webView1);
 		web.setWebViewClient(new MyWebViewClient(this));
 		web.setWebChromeClient(new MyWebChromeClient(this));
-		web.getSettings().setJavaScriptEnabled(true);
-		web.getSettings().setDomStorageEnabled(true);
+		setWebSetting(web.getSettings());
+		// 监听长按事件
 		web.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
@@ -72,6 +72,21 @@ public class MainActivity extends BaseActivity {
 		
 		// 初始化MIME
 		MIME.initMIME(this);
+		// 初始化AsyncHttpClient
+		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
+	}
+
+	@SuppressLint("SetJavaScriptEnabled")
+	public void setWebSetting(WebSettings set) {
+		set.setJavaScriptEnabled(true);// 启用JS
+
+		set.setDomStorageEnabled(true);// 启用localStorage
+		set.setAppCacheEnabled(true);// 启用缓存
+		//set.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 先用缓存，缓存没有请求网络
+
+		set.setSupportZoom(true); // 设置是否支持缩放
+		set.setBuiltInZoomControls(true); // 设置是否显示内建缩放工具
+		// set.setSavePassword(true); //设置是否保存密码
 	}
 
 	@Override
@@ -93,9 +108,9 @@ public class MainActivity extends BaseActivity {
 			String url = ((EditText) findViewById(R.id.uText)).getText()
 					.toString();
 			String fileName = CacheObject.getCacheFileName(url);
-			System.out.println("start save: " + url + " to " + fileName);
+			
 			HttpUtil.downUrlToFile(this, url, fileName);
-			System.out.println("end save: " + url + " to " + fileName);
+			
 			return true;
 		case R.id.action_settings:
 			System.out.println("setClick");
@@ -146,8 +161,8 @@ public class MainActivity extends BaseActivity {
 			}
 		} else {
 			url = "http://www.google.com.hk/search?q=" + url;
-			uText.setText(url);
 		}
+		uText.setText(url);
 		WebView web = (WebView) findViewById(R.id.webView1);
 		web.loadUrl(url);
 		web.requestFocus();

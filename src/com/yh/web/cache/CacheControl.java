@@ -22,58 +22,69 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getResource(Activity act, WebView web,
 			String url) {
-		
 		CacheObject obj = new CacheObject(url);
 		System.out.println(obj.getType() + " " + obj.getMime() + " | " + url);
 
 		WebResourceResponse res = null;
 		if (obj.getMime().startsWith("image")) {
 			// 图片处理
-			res = getImage(url, obj.getMime(), null);
-			
-		} else if (obj.getMime() == "text/html") {
+			res = getImage(act, url, obj.getFileName(), obj.getMime(), null);
+		} else if (obj.getMime().equals("text/html")) {
 			// HTML 处理
-			
-		} else if (obj.getMime() == "application/x-javascript") {
+			res = getHtml(act, url, obj.getFileName(), obj.getMime(), null);
+		} else if (obj.getMime().equals("application/x-javascript")) {
 			// JS 处理
-			
-		} else if (obj.getMime() == "text/css") {
+			//getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
+		} else if (obj.getMime().equals("text/css")) {
 			// CSS 处理
-			
+			//getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
 		} else if (MIME.fileTypes.contains(obj.getType())) {
 			// 文件处理
 			
-		} else if (obj.getMime() == "none"){
+		} else if (obj.getMime().equals("none")) {
 			// 没找到MIME
 			
 		}
+		
 		return res;
-	}
-
-	public static WebResourceResponse getHtml(String url, String encoding) {
-		// 此处写获取html缓存的方法
-		String html = url;
-
-		String mime = "text/html";
-		InputStream is = IOUtil.getInputStreamFromString(html, encoding);
-		return IOUtil.generateResource(mime, encoding, is);
 	}
 	
 	/**
+	 * 获取默认信息
+	 * @param url
+	 * @param fileName
+	 * @param mime
+	 * @param encoding
+	 * @return
+	 */
+	public static WebResourceResponse getDefaultInfo(Activity act, String url, String fileName,
+			String mime, String encoding) {
+		// 获取缓存
+		InputStream is = IOUtil.readExternalFile(fileName);
+		if (is != null) {
+			System.out.println("Come From Cache: " + url);
+		}else{
+			HttpUtil.downUrlToFile(null, url, fileName);
+			return null;
+		}
+		return IOUtil.generateResource(mime, encoding, is);
+	}
+
+	public static WebResourceResponse getHtml(Activity act, String url, String fileName,
+			String mime, String encoding) {
+		return getDefaultInfo(act, url, fileName, mime, encoding);
+	}
+
+	/**
 	 * 获取图片缓存
+	 * 
 	 * @param resources
 	 * @param url
 	 * @param encoding
 	 * @return
 	 */
-	public static WebResourceResponse getImage(String url, String mime,
-			String encoding) {
-		// 获取缓存路径
-		String fileName = CacheObject.getCacheFileName(url, mime);
-		InputStream is = IOUtil.readExternalFile(fileName);
-		if (is != null){
-			System.out.println("Come From Cache: " + url);
-		}
-		return IOUtil.generateResource(mime, encoding, is);
+	public static WebResourceResponse getImage(Activity act, String url, String fileName,
+			String mime, String encoding) {
+		return getDefaultInfo(act, url, fileName, mime, encoding);
 	}
 }

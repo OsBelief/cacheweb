@@ -1,6 +1,3 @@
-/**
- * 
- */
 package com.yh.web.view;
 
 import com.yh.web.R;

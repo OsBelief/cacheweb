@@ -19,10 +19,6 @@ public class CacheObject {
 	
 	public CacheObject(String url){
 		this.url = url;
-		this.type = HttpUtil.getUrlType(url);
-		this.mime = MIME.getMimeFromType(type);
-		this.fileName = getCacheFileName(url, mime);
-		this.cachePolicy = CachePolicy.getCachePolicy(url, type, mime);
 		
 		this.lastTime = 0;
 	}
@@ -60,6 +56,9 @@ public class CacheObject {
 	}
 
 	public String getType() {
+		if (type == null){
+			this.type = HttpUtil.getUrlType(url);
+		}
 		return type;
 	}
 
@@ -68,6 +67,9 @@ public class CacheObject {
 	}
 
 	public String getMime() {
+		if(mime == null){
+			this.mime = MIME.getMimeFromType(getType());
+		}
 		return mime;
 	}
 
@@ -76,6 +78,9 @@ public class CacheObject {
 	}
 
 	public String getFileName() {
+		if(fileName == null){
+			this.fileName = getCacheFileName(getUrl(), getMime());
+		}
 		return fileName;
 	}
 
@@ -92,6 +97,7 @@ public class CacheObject {
 	}
 
 	public CachePolicy getCachePolicy() {
+		this.cachePolicy = CachePolicy.getCachePolicy(getUrl(), getType(), getMime());
 		return cachePolicy;
 	}
 
