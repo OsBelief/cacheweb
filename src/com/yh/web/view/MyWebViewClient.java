@@ -14,6 +14,7 @@ import android.widget.EditText;
 
 import com.yh.web.R;
 import com.yh.web.cache.CacheControl;
+import com.yh.web.cache.HttpUtil;
 
 /**
  * @author gudh ×Ô¶¨Òåä¯ÀÀÆ÷WebViewClient
@@ -32,6 +33,10 @@ public class MyWebViewClient extends WebViewClient {
 	public boolean shouldOverrideUrlLoading(WebView view, String url) {
 		System.out.println(url);
 		((EditText) act.findViewById(R.id.uText)).setText(url);
+		String reload = HttpUtil.getToUrl(url);
+		if(reload != null){
+			url = reload;
+		}
 		view.loadUrl(url);
 		return true;
 	}

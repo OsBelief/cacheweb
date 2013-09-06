@@ -1,0 +1,46 @@
+
+# 最大允许的URL长度
+maxUrlLength : 250
+
+# 不缓存的URL
+disCacheUrl:
+  # 百度统计
+  - ^http://hm.baidu.com/.*
+  - ^http://mobads-logs.baidu.com.*
+  - ^http://mobads.baidu.com.*
+  - ^http://drmcmm.baidu.com/.*
+  # 带时间的
+  - .+t=?\d{10,13}([^\d].*|$)
+  - ^http://127.0.0.1.*
+  # 易查广告
+  - .*/adiSmart/.*
+
+# URL地址替换
+cacheUrlReplace:
+  - src : (^http://manhua.yicha.cn/\?)(.*?)
+    dest : http://manhua.yicha.cn/manhua/?$2
+  - src : (^http://manhua.yicha.cn/apache/.*js)(\?version=\d*)
+    dest : $1
+
+
+# 缓存的类型
+cacheTypeUrl:
+    html : .*\.(html|HTML|htm|HTM)(\?[^/]*)?$
+    
+    js : .*\.(js|JS)(\?[^/]*)?$
+    css : .*\.(css|CSS)(\?[^/]*)?$
+  
+    jpg : .*\.(jpg|JPG|jpeg|JPEG)(\?[^/]*)?$
+    png : .*\.(png|PNG)(\?[^/]*)?$
+    gif : .*\.(gif|GIF)(\?[^/]*)?$
+   
+    pdf : .*\.(pdf|PDF)(\?[^/]*)?$
+    doc : .*\.(doc|DOC)(\?[^/]*)?$
+    xls : .*\.(xls|XLS)(\?[^/]*)?$
+
+# 文件内存
+fileType:
+  - pdf
+  - doc
+  - xls
+

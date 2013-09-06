@@ -23,7 +23,7 @@ import android.graphics.drawable.Drawable;
 import android.webkit.WebResourceResponse;
 
 /**
- * @author gudh 缓存Util
+ * @author gudh IO处理，包括内部文件，外部文件，key-value等
  */
 public class IOUtil {
 
@@ -202,7 +202,7 @@ public class IOUtil {
 	 * @throws IOException
 	 */
 	public static String readStream(InputStream in) throws IOException {
-		InputStreamReader reader = new InputStreamReader(in, "utf-8");
+		InputStreamReader reader = new InputStreamReader(in, "gbk");
 		StringBuffer sb = new StringBuffer();
 		int len = -1;
 		char[] buf = new char[2048];

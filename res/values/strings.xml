@@ -8,6 +8,6 @@
     <string name="hello_world">Hello world!</string>
     <string name="goText">GO</string>
     <string name="urlHint">输入URL可访问</string>
-    <string name="defaultUrl">http://baidu.com</string>
+    <string name="defaultUrl">http://yicha.cn</string>
 
 </resources>

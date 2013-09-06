@@ -4,6 +4,7 @@ import android.os.Environment;
 
 /**
  * @author gudh
+ * 
  * 缓存对象
  */
 public class CacheObject {
@@ -19,7 +20,7 @@ public class CacheObject {
 	
 	public CacheObject(String url){
 		this.url = url;
-		
+		// 延时初始化type等数据
 		this.lastTime = 0;
 	}
 	

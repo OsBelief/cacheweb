@@ -2,11 +2,17 @@ package com.yh.web.cache;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import android.app.Activity;
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -20,17 +26,50 @@ public class HttpUtil {
 	// 异步HTTPClient
 	private static AsyncHttpClient client = null;
 	private static String[] allowedContentTypes = null;
+	
+	/**
+	 * 可以定时检查网络是否可用
+	 */
+	private static boolean netAvailable = true;
 
 	public static void initAsyncHttpClient(String ua) {
 		if (client == null) {
 			client = new AsyncHttpClient();
 		}
 		if (allowedContentTypes == null) {
-			allowedContentTypes = new String[] { "text/html", "text/html",
-					"text/html;charset=utf-8", "text/html;charset=iso-8859-1",
-					"image/png", "image/jpeg", "image/gif" };
+			allowedContentTypes = new String[] {".*"};
 		}
 		client.setUserAgent(ua);
+	}
+	
+	/**
+	 * 判断是否有可用的网络
+	 * @param context
+	 * @return
+	 */
+	public static boolean isNetAvailable(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo workInfo = cm.getActiveNetworkInfo();
+		if(workInfo != null){
+			return workInfo.isAvailable();
+		}
+		return false;
+	}
+	
+	/**
+	 * 判断手机网络是否
+	 * @param context
+	 * @return
+	 */
+	public static boolean isMobileNetAvailable(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		NetworkInfo workInfo = cm.getActiveNetworkInfo();
+		if (workInfo != null && workInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+			return true;
+		}
+		return false;
 	}
 
 	/**
@@ -55,25 +94,47 @@ public class HttpUtil {
 	}
 
 	/**
+	 * 如果有效，转换URL，无效返回null
+	 * @param url
+	 * @return
+	 */
+	public static String getToUrl(String url){
+		if (url.length() > Config.maxUrlLength) {
+			return null;
+		}
+		// 排除过滤URL
+		List<String> disCacheUrlList = Config.disCacheUrlList;
+		for(String reg : disCacheUrlList){
+			if (url.matches(reg)) {
+				return null;
+			}
+		}
+		// 转换URL
+		List<HashMap<String, Object>> cacheUrlReplaceList = Config.cacheUrlReplaceList;
+		for(HashMap<String, Object> one : cacheUrlReplaceList){
+			Matcher m = Pattern.compile(one.get("src").toString()).matcher(url);
+			if (m.find()) {
+				url = m.replaceFirst(one.get("dest").toString());
+				System.out.println("Match | dest : " + url);
+				break;
+			}
+		}
+		return url;
+	}
+	
+	/**
 	 * 获取URL表示的数据类型
 	 * 
 	 * @param url
 	 * @return
 	 */
 	public static String getUrlType(String url) {
-		Set<String> types = MIME.getCacheMimes();
-		if (url.length() > 100) {
-			return MIME.noneType;
-		}
-		// 过滤有时间限制的请求
-		if (url.matches(".+t=?\\d{10,13}([^\\d].*|$)")) {
-			return MIME.noneType;
-		}
+		Map<String, String> typeReg = Config.cacheTypeUrlMap;
+		Set<String> types = typeReg.keySet();
 		for (String type : types) {
-			String uType = type.toUpperCase(Locale.getDefault());
-			String regex = ".*\\.(" + type + "|" + uType + ")(\\?[^/]*)?$";
+			String regex = typeReg.get(type);
 			if (Pattern.matches(regex, url)) {
-				return type.toLowerCase(Locale.getDefault());
+				return type;
 			}
 		}
 		// 否则为HTML
@@ -90,23 +151,6 @@ public class HttpUtil {
 		return MIME.getMimeFromType(getUrlType(url));
 	}
 
-	public static void main(String[] arg) {
-		String[] urls = {
-				"http://www.oschina.net/js/2011/fancybox/jquery.fancybox-1.3.4.css",
-				"http://www.oschina.net/img/favicon.ico",
-				"http://www.oschina.net/js/2011/oschina.js?ver=20121007",
-				"http://www.oschina.net/js/poshytip/jquery.poshytip.min.js",
-				"http://www.oschina.net/question?catalog=1",
-				"http://www.oschina.net/css/oschina2013.css?date=20130724",
-				"http://www.oschina.net/translate/good-habits-in-web-development",
-				"http://static.oschina.net/uploads/space/2013/0812/162801_Gtqn_179699.jpg",
-				"http://static.oschina.net/uploads/user/362/725072_50.jpg?t=1370482795000",
-				"http://static.oschina.net/uploads/user/129/259408_50.pdf?t=1372754512000" };
-		for (String url : urls) {
-			System.out.println(getUrlType(url) + "\t" + url);
-		}
-	}
-
 	/**
 	 * 下载URL的内容到文件
 	 * 
@@ -114,65 +158,71 @@ public class HttpUtil {
 	 * @param fileName
 	 */
 	public static void downUrlToFile(Activity act, String url, String fileName) {
-		System.out.println("start save: " + url + " to " + fileName);
-
-		if (!isUrl(url)) {
-			Toast.makeText(act, "下载链接地址不正确！" + url, Toast.LENGTH_LONG).show();
-			return;
+		if(netAvailable){
+			System.out.println("Save | " + url);
+			
+			if (!isUrl(url)) {
+				Toast.makeText(act, "下载链接地址不正确！" + url, Toast.LENGTH_LONG).show();
+				return;
+			}
+			// 添加当前host为Referer
+			try {
+				URL u = new URL(url);
+				client.addHeader("Referer", u.getProtocol() + "://" + u.getHost());
+			} catch (MalformedURLException e) {
+			}
+	
+			client.get(url, new MyBinaryHttpResponseHandler(allowedContentTypes,
+					act, url, fileName));
+		} else{
+			System.out.println("Net is not available " + url);
 		}
-		// 添加当前host为Referer
-		try {
-			URL u = new URL(url);
-			client.addHeader("Referer", u.getProtocol() + "://" + u.getHost());
-		} catch (MalformedURLException e) {
-		}
-
-		client.get(url, new MyBinaryHttpResponseHandler(allowedContentTypes,
-				act, fileName));
-
-		System.out.println("end save: " + url + " to " + fileName);
 	}
 
 	static class MyBinaryHttpResponseHandler extends BinaryHttpResponseHandler {
 		private Activity act;
 		private String fileName;
+		private String url;
+		private int maxAllowByteLen = 50;
 
 		public MyBinaryHttpResponseHandler(String[] allowedContentTypes,
-				Activity act, String fileName) {
+				Activity act, String url, String fileName) {
 			super(allowedContentTypes);
 			this.act = act;
+			this.url = url;
 			this.fileName = fileName;
 		}
 
 		@Override
 		public void onSuccess(byte[] fileData) {
-			if(fileData != null && fileData.length > 100){
+			if (fileData != null && fileData.length > maxAllowByteLen) {
 				IOUtil.writeExternalFile(fileName, fileData);
 				if (act != null) {
-					Toast.makeText(act, "down ok, size: " + fileData.length,
+					Toast.makeText(act, "Down ok, size: " + fileData.length,
 							Toast.LENGTH_LONG).show();
 				}
-				System.out.println("down ok, size: " + fileData.length);
-			}else{
-				System.out.println("down fail : receive is null or lt 100");
+				System.out.println("Down ok, size: " + fileData.length + " " + url);
+			} else {
+				System.out.println("Down fail : receive is null or len is "
+						+ fileData.length + " lt " + maxAllowByteLen + " " + url);
 			}
 		}
 
 		@Override
 		public void onFailure(Throwable e) {
 			if (act != null) {
-				Toast.makeText(act, "down fail " + e, Toast.LENGTH_LONG).show();
-				System.out.println("down fail " + e);
+				Toast.makeText(act, "Down fail " + e, Toast.LENGTH_LONG).show();
 			}
+			System.out.println("Down fail " + e + " " + url);
 		}
 
 		@Override
 		public void onFailure(Throwable e, String response) {
 			if (act != null) {
-				Toast.makeText(act, "down fail " + e + "\r\n" + response,
+				Toast.makeText(act, "Down fail " + e + "\r\n" + response,
 						Toast.LENGTH_LONG).show();
-				System.out.println("down fail " + e + "\r\n" + response);
 			}
+			System.out.println("Down fail " + e + "\r\n" + response + " " + url);
 		}
 	}
 }

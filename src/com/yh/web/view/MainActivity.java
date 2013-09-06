@@ -11,17 +11,17 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
-import android.view.inputmethod.EditorInfo;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.yh.web.R;
 import com.yh.web.cache.CacheObject;
+import com.yh.web.cache.Config;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.MIME;
 
@@ -34,16 +34,18 @@ public class MainActivity extends BaseActivity {
 
 		// 添加事件，点击GO的时候自动调用GoBtn方法跳到指定URL
 		EditText uText = (EditText) findViewById(R.id.uText);
-		uText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			public boolean onEditorAction(TextView view, int actionId,
-					KeyEvent event) {
-				if (actionId == EditorInfo.IME_ACTION_GO) {
+		// 安装回车自动加载
+		uText.setOnKeyListener(new OnKeyListener() {
+			@Override
+			public boolean onKey(View v, int keyCode, KeyEvent event) {  
+				if(keyCode == KeyEvent.KEYCODE_ENTER){
 					goBtnClick(null);
+					return true;  
 				}
-				return true;
+				return false;
 			}
 		});
-
+			
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
 		web.setWebViewClient(new MyWebViewClient(this));
@@ -69,9 +71,11 @@ public class MainActivity extends BaseActivity {
 		});
 		// web 获得焦点
 		web.requestFocus();
-		
+
 		// 初始化MIME
-		MIME.initMIME(this);
+		MIME.initMIME(this.getAssets());
+		// 初始化过滤器
+		Config.initFilter(this.getAssets());
 		// 初始化AsyncHttpClient
 		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
 	}
@@ -82,7 +86,8 @@ public class MainActivity extends BaseActivity {
 
 		set.setDomStorageEnabled(true);// 启用localStorage
 		set.setAppCacheEnabled(true);// 启用缓存
-		//set.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); // 先用缓存，缓存没有请求网络
+		// set.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
+		// 先用缓存，缓存没有请求网络
 
 		set.setSupportZoom(true); // 设置是否支持缩放
 		set.setBuiltInZoomControls(true); // 设置是否显示内建缩放工具
@@ -108,9 +113,9 @@ public class MainActivity extends BaseActivity {
 			String url = ((EditText) findViewById(R.id.uText)).getText()
 					.toString();
 			String fileName = CacheObject.getCacheFileName(url);
-			
+
 			HttpUtil.downUrlToFile(this, url, fileName);
-			
+
 			return true;
 		case R.id.action_settings:
 			System.out.println("setClick");

@@ -22,6 +22,12 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getResource(Activity act, WebView web,
 			String url) {
+		// 获取转换的URL
+		url = HttpUtil.getToUrl(url);
+		if(url == null){
+			System.out.println("DisCache url | " + url);
+			return null;
+		}
 		CacheObject obj = new CacheObject(url);
 		System.out.println(obj.getType() + " " + obj.getMime() + " | " + url);
 
@@ -34,11 +40,11 @@ public class CacheControl {
 			res = getHtml(act, url, obj.getFileName(), obj.getMime(), null);
 		} else if (obj.getMime().equals("application/x-javascript")) {
 			// JS 处理
-			//getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
+			getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
 		} else if (obj.getMime().equals("text/css")) {
 			// CSS 处理
-			//getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
-		} else if (MIME.fileTypes.contains(obj.getType())) {
+			getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
+		} else if (Config.fileTypeSet.contains(obj.getType())) {
 			// 文件处理
 			
 		} else if (obj.getMime().equals("none")) {
@@ -62,7 +68,7 @@ public class CacheControl {
 		// 获取缓存
 		InputStream is = IOUtil.readExternalFile(fileName);
 		if (is != null) {
-			System.out.println("Come From Cache: " + url);
+			System.out.println("From Cache: " + url);
 		}else{
 			HttpUtil.downUrlToFile(null, url, fileName);
 			return null;

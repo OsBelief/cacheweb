@@ -31,7 +31,7 @@ public class MD5Util {
 	 */
 	public synchronized static String getFileName(String url){
 		String m=digestString(url);
-		m=m.substring(0,4)+"/"+m.substring(4,8)+"/"+m.substring(8);
+		m=m.substring(0,2)+"/"+m.substring(2,4)+"/"+m.substring(4);
 		return m;
 	}
 	
