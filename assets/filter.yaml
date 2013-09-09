@@ -23,7 +23,7 @@ cacheUrlReplace:
     dest : $1
 
 
-# 缓存的类型
+# URL的类型
 cacheTypeUrl:
     html : .*\.(html|HTML|htm|HTM)(\?[^/]*)?$
     
@@ -38,7 +38,7 @@ cacheTypeUrl:
     doc : .*\.(doc|DOC)(\?[^/]*)?$
     xls : .*\.(xls|XLS)(\?[^/]*)?$
 
-# 文件内存
+# 文件类型不缓存
 fileType:
   - pdf
   - doc
