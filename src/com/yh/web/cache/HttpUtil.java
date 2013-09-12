@@ -1,6 +1,8 @@
 package com.yh.web.cache;
 
 import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.List;
@@ -149,6 +151,20 @@ public class HttpUtil {
 	 */
 	public static String getUrlMime(String url) {
 		return MIME.getMimeFromType(getUrlType(url));
+	}
+	
+	/**
+	 * »ñÈ¡URLµÄhost
+	 * @param url
+	 * @return
+	 */
+	public static String getUrlHost(String url){
+		try {
+			return new URI(url).getHost();
+		} catch (URISyntaxException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	/**

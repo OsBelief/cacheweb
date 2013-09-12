@@ -36,7 +36,7 @@ public class CachePolicy {
 	 * @param mime
 	 * @return
 	 */
-	public static CachePolicy getCachePolicy(String url, String type, String mime){
-		return new CachePolicy();
+	public static int getCachePolicy(String url, String type, String mime){
+		return 0;
 	}
 }
