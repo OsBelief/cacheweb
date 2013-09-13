@@ -38,8 +38,8 @@ cacheTypeUrl:
     doc : .*\.(doc|DOC)(\?[^/]*)?$
     xls : .*\.(xls|XLS)(\?[^/]*)?$
 
-# 文件类型不缓存
-fileType:
+# 不缓存的类型
+notCacheType:
   - pdf
   - doc
   - xls

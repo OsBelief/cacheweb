@@ -31,8 +31,8 @@ public class Config {
 	public static List<HashMap<String, Object>> cacheUrlReplaceList;
 	// 需要缓存URL的类型和对应的匹配正则
 	public static LinkedHashMap<String, String> cacheTypeUrlMap;
-	// 判断是文件的类型
-	public static HashSet<String> fileTypeSet;
+	// 不缓存的类型
+	public static HashSet<String> notCacheType;
 
 	@SuppressWarnings("unchecked")
 	/**
@@ -48,8 +48,8 @@ public class Config {
 		if (cacheTypeUrlMap == null) {
 			cacheTypeUrlMap = new LinkedHashMap<String, String>();
 		}
-		if (fileTypeSet == null) {
-			fileTypeSet = new HashSet<String>();
+		if (notCacheType == null) {
+			notCacheType = new HashSet<String>();
 		}
 		Yaml yaml = new Yaml();
 		try {
@@ -71,8 +71,8 @@ public class Config {
 				cacheTypeUrlMap.putAll((LinkedHashMap<String, String>) obj
 						.get("cacheTypeUrl"));
 			}
-			if (obj.get("fileType") instanceof List) {
-				fileTypeSet.addAll((List<String>) obj.get("fileType"));
+			if (obj.get("notCacheType") instanceof List) {
+				notCacheType.addAll((List<String>) obj.get("notCacheType"));
 			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

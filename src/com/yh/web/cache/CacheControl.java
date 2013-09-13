@@ -44,8 +44,8 @@ public class CacheControl {
 		} else if (obj.getMime().equals("text/css")) {
 			// CSS 处理
 			getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
-		} else if (Config.fileTypeSet.contains(obj.getType())) {
-			// 文件处理
+		} else if (Config.notCacheType.contains(obj.getType())) {
+			// 不缓存处理
 			
 		} else if (obj.getMime().equals("none")) {
 			// 没找到MIME

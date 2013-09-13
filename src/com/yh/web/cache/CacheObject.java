@@ -1,7 +1,5 @@
 package com.yh.web.cache;
 
-import java.sql.Timestamp;
-
 import android.os.Environment;
 
 /**
@@ -22,7 +20,7 @@ public class CacheObject {
 
 	// 根据创建时间和缓存策略计算是否过期
 	private int cachePolicy = -1;
-	private Timestamp createTime;
+	private long createTime;
 	private boolean isExpire;
 
 	// 使用次数
@@ -68,21 +66,6 @@ public class CacheObject {
 		fileName = new StringBuffer().append(rootPath).append(host).append("/")
 				.append(mime).append("/").append(fileName).toString();
 		return fileName;
-	}
-
-	/**
-	 * 根据创建时间、当前时间和缓存策略，判断是否过期
-	 * 
-	 * @param createTime
-	 * @param now
-	 * @param cachePolicy
-	 * @return
-	 */
-	public static boolean isExpire(Timestamp createTime, long now,
-			int cachePolicy) {
-		// 此处实现判断过期代码
-
-		return false;
 	}
 
 	public String getId() {
@@ -149,11 +132,11 @@ public class CacheObject {
 		this.cachePolicy = cachePolicy;
 	}
 
-	public Timestamp getCreateTime() {
+	public long getCreateTime() {
 		return createTime;
 	}
 
-	public void setCreateTime(Timestamp createTime) {
+	public void setCreateTime(long createTime) {
 		this.createTime = createTime;
 	}
 
@@ -166,7 +149,7 @@ public class CacheObject {
 	 */
 	public boolean isExpire(long now) {
 		if (now != -1) {
-			isExpire = isExpire(getCreateTime(), now, getCachePolicy());
+			isExpire = CachePolicy.isExpire(getCreateTime(), now, getCachePolicy());
 		}
 		return isExpire;
 	}
