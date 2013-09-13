@@ -12,22 +12,25 @@ public class CacheObject {
 	public final static String rootPath = Environment
 			.getExternalStorageDirectory().getPath() + "/yichaweb/cache/";
 
-	private String id;
+	private String uid;
 	private String url;
 	private String host;
 	private String type;
 	private String mime;
 
+	// 缓存本地文件
+	private String fileName;
+
 	// 根据创建时间和缓存策略计算是否过期
 	private int cachePolicy = -1;
 	private long createTime;
-	private boolean isExpire;
 
 	// 使用次数
 	private int useCount = 0;
+	
+	// isExpire 不存数据库，用时判断
+	private boolean isExpire;
 
-	// 缓存本地文件
-	private String fileName;
 
 	public CacheObject() {
 	}
@@ -68,15 +71,15 @@ public class CacheObject {
 		return fileName;
 	}
 
-	public String getId() {
-		if (id == null) {
-			id = MD5Util.digestString(url);
+	public String getUid() {
+		if (uid == null) {
+			uid = MD5Util.digestString(url);
 		}
-		return id;
+		return uid;
 	}
 
-	public void setId(String id) {
-		this.id = id;
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	public String getUrl() {
@@ -120,6 +123,17 @@ public class CacheObject {
 		this.mime = mime;
 	}
 
+	public String getFileName() {
+		if (fileName == null) {
+			fileName = getCacheFileName(getUid(), getHost(), getMime());
+		}
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
+	}
+	
 	public int getCachePolicy() {
 		if (cachePolicy == -1) {
 			cachePolicy = CachePolicy.getCachePolicy(getUrl(), getType(),
@@ -160,12 +174,5 @@ public class CacheObject {
 
 	public void setUseCount(int useCount) {
 		this.useCount = useCount;
-	}
-
-	public String getFileName() {
-		if (fileName == null) {
-			fileName = getCacheFileName(getId(), getHost(), getMime());
-		}
-		return fileName;
 	}
 }
