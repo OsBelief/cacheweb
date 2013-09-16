@@ -15,15 +15,16 @@ import com.yh.web.cache.db.CacheOrm;
 public class CacheControl {
 
 	public static CacheOrm orm = null;
-	
+
 	/**
 	 * 初始化缓存ORM
+	 * 
 	 * @param context
 	 */
-	public static void initCache(Context context){
+	public static void initCache(Context context) {
 		orm = new CacheOrm(context);
 	}
-	
+
 	/**
 	 * 捕捉请求，控制缓存策略
 	 * 
@@ -38,18 +39,22 @@ public class CacheControl {
 		// 获取转换的URL
 		String urlb = url;
 		url = HttpUtil.getToUrl(url);
-		if(url == null){
+		if (url == null) {
 			Log.i("getResource", "DisCache url | " + urlb);
 			// 如果转换的URL为null，则表示不需要缓存
 			return null;
 		}
 		// 查询数据库是否有缓存
 		CacheObject obj = orm.queryByUrl(url);
-		if(obj == null){
+		if (obj == null) {
 			obj = new CacheObject(url);
-			Log.i("getResource", "New Fetch | " + obj.getType() + " " + obj.getMime() + " | " + url);
-		} else{
-			Log.i("getResource", "From Cache | " + obj.getType() + " " + obj.getMime() + " | " + url);
+			Log.i("getResource",
+					"New Fetch | " + obj.getType() + " " + obj.getMime()
+							+ " | " + url);
+		} else {
+			Log.i("getResource",
+					"From Cache | " + obj.getType() + " " + obj.getMime()
+							+ " | " + url);
 		}
 
 		WebResourceResponse res = null;
@@ -67,31 +72,33 @@ public class CacheControl {
 			res = getDefaultInfo(context, obj, null);
 		} else if (Config.notCacheType.contains(obj.getType())) {
 			// 不缓存处理
-			
+
 		} else if (obj.getMime().equals("none")) {
 			// 没找到MIME
-			
+
 		}
-		
+
 		return res;
 	}
-	
+
 	/**
 	 * 获取默认信息
+	 * 
 	 * @param context
 	 * @param obj
 	 * @param encoding
 	 * @return
 	 */
-	public static WebResourceResponse getDefaultInfo(Context context, CacheObject obj, String encoding) {
+	public static WebResourceResponse getDefaultInfo(Context context,
+			CacheObject obj, String encoding) {
 		// 是否需要更新缓存
 		boolean needUpdate = false;
 		// 返回结果
 		WebResourceResponse res = null;
-		
-		if(obj.isComeFromCache()){
+
+		if (obj.isComeFromCache()) {
 			// 来自缓存
-			if(!obj.isExpire(System.currentTimeMillis())){
+			if (!obj.isExpire(System.currentTimeMillis())) {
 				// 缓存未过期
 				InputStream is = IOUtil.readExternalFile(obj.getFileName());
 				if (is != null) {
@@ -99,21 +106,23 @@ public class CacheControl {
 					Log.i("getDefaultInfo", "From Cache: " + obj.getUrl());
 					res = IOUtil.generateResource(obj.getMime(), encoding, is);
 					obj.setUseCount(obj.getUseCount() + 1);
-					Log.d("updateDB", obj.getUrl() + "useCount " + obj.getUseCount());
+					Log.d("updateDB",
+							obj.getUrl() + "useCount " + obj.getUseCount());
 					orm.updateUseCount(obj);
-				}else{
-					Log.i("getDefaultInfo", "File NotExist | " + obj.getUrl() + " " + obj.getFileName());
+				} else {
+					Log.i("getDefaultInfo", "File NotExist | " + obj.getUrl()
+							+ " " + obj.getFileName());
 					needUpdate = true;
 				}
-			}else{
+			} else {
 				Log.i("getDefaultInfo", "Cache Expire | " + obj.getUrl());
 				needUpdate = true;
 			}
-		} else{
+		} else {
 			Log.i("getDefaultInfo", "NeedUpdate | " + obj.getUrl());
 			needUpdate = true;
 		}
-		if(needUpdate){
+		if (needUpdate) {
 			// 更新缓存
 			HttpUtil.downUrlToFile(null, obj);
 		}
@@ -122,23 +131,27 @@ public class CacheControl {
 
 	/**
 	 * 获取html缓存
+	 * 
 	 * @param context
 	 * @param obj
 	 * @param encoding
 	 * @return
 	 */
-	public static WebResourceResponse getHtml(Context context, CacheObject obj, String encoding) {
+	public static WebResourceResponse getHtml(Context context, CacheObject obj,
+			String encoding) {
 		return getDefaultInfo(context, obj, encoding);
 	}
 
 	/**
 	 * 获取图片缓存
+	 * 
 	 * @param context
 	 * @param obj
 	 * @param encoding
 	 * @return
 	 */
-	public static WebResourceResponse getImage(Context context, CacheObject obj, String encoding) {
+	public static WebResourceResponse getImage(Context context,
+			CacheObject obj, String encoding) {
 		return getDefaultInfo(context, obj, encoding);
 	}
 }

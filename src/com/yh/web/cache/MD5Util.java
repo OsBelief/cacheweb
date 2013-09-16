@@ -8,8 +8,8 @@ import java.security.NoSuchAlgorithmException;
 
 /**
  * md5的获取，用于文件路径命名
- * @author yh
- * 创建时间：2012-4-19
+ * 
+ * @author yh 创建时间：2012-4-19
  */
 public class MD5Util {
 
@@ -26,17 +26,19 @@ public class MD5Util {
 
 	/**
 	 * 从一个地址获取对应md5产生路径
+	 * 
 	 * @param url
 	 * @return
 	 */
-	public synchronized static String getFileName(String url){
-		String m=digestString(url);
-		m=m.substring(0,2)+"/"+m.substring(2,4)+"/"+m.substring(4);
+	public synchronized static String getFileName(String url) {
+		String m = digestString(url);
+		m = m.substring(0, 2) + "/" + m.substring(2, 4) + "/" + m.substring(4);
 		return m;
 	}
-	
+
 	/**
 	 * 获取buff的md5
+	 * 
 	 * @param buff
 	 * @return
 	 */
@@ -49,11 +51,14 @@ public class MD5Util {
 
 	/**
 	 * 获取文件内容的md5
-	 * @param filePath 文件路径
+	 * 
+	 * @param filePath
+	 *            文件路径
 	 * @return
 	 * @throws Exception
 	 */
-	public synchronized static String digestFile(String filePath) throws Exception {
+	public synchronized static String digestFile(String filePath)
+			throws Exception {
 		md.reset();
 		InputStream in = new BufferedInputStream(new FileInputStream(filePath));
 		byte[] buff = new byte[BUFF_SIZE];
@@ -69,18 +74,20 @@ public class MD5Util {
 
 	/**
 	 * 获取字符串的md5
+	 * 
 	 * @param str
 	 * @return
 	 */
-	public synchronized static String digestString(String str){
+	public synchronized static String digestString(String str) {
 		md.reset();
 		md.update(str.getBytes());
 		byte[] digest = md.digest();
 		return bin2Hex(digest);
 	}
-	
+
 	/**
 	 * 将buf转为字符串
+	 * 
 	 * @param buff
 	 * @return
 	 */

@@ -23,7 +23,7 @@ public class Config {
 
 	public final static String filterName = "filter.yaml";
 	public final static String configName = "config.yaml";
-	
+
 	// 最大允许的URL长度
 	public static int maxUrlLength = 200;
 	// 不缓存的URL匹配
@@ -44,7 +44,7 @@ public class Config {
 			disCacheUrlList = new ArrayList<String>();
 		}
 		if (cacheUrlReplaceList == null) {
-			cacheUrlReplaceList = new ArrayList<HashMap<String,Object>>();
+			cacheUrlReplaceList = new ArrayList<HashMap<String, Object>>();
 		}
 		if (cacheTypeUrlMap == null) {
 			cacheTypeUrlMap = new LinkedHashMap<String, String>();
@@ -54,19 +54,19 @@ public class Config {
 		}
 		Yaml yaml = new Yaml();
 		try {
-			String yamltxt = IOUtil.readStream(assets.open(filterName))
-					.trim();
+			String yamltxt = IOUtil.readStream(assets.open(filterName)).trim();
 			Log.d("initFilter", yamltxt);
 			LinkedHashMap<String, Object> obj = (LinkedHashMap<String, Object>) yaml
 					.load(yamltxt);
-			if(obj.get("maxUrlLength") != null){
-				maxUrlLength = (Integer)obj.get("maxUrlLength");
+			if (obj.get("maxUrlLength") != null) {
+				maxUrlLength = (Integer) obj.get("maxUrlLength");
 			}
 			if (obj.get("disCacheUrl") instanceof List) {
 				disCacheUrlList.addAll((List<String>) obj.get("disCacheUrl"));
 			}
 			if (obj.get("cacheUrlReplace") instanceof List) {
-				cacheUrlReplaceList.addAll((List<HashMap<String, Object>>) obj.get("cacheUrlReplace"));
+				cacheUrlReplaceList.addAll((List<HashMap<String, Object>>) obj
+						.get("cacheUrlReplace"));
 			}
 			if (obj.get("cacheTypeUrl") instanceof Map) {
 				cacheTypeUrlMap.putAll((LinkedHashMap<String, String>) obj
@@ -88,12 +88,11 @@ public class Config {
 	public static void initConfig(AssetManager assets) {
 		Yaml yaml = new Yaml();
 		try {
-			String yamltxt = IOUtil.readStream(assets.open(configName))
-					.trim();
+			String yamltxt = IOUtil.readStream(assets.open(configName)).trim();
 			@SuppressWarnings("unchecked")
 			LinkedHashMap<String, Object> obj = (LinkedHashMap<String, Object>) yaml
 					.load(yamltxt);
-			
+
 			Log.d("initConfig", obj.toString());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();

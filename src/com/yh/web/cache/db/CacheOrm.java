@@ -13,7 +13,7 @@ import com.yh.web.cache.CacheObject;
 public class CacheOrm {
 
 	private String tableName = "cacheinfo";
-	
+
 	private DBHelper helper;
 	private SQLiteDatabase db;
 

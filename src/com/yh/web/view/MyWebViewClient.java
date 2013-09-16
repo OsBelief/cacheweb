@@ -35,7 +35,7 @@ public class MyWebViewClient extends WebViewClient {
 		Log.i("shouldOverrideUrlLoading", url);
 		((EditText) act.findViewById(R.id.uText)).setText(url);
 		String reload = HttpUtil.getToUrl(url);
-		if(reload != null){
+		if (reload != null) {
 			url = reload;
 		}
 		view.loadUrl(url);
@@ -53,11 +53,11 @@ public class MyWebViewClient extends WebViewClient {
 	@Override
 	public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
 		WebResourceResponse res = null;
-		
+
 		FutureTask<WebResourceResponse> future = new FutureTask<WebResourceResponse>(
 				new MyCallable(act, view, url));
 		executor.execute(future);
-		
+
 		// 在这里可以做别的任何事情
 		try {
 			// 为1秒

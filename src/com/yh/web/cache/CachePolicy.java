@@ -42,8 +42,9 @@ public class CachePolicy {
 		try {
 			String yamltxt = IOUtil.readStream(assets.open(policyFileName))
 					.trim();
-			// String yamltxt = IOUtil.readStream(new FileInputStream("D:\\Android\\YichaWeb\\assets\\policy.yaml"));
-			
+			// String yamltxt = IOUtil.readStream(new
+			// FileInputStream("D:\\Android\\YichaWeb\\assets\\policy.yaml"));
+
 			HashMap<String, Object> obj = (HashMap<String, Object>) yaml
 					.load(yamltxt);
 			List<HashMap<String, Object>> pols = (List<HashMap<String, Object>>) obj
@@ -106,8 +107,8 @@ public class CachePolicy {
 			createCal.setTimeInMillis(createTime);
 			Calendar nowCal = Calendar.getInstance();
 			nowCal.setTimeInMillis(nowTime);
-			
-			//Log.d("time", createCal + " " + nowCal);
+
+			// Log.d("time", createCal + " " + nowCal);
 			for (String pol : cp.policy) {
 				if (pol.equals("month")) {
 					if (nowCal.get(Calendar.MONTH)
@@ -165,7 +166,7 @@ public class CachePolicy {
 		if (field.equals("id")) {
 			id = (Integer) value;
 		} else if (field.equals("policy")) {
-			policy = ((ArrayList<String>) value).toArray(new String[]{});
+			policy = ((ArrayList<String>) value).toArray(new String[] {});
 		} else if (field.equals("month")) {
 			month = (Integer) value;
 		} else if (field.equals("week")) {
@@ -173,7 +174,7 @@ public class CachePolicy {
 		} else if (field.equals("day")) {
 			this.day = (Integer) value;
 		} else if (field.equals("time")) {
-			this.time = (long)((Integer) value) * 1000;
+			this.time = (long) ((Integer) value) * 1000;
 		}
 	}
 }

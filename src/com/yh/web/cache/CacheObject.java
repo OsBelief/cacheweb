@@ -27,12 +27,12 @@ public class CacheObject {
 
 	// 使用次数
 	private int useCount = 0;
-	
+
 	// isExpire 不存数据库，用时判断
 	private boolean isExpire;
 	// 来自缓存，从数据库获取是设置为true， 否则不设置
 	private boolean comeFromCache = false;
-	
+
 	public CacheObject() {
 	}
 
@@ -50,13 +50,15 @@ public class CacheObject {
 	public static String getCacheFileName(String url) {
 		String mime = HttpUtil.getUrlMime(url);
 		String fileName = MD5Util.getFileName(url);
-		fileName = new StringBuffer().append(rootPath).append("UserDown").append("/")
-				.append(mime).append("/").append(fileName).toString();
+		fileName = new StringBuffer().append(rootPath).append("UserDown")
+				.append("/").append(mime).append("/").append(fileName)
+				.toString();
 		return fileName;
 	}
 
 	/**
 	 * 根据必要信息获取文件名，存储程序下载的内容
+	 * 
 	 * @param id
 	 * @param host
 	 * @param mime
@@ -64,8 +66,7 @@ public class CacheObject {
 	 */
 	public static String getCacheFileName(String id, String host, String mime) {
 		String fileName = new StringBuffer().append(id.substring(0, 2))
-				.append("/").append(id.substring(10))
-				.toString();
+				.append("/").append(id.substring(10)).toString();
 		fileName = new StringBuffer().append(rootPath).append(host).append("/")
 				.append(mime).append("/").append(fileName).toString();
 		return fileName;
@@ -133,7 +134,7 @@ public class CacheObject {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
-	
+
 	public int getCachePolicy() {
 		if (cachePolicy == -1) {
 			cachePolicy = CachePolicy.getCachePolicy(getUrl(), getType(),
@@ -153,7 +154,7 @@ public class CacheObject {
 	public void setCreateTime(long createTime) {
 		this.createTime = createTime;
 	}
-	
+
 	public int getUseCount() {
 		return useCount;
 	}
@@ -171,7 +172,8 @@ public class CacheObject {
 	 */
 	public boolean isExpire(long now) {
 		if (now != -1) {
-			isExpire = CachePolicy.isExpire(getCreateTime(), now, getCachePolicy());
+			isExpire = CachePolicy.isExpire(getCreateTime(), now,
+					getCachePolicy());
 		}
 		return isExpire;
 	}

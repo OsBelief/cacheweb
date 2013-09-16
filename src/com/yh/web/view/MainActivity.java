@@ -40,15 +40,15 @@ public class MainActivity extends BaseActivity {
 		// 安装回车自动加载
 		uText.setOnKeyListener(new OnKeyListener() {
 			@Override
-			public boolean onKey(View v, int keyCode, KeyEvent event) {  
-				if(keyCode == KeyEvent.KEYCODE_ENTER){
+			public boolean onKey(View v, int keyCode, KeyEvent event) {
+				if (keyCode == KeyEvent.KEYCODE_ENTER) {
 					goBtnClick(null);
-					return true;  
+					return true;
 				}
 				return false;
 			}
 		});
-			
+
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
 		web.setWebViewClient(new MyWebViewClient(this));

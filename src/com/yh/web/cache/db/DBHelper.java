@@ -25,13 +25,12 @@ public class DBHelper extends SQLiteOpenHelper {
 				+ "[cachePolicy] [int(8)],   [useCount] INT DEFAULT 0) ");
 	}
 
-	
 	/**
 	 * 数据库版本更改时的事件
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		// 如果DATABASE_VERSION值被改为2,系统发现现有数据库版本不同,即会调用onUpgrade
-		//db.execSQL("ALTER TABLE person ADD COLUMN other STRING");
+		// db.execSQL("ALTER TABLE person ADD COLUMN other STRING");
 	}
 }
