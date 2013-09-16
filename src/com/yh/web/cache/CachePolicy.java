@@ -9,6 +9,7 @@ import java.util.List;
 import org.yaml.snakeyaml.Yaml;
 
 import android.content.res.AssetManager;
+import android.util.Log;
 import android.util.SparseArray;
 
 /**
@@ -63,7 +64,7 @@ public class CachePolicy {
 					}
 				}
 			}
-			System.out.println(obj);
+			Log.d("initPolicy", obj.toString());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

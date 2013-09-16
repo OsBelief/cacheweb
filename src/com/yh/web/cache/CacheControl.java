@@ -3,6 +3,7 @@ package com.yh.web.cache;
 import java.io.InputStream;
 
 import android.app.Activity;
+import android.util.Log;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
@@ -25,11 +26,11 @@ public class CacheControl {
 		// 获取转换的URL
 		url = HttpUtil.getToUrl(url);
 		if(url == null){
-			System.out.println("DisCache url | " + url);
+			Log.i("getResource", "DisCache url | " + url);
 			return null;
 		}
 		CacheObject obj = new CacheObject(url);
-		System.out.println(obj.getType() + " " + obj.getMime() + " | " + url);
+		Log.i("getResource", obj.getType() + " " + obj.getMime() + " | " + url);
 
 		WebResourceResponse res = null;
 		if (obj.getMime().startsWith("image")) {
@@ -68,7 +69,7 @@ public class CacheControl {
 		// 获取缓存
 		InputStream is = IOUtil.readExternalFile(fileName);
 		if (is != null) {
-			System.out.println("From Cache: " + url);
+			Log.i("getDefaultInfo", "From Cache: " + url);
 		}else{
 			HttpUtil.downUrlToFile(null, url, fileName);
 			return null;

@@ -7,6 +7,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.util.Log;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -31,7 +32,7 @@ public class MyWebViewClient extends WebViewClient {
 
 	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, String url) {
-		System.out.println(url);
+		Log.i("shouldOverrideUrlLoading", url);
 		((EditText) act.findViewById(R.id.uText)).setText(url);
 		String reload = HttpUtil.getToUrl(url);
 		if(reload != null){

@@ -12,6 +12,7 @@ import java.util.Map;
 import org.yaml.snakeyaml.Yaml;
 
 import android.content.res.AssetManager;
+import android.util.Log;
 
 /**
  * @author gudh
@@ -55,7 +56,7 @@ public class Config {
 		try {
 			String yamltxt = IOUtil.readStream(assets.open(filterName))
 					.trim();
-			System.out.println(yamltxt);
+			Log.d("initFilter", yamltxt);
 			LinkedHashMap<String, Object> obj = (LinkedHashMap<String, Object>) yaml
 					.load(yamltxt);
 			if(obj.get("maxUrlLength") != null){
@@ -93,7 +94,7 @@ public class Config {
 			LinkedHashMap<String, Object> obj = (LinkedHashMap<String, Object>) yaml
 					.load(yamltxt);
 			
-			System.out.println(obj);
+			Log.d("initConfig", obj.toString());
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {

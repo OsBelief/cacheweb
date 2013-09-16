@@ -7,6 +7,7 @@ import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -118,7 +119,7 @@ public class MainActivity extends BaseActivity {
 
 			return true;
 		case R.id.action_settings:
-			System.out.println("setClick");
+			Log.d("debug", "setClick");
 			return true;
 		case R.id.action_eixt:
 			exit();

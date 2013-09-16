@@ -15,6 +15,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.util.Log;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -117,7 +118,7 @@ public class HttpUtil {
 			Matcher m = Pattern.compile(one.get("src").toString()).matcher(url);
 			if (m.find()) {
 				url = m.replaceFirst(one.get("dest").toString());
-				System.out.println("Match | dest : " + url);
+				Log.i("getToUrl", "Match | dest : " + url);
 				break;
 			}
 		}
@@ -175,7 +176,7 @@ public class HttpUtil {
 	 */
 	public static void downUrlToFile(Activity act, String url, String fileName) {
 		if(netAvailable){
-			System.out.println("Save | " + url);
+			Log.i("downUrlToFile", "Save | " + url);
 			
 			if (!isUrl(url)) {
 				Toast.makeText(act, "下载链接地址不正确！" + url, Toast.LENGTH_LONG).show();
@@ -191,7 +192,7 @@ public class HttpUtil {
 			client.get(url, new MyBinaryHttpResponseHandler(allowedContentTypes,
 					act, url, fileName));
 		} else{
-			System.out.println("Net is not available " + url);
+			Log.i("downUrlToFile", "Net is not available " + url);
 		}
 	}
 
@@ -217,9 +218,9 @@ public class HttpUtil {
 					Toast.makeText(act, "Down ok, size: " + fileData.length,
 							Toast.LENGTH_LONG).show();
 				}
-				System.out.println("Down ok, size: " + fileData.length + " " + url);
+				Log.i("downUrlToFile", "Down ok, size: " + fileData.length + " " + url);
 			} else {
-				System.out.println("Down fail : receive is null or len is "
+				Log.i("downUrlToFile", "Down fail : receive is null or len is "
 						+ fileData.length + " lt " + maxAllowByteLen + " " + url);
 			}
 		}
@@ -229,7 +230,7 @@ public class HttpUtil {
 			if (act != null) {
 				Toast.makeText(act, "Down fail " + e, Toast.LENGTH_LONG).show();
 			}
-			System.out.println("Down fail " + e + " " + url);
+			Log.i("downUrlToFile", "Down fail " + e + " " + url);
 		}
 
 		@Override
@@ -238,7 +239,7 @@ public class HttpUtil {
 				Toast.makeText(act, "Down fail " + e + "\r\n" + response,
 						Toast.LENGTH_LONG).show();
 			}
-			System.out.println("Down fail " + e + "\r\n" + response + " " + url);
+			Log.i("downUrlToFile", "Down fail " + e + "\r\n" + response + " " + url);
 		}
 	}
 }
