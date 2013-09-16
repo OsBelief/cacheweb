@@ -21,7 +21,9 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 import com.yh.web.R;
+import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheObject;
+import com.yh.web.cache.CachePolicy;
 import com.yh.web.cache.Config;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.MIME;
@@ -77,8 +79,12 @@ public class MainActivity extends BaseActivity {
 		MIME.initMIME(this.getAssets());
 		// 初始化过滤器
 		Config.initFilter(this.getAssets());
+		// 初始化缓存策略
+		CachePolicy.initPolicy(this.getAssets());
 		// 初始化AsyncHttpClient
 		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
+		// 初始化缓存
+		CacheControl.initCache(this);
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")

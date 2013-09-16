@@ -3,28 +3,40 @@
 cachePolicy:
   # 缓存24小时
   - id : 0
-    policy : time
+    policy : [ time ]
+    month : 0
+    week : 0
+    day : 0
     time : 86400
     
   # 缓存12小时
   - id : 1
-  	policy : time
-  	time : 43200
-  	
-  # 缓存不过月24小时
-  - id ：2
-    policy ：month, time
+    policy : [ time ]
     month : 0
-    time : 86400
-    
-  # 缓存不过周24小时
-  - id ：3
-    policy ：week, time
     week : 0
+    day : 0
+    time : 43200
+
+  # 缓存不过月24小时
+  - id : 2
+    policy : [ week, time ]
+    month : 0
+    week : 0
+    day : 0
     time : 86400
-    
+
+  # 缓存不过周24小时
+  - id : 3
+    policy : [ week, time ]
+    month : 0
+    week : 0
+    day : 0
+    time : 86400
+
   # 缓存不过天12小时
-  - id ：4
-    policy ：day, time
+  - id : 3
+    policy : [ week, time ]
+    month : 0
+    week : 0
     day : 0
     time : 43200

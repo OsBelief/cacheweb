@@ -12,6 +12,8 @@ import com.yh.web.cache.CacheObject;
 
 public class CacheOrm {
 
+	private String tableName = "cacheinfo";
+	
 	private DBHelper helper;
 	private SQLiteDatabase db;
 
@@ -30,7 +32,7 @@ public class CacheOrm {
 	 */
 	public void add(CacheObject obj) {
 		db.execSQL(
-				"INSERT INTO cacheinfo VALUES(null, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+				"INSERT INTO cacheinfo VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
 				new Object[] { obj.getUid(), obj.getUrl(), obj.getHost(),
 						obj.getType(), obj.getMime(), obj.getFileName(),
 						obj.getCreateTime(), obj.getCachePolicy(),
@@ -67,7 +69,7 @@ public class CacheOrm {
 	public void updateTime(CacheObject obj) {
 		ContentValues cv = new ContentValues();
 		cv.put("createTime", obj.getCreateTime());
-		db.update("CacheObject", cv, "uid = ?", new String[] { obj.getUid() });
+		db.update(tableName, cv, "uid = ?", new String[] { obj.getUid() });
 	}
 
 	/**
@@ -78,7 +80,7 @@ public class CacheOrm {
 	public void updateUseCount(CacheObject obj) {
 		ContentValues cv = new ContentValues();
 		cv.put("useCount", obj.getUseCount());
-		db.update("CacheObject", cv, "uid = ?", new String[] { obj.getUid() });
+		db.update(tableName, cv, "uid = ?", new String[] { obj.getUid() });
 	}
 
 	/**
@@ -87,7 +89,7 @@ public class CacheOrm {
 	 * @param obj
 	 */
 	public void delete(CacheObject obj) {
-		db.delete("cacheinfo", "uid = ?", new String[] { obj.getUid() });
+		db.delete(tableName, "uid = ?", new String[] { obj.getUid() });
 	}
 
 	/**
@@ -97,12 +99,10 @@ public class CacheOrm {
 	 */
 	public CacheObject queryByUrl(String url) {
 		CacheObject obj = null;
-		Cursor c = db.query("cacheinfo", null, "url = ?", new String[] { url },
+		Cursor c = db.query(tableName, null, "url = ?", new String[] { url },
 				null, null, null);
 		if (c.moveToNext()) {
 			obj = getCacheObject(c);
-			// 来自数据库缓存
-			obj.setComeFromCache(true);
 		}
 		return obj;
 	}
@@ -140,6 +140,9 @@ public class CacheOrm {
 		obj.setCreateTime(c.getLong(c.getColumnIndex("createTime")));
 		obj.setCachePolicy(c.getInt(c.getColumnIndex("cachePolicy")));
 		obj.setUseCount(c.getInt(c.getColumnIndex("useCount")));
+
+		// 来自数据库缓存
+		obj.setComeFromCache(true);
 		return obj;
 	}
 

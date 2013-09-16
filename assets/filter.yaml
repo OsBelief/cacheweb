@@ -12,11 +12,21 @@ disCacheUrl:
   # 带时间的
   - .+t=?\d{10,13}([^\d].*|$)
   - ^http://127.0.0.1.*
+  - ^http://localhost.*
   # 易查广告
   - .*/adiSmart/.*
+  - .*/cnadsmart/.*
+  # 易查统计
+  - ^http://tbook.yicha.cn/tb/tj.gif.*
+  # 评论系统
+  - ^http://comment.yicha.cn/.*
 
 # URL地址替换
 cacheUrlReplace:
+  - src : (^http://yicha.mobi/?$|^http://yicha.cn/?$)
+    dest : http://page.yicha.cn/tp/i.y
+  - src : (^http://yicha.mobi.*|^http://yicha.cn.*|http://page.yicha.cn/tp/i.y\?.*)
+    dest : http://page.yicha.cn/tp/i.y
   - src : (^http://manhua.yicha.cn/\?)(.*?)
     dest : http://manhua.yicha.cn/manhua/?$2
   - src : (^http://manhua.yicha.cn/apache/.*js)(\?version=\d*)

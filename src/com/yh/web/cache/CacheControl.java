@@ -36,9 +36,10 @@ public class CacheControl {
 	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
 		// 获取转换的URL
+		String urlb = url;
 		url = HttpUtil.getToUrl(url);
 		if(url == null){
-			Log.i("getResource", "DisCache url | " + url);
+			Log.i("getResource", "DisCache url | " + urlb);
 			// 如果转换的URL为null，则表示不需要缓存
 			return null;
 		}
@@ -46,9 +47,9 @@ public class CacheControl {
 		CacheObject obj = orm.queryByUrl(url);
 		if(obj == null){
 			obj = new CacheObject(url);
-			Log.i("getResource", "New fetch | " + obj.getType() + " " + obj.getMime() + " | " + url);
+			Log.i("getResource", "New Fetch | " + obj.getType() + " " + obj.getMime() + " | " + url);
 		} else{
-			Log.i("getResource", "Come from cache | " + obj.getType() + " " + obj.getMime() + " | " + url);
+			Log.i("getResource", "From Cache | " + obj.getType() + " " + obj.getMime() + " | " + url);
 		}
 
 		WebResourceResponse res = null;
@@ -98,19 +99,23 @@ public class CacheControl {
 					Log.i("getDefaultInfo", "From Cache: " + obj.getUrl());
 					res = IOUtil.generateResource(obj.getMime(), encoding, is);
 					obj.setUseCount(obj.getUseCount() + 1);
+					Log.d("updateDB", obj.getUrl() + "useCount " + obj.getUseCount());
 					orm.updateUseCount(obj);
 				}else{
+					Log.i("getDefaultInfo", "File NotExist | " + obj.getUrl() + " " + obj.getFileName());
 					needUpdate = true;
 				}
 			}else{
+				Log.i("getDefaultInfo", "Cache Expire | " + obj.getUrl());
 				needUpdate = true;
 			}
 		} else{
+			Log.i("getDefaultInfo", "NeedUpdate | " + obj.getUrl());
 			needUpdate = true;
 		}
 		if(needUpdate){
 			// 更新缓存
-			HttpUtil.downUrlToFile(null, obj.getUrl(), obj.getFileName());
+			HttpUtil.downUrlToFile(null, obj);
 		}
 		return res;
 	}

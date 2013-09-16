@@ -117,12 +117,13 @@ public class HttpUtil {
 			}
 		}
 		// 转换URL
+		String urlb = url;
 		List<HashMap<String, Object>> cacheUrlReplaceList = Config.cacheUrlReplaceList;
 		for (HashMap<String, Object> one : cacheUrlReplaceList) {
 			Matcher m = Pattern.compile(one.get("src").toString()).matcher(url);
 			if (m.find()) {
 				url = m.replaceFirst(one.get("dest").toString());
-				Log.i("getToUrl", "Match | dest : " + url);
+				Log.i("getToUrl", "Match | " + urlb + " to " + url);
 				break;
 			}
 		}
@@ -222,7 +223,7 @@ public class HttpUtil {
 			}
 
 			client.get(obj.getUrl(), new MyBinaryHttpResponseHandler(
-					allowedContentTypes, act, obj.getUrl(), obj.getFileName()));
+					allowedContentTypes, act, obj));
 		} else {
 			Log.i("downUrlToFile", "Net is not available " + obj.getUrl());
 		}
@@ -243,25 +244,6 @@ public class HttpUtil {
 			this.fileName = fileName;
 		}
 
-		/**
-		 * 更新数据库
-		 * @param obj
-		 * @param result
-		 */
-		public void updateDB(CacheObject obj, boolean result) {
-			if (!result) {
-				// 失败则删除数据库记录
-				CacheControl.orm.delete(obj);
-			} else {
-				// 成功并存在则更新创建时间
-				if (obj != null && obj.isComeFromCache()) {
-					CacheControl.orm.updateTime(obj);
-				} else {
-					CacheControl.orm.add(obj);
-				}
-			}
-		}
-
 		public MyBinaryHttpResponseHandler(String[] allowedContentTypes,
 				Activity act, CacheObject obj) {
 			super(allowedContentTypes);
@@ -271,20 +253,52 @@ public class HttpUtil {
 			this.cacheObj = obj;
 		}
 
+		/**
+		 * 更新数据库
+		 * 
+		 * @param obj
+		 * @param result
+		 */
+		public void updateDB(CacheObject obj, boolean result) {
+			try {
+				if (!result) {
+					// 失败则删除数据库记录
+					if (obj != null && obj.isComeFromCache()) {
+						CacheControl.orm.delete(obj);
+						Log.i("updateDB", "DELETE | " + obj.getUrl());
+					}
+				} else {
+					// 成功并存在则更新创建时间
+					obj.setCreateTime(System.currentTimeMillis());
+					if (obj != null && obj.isComeFromCache()) {
+						CacheControl.orm.updateTime(obj);
+						Log.i("updateDB", "UPTIME | " + obj.getUrl());
+					} else {
+						CacheControl.orm.add(obj);
+						Log.i("updateDB", "INSERT | " + obj.getUrl());
+					}
+				}
+			} catch (Exception e) {
+				Log.e("updateDB", obj.getUrl() + "\t" + e.getMessage());
+			}
+		}
+
 		@Override
 		public void onSuccess(byte[] fileData) {
 			boolean res = false;
 			if (fileData != null && fileData.length > maxAllowByteLen) {
 				IOUtil.writeExternalFile(fileName, fileData);
 				if (act != null) {
-					Toast.makeText(act, "Down ok, size: " + fileData.length,
+					Toast.makeText(act, "Down Ok, size: " + fileData.length,
 							Toast.LENGTH_LONG).show();
 				}
 				res = true;
-				Log.i("downUrlToFile", "Down ok, size: " + fileData.length + " " + url);
+				Log.i("downUrlToFile", "Down Ok, size: " + fileData.length
+						+ " " + url);
 			} else {
-				Log.i("downUrlToFile", "Down fail : receive is null or len is "
-						+ fileData.length + " lt " + maxAllowByteLen + " " + url);
+				Log.i("downUrlToFile", "Down Fail : receive is null or len is "
+						+ fileData.length + " lt " + maxAllowByteLen + " "
+						+ url);
 			}
 			updateDB(cacheObj, res);
 		}
@@ -292,19 +306,19 @@ public class HttpUtil {
 		@Override
 		public void onFailure(Throwable e) {
 			if (act != null) {
-				Toast.makeText(act, "Down fail " + e, Toast.LENGTH_LONG).show();
+				Toast.makeText(act, "Down Fail " + e, Toast.LENGTH_LONG).show();
 			}
-			Log.i("downUrlToFile", "Down fail " + e + " " + url);
+			Log.i("downUrlToFile", "Down Fail " + e + " " + url);
 			updateDB(cacheObj, false);
 		}
 
 		@Override
 		public void onFailure(Throwable e, String response) {
 			if (act != null) {
-				Toast.makeText(act, "Down fail " + e + "\r\n" + response,
+				Toast.makeText(act, "Down Fail " + e + "\r\n" + response,
 						Toast.LENGTH_LONG).show();
 			}
-			Log.i("downUrlToFile", "Down fail " + e + "\r\n" + response + " "
+			Log.i("downUrlToFile", "Down Fail " + e + "\r\n" + response + " "
 					+ url);
 			updateDB(cacheObj, false);
 		}

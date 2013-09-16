@@ -42,22 +42,21 @@ public class CacheObject {
 	}
 
 	/**
-	 * 根据URL计算文件名
+	 * 根据URL计算文件名，存储用户下载的内容
 	 * 
 	 * @param url
 	 * @return
 	 */
 	public static String getCacheFileName(String url) {
-		String host = HttpUtil.getUrlHost(url);
 		String mime = HttpUtil.getUrlMime(url);
 		String fileName = MD5Util.getFileName(url);
-		fileName = new StringBuffer().append(rootPath).append(host).append("/")
+		fileName = new StringBuffer().append(rootPath).append("UserDown").append("/")
 				.append(mime).append("/").append(fileName).toString();
 		return fileName;
 	}
 
 	/**
-	 * 根据必要信息获取文件名
+	 * 根据必要信息获取文件名，存储程序下载的内容
 	 * @param id
 	 * @param host
 	 * @param mime
@@ -65,7 +64,7 @@ public class CacheObject {
 	 */
 	public static String getCacheFileName(String id, String host, String mime) {
 		String fileName = new StringBuffer().append(id.substring(0, 2))
-				.append(id.substring(2, 4)).append(id.substring(4))
+				.append("/").append(id.substring(10))
 				.toString();
 		fileName = new StringBuffer().append(rootPath).append(host).append("/")
 				.append(mime).append("/").append(fileName).toString();

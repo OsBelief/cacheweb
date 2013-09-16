@@ -20,6 +20,7 @@ import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.util.Log;
 import android.webkit.WebResourceResponse;
 
 /**
@@ -100,15 +101,17 @@ public class IOUtil {
 	 */
 	public static void writeExternalFile(String fileName, byte[] bytes) {
 		try {
-			File parent = new File(fileName).getParentFile();
+			File file = new File(fileName);
+			File parent = file.getParentFile();
 			if (!parent.exists()) {
+				Log.d("fileIO", "mkdir " + parent.getAbsolutePath());
 				parent.mkdirs();
 			}
-			FileOutputStream outputStream = new FileOutputStream(fileName);
+			FileOutputStream outputStream = new FileOutputStream(file);
 			outputStream.write(bytes);
 			outputStream.close();
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e("writeExternalFile", e.getMessage() + " " + fileName);
 		}
 	}
 
