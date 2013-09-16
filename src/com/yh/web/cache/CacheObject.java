@@ -30,8 +30,9 @@ public class CacheObject {
 	
 	// isExpire 不存数据库，用时判断
 	private boolean isExpire;
-
-
+	// 来自缓存，从数据库获取是设置为true， 否则不设置
+	private boolean comeFromCache = false;
+	
 	public CacheObject() {
 	}
 
@@ -153,6 +154,14 @@ public class CacheObject {
 	public void setCreateTime(long createTime) {
 		this.createTime = createTime;
 	}
+	
+	public int getUseCount() {
+		return useCount;
+	}
+
+	public void setUseCount(int useCount) {
+		this.useCount = useCount;
+	}
 
 	/**
 	 * 根据当前时间，判断是否过期，并设置
@@ -168,11 +177,11 @@ public class CacheObject {
 		return isExpire;
 	}
 
-	public int getUseCount() {
-		return useCount;
+	public boolean isComeFromCache() {
+		return comeFromCache;
 	}
 
-	public void setUseCount(int useCount) {
-		this.useCount = useCount;
+	public void setComeFromCache(boolean comeFromCache) {
+		this.comeFromCache = comeFromCache;
 	}
 }

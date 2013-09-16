@@ -29,7 +29,7 @@ public class HttpUtil {
 	// 异步HTTPClient
 	private static AsyncHttpClient client = null;
 	private static String[] allowedContentTypes = null;
-	
+
 	/**
 	 * 可以定时检查网络是否可用
 	 */
@@ -40,13 +40,14 @@ public class HttpUtil {
 			client = new AsyncHttpClient();
 		}
 		if (allowedContentTypes == null) {
-			allowedContentTypes = new String[] {".*"};
+			allowedContentTypes = new String[] { ".*" };
 		}
 		client.setUserAgent(ua);
 	}
-	
+
 	/**
 	 * 判断是否有可用的网络
+	 * 
 	 * @param context
 	 * @return
 	 */
@@ -54,14 +55,15 @@ public class HttpUtil {
 		ConnectivityManager cm = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo workInfo = cm.getActiveNetworkInfo();
-		if(workInfo != null){
+		if (workInfo != null) {
 			return workInfo.isAvailable();
 		}
 		return false;
 	}
-	
+
 	/**
 	 * 判断手机网络是否
+	 * 
 	 * @param context
 	 * @return
 	 */
@@ -69,7 +71,8 @@ public class HttpUtil {
 		ConnectivityManager cm = (ConnectivityManager) context
 				.getSystemService(Context.CONNECTIVITY_SERVICE);
 		NetworkInfo workInfo = cm.getActiveNetworkInfo();
-		if (workInfo != null && workInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
+		if (workInfo != null
+				&& workInfo.getType() == ConnectivityManager.TYPE_MOBILE) {
 			return true;
 		}
 		return false;
@@ -98,23 +101,24 @@ public class HttpUtil {
 
 	/**
 	 * 如果有效，转换URL，无效返回null
+	 * 
 	 * @param url
 	 * @return
 	 */
-	public static String getToUrl(String url){
+	public static String getToUrl(String url) {
 		if (url.length() > Config.maxUrlLength) {
 			return null;
 		}
 		// 排除过滤URL
 		List<String> disCacheUrlList = Config.disCacheUrlList;
-		for(String reg : disCacheUrlList){
+		for (String reg : disCacheUrlList) {
 			if (url.matches(reg)) {
 				return null;
 			}
 		}
 		// 转换URL
 		List<HashMap<String, Object>> cacheUrlReplaceList = Config.cacheUrlReplaceList;
-		for(HashMap<String, Object> one : cacheUrlReplaceList){
+		for (HashMap<String, Object> one : cacheUrlReplaceList) {
 			Matcher m = Pattern.compile(one.get("src").toString()).matcher(url);
 			if (m.find()) {
 				url = m.replaceFirst(one.get("dest").toString());
@@ -124,7 +128,7 @@ public class HttpUtil {
 		}
 		return url;
 	}
-	
+
 	/**
 	 * 获取URL表示的数据类型
 	 * 
@@ -153,13 +157,14 @@ public class HttpUtil {
 	public static String getUrlMime(String url) {
 		return MIME.getMimeFromType(getUrlType(url));
 	}
-	
+
 	/**
 	 * 获取URL的host
+	 * 
 	 * @param url
 	 * @return
 	 */
-	public static String getUrlHost(String url){
+	public static String getUrlHost(String url) {
 		try {
 			return new URI(url).getHost();
 		} catch (URISyntaxException e) {
@@ -175,24 +180,51 @@ public class HttpUtil {
 	 * @param fileName
 	 */
 	public static void downUrlToFile(Activity act, String url, String fileName) {
-		if(netAvailable){
+		if (netAvailable) {
 			Log.i("downUrlToFile", "Save | " + url);
-			
+
 			if (!isUrl(url)) {
-				Toast.makeText(act, "下载链接地址不正确！" + url, Toast.LENGTH_LONG).show();
+				Toast.makeText(act, "下载链接地址不正确！" + url, Toast.LENGTH_LONG)
+						.show();
 				return;
 			}
 			// 添加当前host为Referer
 			try {
 				URL u = new URL(url);
-				client.addHeader("Referer", u.getProtocol() + "://" + u.getHost());
+				client.addHeader("Referer",
+						u.getProtocol() + "://" + u.getHost());
 			} catch (MalformedURLException e) {
 			}
-	
-			client.get(url, new MyBinaryHttpResponseHandler(allowedContentTypes,
-					act, url, fileName));
-		} else{
+
+			client.get(url, new MyBinaryHttpResponseHandler(
+					allowedContentTypes, act, url, fileName));
+		} else {
 			Log.i("downUrlToFile", "Net is not available " + url);
+		}
+	}
+
+	/**
+	 * 下载缓存
+	 * 
+	 * @param act
+	 * @param obj
+	 */
+	public static void downUrlToFile(Activity act, CacheObject obj) {
+		if (netAvailable) {
+			Log.i("downUrlToFile", "Save | " + obj.getUrl());
+
+			try {
+				URL u = new URL(obj.getUrl());
+				// 添加当前host为Referer
+				client.addHeader("Referer",
+						u.getProtocol() + "://" + u.getHost());
+			} catch (MalformedURLException e) {
+			}
+
+			client.get(obj.getUrl(), new MyBinaryHttpResponseHandler(
+					allowedContentTypes, act, obj.getUrl(), obj.getFileName()));
+		} else {
+			Log.i("downUrlToFile", "Net is not available " + obj.getUrl());
 		}
 	}
 
@@ -201,6 +233,7 @@ public class HttpUtil {
 		private String fileName;
 		private String url;
 		private int maxAllowByteLen = 50;
+		private CacheObject cacheObj;
 
 		public MyBinaryHttpResponseHandler(String[] allowedContentTypes,
 				Activity act, String url, String fileName) {
@@ -210,19 +243,50 @@ public class HttpUtil {
 			this.fileName = fileName;
 		}
 
+		/**
+		 * 更新数据库
+		 * @param obj
+		 * @param result
+		 */
+		public void updateDB(CacheObject obj, boolean result) {
+			if (!result) {
+				// 失败则删除数据库记录
+				CacheControl.orm.delete(obj);
+			} else {
+				// 成功并存在则更新创建时间
+				if (obj != null && obj.isComeFromCache()) {
+					CacheControl.orm.updateTime(obj);
+				} else {
+					CacheControl.orm.add(obj);
+				}
+			}
+		}
+
+		public MyBinaryHttpResponseHandler(String[] allowedContentTypes,
+				Activity act, CacheObject obj) {
+			super(allowedContentTypes);
+			this.act = act;
+			this.url = obj.getUrl();
+			this.fileName = obj.getFileName();
+			this.cacheObj = obj;
+		}
+
 		@Override
 		public void onSuccess(byte[] fileData) {
+			boolean res = false;
 			if (fileData != null && fileData.length > maxAllowByteLen) {
 				IOUtil.writeExternalFile(fileName, fileData);
 				if (act != null) {
 					Toast.makeText(act, "Down ok, size: " + fileData.length,
 							Toast.LENGTH_LONG).show();
 				}
+				res = true;
 				Log.i("downUrlToFile", "Down ok, size: " + fileData.length + " " + url);
 			} else {
 				Log.i("downUrlToFile", "Down fail : receive is null or len is "
 						+ fileData.length + " lt " + maxAllowByteLen + " " + url);
 			}
+			updateDB(cacheObj, res);
 		}
 
 		@Override
@@ -231,6 +295,7 @@ public class HttpUtil {
 				Toast.makeText(act, "Down fail " + e, Toast.LENGTH_LONG).show();
 			}
 			Log.i("downUrlToFile", "Down fail " + e + " " + url);
+			updateDB(cacheObj, false);
 		}
 
 		@Override
@@ -239,7 +304,9 @@ public class HttpUtil {
 				Toast.makeText(act, "Down fail " + e + "\r\n" + response,
 						Toast.LENGTH_LONG).show();
 			}
-			Log.i("downUrlToFile", "Down fail " + e + "\r\n" + response + " " + url);
+			Log.i("downUrlToFile", "Down fail " + e + "\r\n" + response + " "
+					+ url);
+			updateDB(cacheObj, false);
 		}
 	}
 }

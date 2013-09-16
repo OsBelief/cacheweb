@@ -2,49 +2,68 @@ package com.yh.web.cache;
 
 import java.io.InputStream;
 
-import android.app.Activity;
+import android.content.Context;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
+
+import com.yh.web.cache.db.CacheOrm;
 
 /**
  * @author gudh 缓存控制策略
  */
 public class CacheControl {
 
+	public static CacheOrm orm = null;
+	
+	/**
+	 * 初始化缓存ORM
+	 * @param context
+	 */
+	public static void initCache(Context context){
+		orm = new CacheOrm(context);
+	}
+	
 	/**
 	 * 捕捉请求，控制缓存策略
 	 * 
-	 * @param act
+	 * @param context
 	 *            请求Web所在的Activity
 	 * @param url
 	 *            请求的地址
 	 * @return 返回null走远地址，非空则取返回的资源
 	 */
-	public static WebResourceResponse getResource(Activity act, WebView web,
+	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
 		// 获取转换的URL
 		url = HttpUtil.getToUrl(url);
 		if(url == null){
 			Log.i("getResource", "DisCache url | " + url);
+			// 如果转换的URL为null，则表示不需要缓存
 			return null;
 		}
-		CacheObject obj = new CacheObject(url);
-		Log.i("getResource", obj.getType() + " " + obj.getMime() + " | " + url);
+		// 查询数据库是否有缓存
+		CacheObject obj = orm.queryByUrl(url);
+		if(obj == null){
+			obj = new CacheObject(url);
+			Log.i("getResource", "New fetch | " + obj.getType() + " " + obj.getMime() + " | " + url);
+		} else{
+			Log.i("getResource", "Come from cache | " + obj.getType() + " " + obj.getMime() + " | " + url);
+		}
 
 		WebResourceResponse res = null;
 		if (obj.getMime().startsWith("image")) {
 			// 图片处理
-			res = getImage(act, url, obj.getFileName(), obj.getMime(), null);
+			res = getImage(context, obj, null);
 		} else if (obj.getMime().equals("text/html")) {
 			// HTML 处理
-			res = getHtml(act, url, obj.getFileName(), obj.getMime(), null);
+			res = getHtml(context, obj, null);
 		} else if (obj.getMime().equals("application/x-javascript")) {
 			// JS 处理
-			getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
+			res = getDefaultInfo(context, obj, null);
 		} else if (obj.getMime().equals("text/css")) {
 			// CSS 处理
-			getDefaultInfo(act, url, obj.getFileName(), obj.getMime(), null);
+			res = getDefaultInfo(context, obj, null);
 		} else if (Config.notCacheType.contains(obj.getType())) {
 			// 不缓存处理
 			
@@ -58,40 +77,63 @@ public class CacheControl {
 	
 	/**
 	 * 获取默认信息
-	 * @param url
-	 * @param fileName
-	 * @param mime
+	 * @param context
+	 * @param obj
 	 * @param encoding
 	 * @return
 	 */
-	public static WebResourceResponse getDefaultInfo(Activity act, String url, String fileName,
-			String mime, String encoding) {
-		// 获取缓存
-		InputStream is = IOUtil.readExternalFile(fileName);
-		if (is != null) {
-			Log.i("getDefaultInfo", "From Cache: " + url);
-		}else{
-			HttpUtil.downUrlToFile(null, url, fileName);
-			return null;
+	public static WebResourceResponse getDefaultInfo(Context context, CacheObject obj, String encoding) {
+		// 是否需要更新缓存
+		boolean needUpdate = false;
+		// 返回结果
+		WebResourceResponse res = null;
+		
+		if(obj.isComeFromCache()){
+			// 来自缓存
+			if(!obj.isExpire(System.currentTimeMillis())){
+				// 缓存未过期
+				InputStream is = IOUtil.readExternalFile(obj.getFileName());
+				if (is != null) {
+					// 缓存文件仍然存在
+					Log.i("getDefaultInfo", "From Cache: " + obj.getUrl());
+					res = IOUtil.generateResource(obj.getMime(), encoding, is);
+					obj.setUseCount(obj.getUseCount() + 1);
+					orm.updateUseCount(obj);
+				}else{
+					needUpdate = true;
+				}
+			}else{
+				needUpdate = true;
+			}
+		} else{
+			needUpdate = true;
 		}
-		return IOUtil.generateResource(mime, encoding, is);
+		if(needUpdate){
+			// 更新缓存
+			HttpUtil.downUrlToFile(null, obj.getUrl(), obj.getFileName());
+		}
+		return res;
 	}
 
-	public static WebResourceResponse getHtml(Activity act, String url, String fileName,
-			String mime, String encoding) {
-		return getDefaultInfo(act, url, fileName, mime, encoding);
+	/**
+	 * 获取html缓存
+	 * @param context
+	 * @param obj
+	 * @param encoding
+	 * @return
+	 */
+	public static WebResourceResponse getHtml(Context context, CacheObject obj, String encoding) {
+		return getDefaultInfo(context, obj, encoding);
 	}
 
 	/**
 	 * 获取图片缓存
-	 * 
-	 * @param resources
-	 * @param url
+	 * @param context
+	 * @param obj
 	 * @param encoding
 	 * @return
 	 */
-	public static WebResourceResponse getImage(Activity act, String url, String fileName,
-			String mime, String encoding) {
-		return getDefaultInfo(act, url, fileName, mime, encoding);
+	public static WebResourceResponse getImage(Context context, CacheObject obj, String encoding) {
+		return getDefaultInfo(context, obj, encoding);
 	}
 }
