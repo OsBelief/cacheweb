@@ -48,10 +48,12 @@ cacheTypeUrl:
     pdf : .*\.(pdf|PDF)(\?[^/]*)?$
     doc : .*\.(doc|DOC)(\?[^/]*)?$
     xls : .*\.(xls|XLS)(\?[^/]*)?$
+    mp3 : .*\.(mp3|MP3)(\?[^/]*)?$
 
 # 不缓存的类型
 notCacheType:
   - pdf
   - doc
   - xls
+  - mp3
 

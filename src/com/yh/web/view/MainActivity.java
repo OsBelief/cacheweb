@@ -27,6 +27,7 @@ import com.yh.web.cache.CachePolicy;
 import com.yh.web.cache.Config;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.MIME;
+import com.yh.web.cache.SystemInfo;
 
 public class MainActivity extends BaseActivity {
 
@@ -85,6 +86,8 @@ public class MainActivity extends BaseActivity {
 		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
 		// 初始化缓存
 		CacheControl.initCache(this);
+		// 开始监控网络
+		SystemInfo.startJudge();
 	}
 
 	@SuppressLint("SetJavaScriptEnabled")
