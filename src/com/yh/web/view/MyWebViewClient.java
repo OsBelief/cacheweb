@@ -7,6 +7,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -26,6 +27,9 @@ public class MyWebViewClient extends WebViewClient {
 
 	private Activity act;
 
+	// 记录302跳转情况
+	private String pendingUrl;
+
 	public MyWebViewClient(Activity act) {
 		this.act = act;
 	}
@@ -44,7 +48,25 @@ public class MyWebViewClient extends WebViewClient {
 
 	@Override
 	public void onLoadResource(WebView view, String url) {
+		// Log.i("onLoadResource", url);
 		super.onLoadResource(view, url);
+	}
+
+	@Override
+	public void onPageStarted(WebView view, String url, Bitmap favicon) {
+		if (pendingUrl == null) {
+			pendingUrl = url;
+		}
+	}
+
+	@Override
+	public void onPageFinished(WebView view, String url) {
+		if (!url.equals(pendingUrl)) {
+			Log.d("Redirect(302)", "Detected HTTP redirect " + pendingUrl
+					+ "->" + url);
+			((EditText) act.findViewById(R.id.uText)).setText(url);
+			pendingUrl = null;
+		}
 	}
 
 	/**

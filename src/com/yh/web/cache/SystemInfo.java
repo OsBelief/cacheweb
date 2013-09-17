@@ -21,24 +21,59 @@ public class SystemInfo {
 	private static long[] bpdLast = { 0, 0, 0 };
 	// 现在的情况 BytePacketDrop
 	private static long[] bpdNow = { 0, 0, 0 };
-
 	// 锁，同时只有一个在统计
 	private static boolean lock = false;
-
-	// 上次统计时间
-	public static long lastTime = -1;
-
-	// 标志当前网络是否繁忙
-	public static boolean isNetBuzy = false;
-
-	// 判断网络延时
-	public static long judgeSleep = 2000;
-
 	// 是否要继续监控网络
-	public static boolean isJudge = true;
+	private static boolean isJudge = true;
+	// 上次统计时间
+	private static long lastTime = -1;
+	// 标志当前网络是否繁忙
+	private static boolean isNetBuzy = false;
+
+	private static long byteMax = 102400; // 最大网速(byte/s)
+	private static long packetMax = 200; // 最大发包 (p/s)
+	private static long dropMax = 10; // 最大丢包(p/s)
+	private static long judgeSleep = 5000; // 判断周期(ms)
 
 	/**
-	 * 初始化系统监控
+	 * 设置监控的参数，参数为-1则不更改
+	 * 
+	 * @param byteMax
+	 *            最大网速(byte/s)，默认102400(100k)
+	 * @param packetMax
+	 *            最大发包 (p/s)，默认200
+	 * @param dropMax
+	 *            最大丢包(p/s)，默认10
+	 * @param judgeSleep
+	 *            判断周期(ms)，默认5000(5s)
+	 */
+	public static void setParameter(long byteMax, long packetMax, long dropMax,
+			long judgeSleep) {
+		if (byteMax != -1) {
+			SystemInfo.byteMax = byteMax;
+		}
+		if (packetMax != -1) {
+			SystemInfo.packetMax = packetMax;
+		}
+		if (dropMax != -1) {
+			SystemInfo.dropMax = dropMax;
+		}
+		if (judgeSleep != -1) {
+			SystemInfo.judgeSleep = judgeSleep;
+		}
+	}
+
+	/**
+	 * 获取当前网络是否忙碌状态
+	 * 
+	 * @return
+	 */
+	public static boolean isNetBuzy() {
+		return isNetBuzy;
+	}
+
+	/**
+	 * 初始化网络监控
 	 */
 	public static void startJudge() {
 		// 启动线程定时监控
@@ -49,7 +84,6 @@ public class SystemInfo {
 				while (isJudge) {
 					try {
 						SystemInfo.judgeNetBuzy();
-						
 
 						// 延时
 						Thread.sleep(SystemInfo.judgeSleep);
@@ -59,6 +93,13 @@ public class SystemInfo {
 				}
 			}
 		}).start();
+	}
+
+	/**
+	 * 结束网络监控
+	 */
+	public static void stopJudge() {
+		isJudge = false;
 	}
 
 	/**
@@ -74,25 +115,28 @@ public class SystemInfo {
 		}
 		long seconds = netInfo[4] / 1000;
 
-		if (netInfo[0] > 204800 * seconds) {
+		if (netInfo[0] > byteMax * seconds) {
 			// 每秒超过200k
 			isNetBuzy = true;
-		} else if (netInfo[1] > 400 * seconds) {
+		} else if (netInfo[1] > packetMax * seconds) {
 			// 每秒发包超过200
 			isNetBuzy = true;
-		} else if (netInfo[2] > 10 * seconds) {
+		} else if (netInfo[2] > dropMax * seconds) {
 			// 每秒丢包数大于10
 			isNetBuzy = true;
 		} else {
 			isNetBuzy = false;
 		}
-		
-		if(isNetBuzy){
-			Log.w("NetInfo",  "BDP Now True | " + netInfo[0] + "  " + netInfo[1] + "  " + netInfo[2] + "  " + netInfo[3] + "  " + netInfo[4]);
-		}else{
-			Log.d("NetInfo",  "BDP Now False | " + netInfo[0] + "  " + netInfo[1] + "  " + netInfo[2] + "  " + netInfo[3] + "  " + netInfo[4]);
+
+		if (isNetBuzy) {
+			Log.w("NetInfo", "BDP Now True | " + netInfo[0] + "  " + netInfo[1]
+					+ "  " + netInfo[2] + "  " + netInfo[3] + "  " + netInfo[4]);
+		} else {
+			Log.d("NetInfo", "BDP Now False | " + netInfo[0] + "  "
+					+ netInfo[1] + "  " + netInfo[2] + "  " + netInfo[3] + "  "
+					+ netInfo[4]);
 		}
-		
+
 		return isNetBuzy;
 	}
 
@@ -124,18 +168,18 @@ public class SystemInfo {
 		try {
 			while ((line = in.readLine()) != null) {
 				segs = line.trim().split(":");
-				
+
 				if (line.startsWith(ETHLINE) || line.startsWith(GPRSLINE)
 						|| line.startsWith(WIFILINE)) {
 					netData = segs[1].trim().split(" +");
-					
+
 					bpdNow[0] += Long.parseLong(netData[0])
 							+ Long.parseLong(netData[8]);
 					bpdNow[1] += Long.parseLong(netData[1])
 							+ Long.parseLong(netData[9]);
 					bpdNow[2] += Long.parseLong(netData[3])
 							+ Long.parseLong(netData[11]);
-					//Log.d("NetInfo", line);
+					// Log.d("NetInfo", line);
 					res[3] = res[3] + 1;
 				}
 			}

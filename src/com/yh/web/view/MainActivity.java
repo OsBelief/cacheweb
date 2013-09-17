@@ -52,9 +52,44 @@ public class MainActivity extends BaseActivity {
 
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
+		setWebView(web);
+		
+		// 初始化MIME
+		MIME.initMIME(this.getAssets());
+		// 初始化过滤器
+		Config.initFilter(this.getAssets());
+		// 初始化缓存策略
+		CachePolicy.initPolicy(this.getAssets());
+		// 初始化AsyncHttpClient
+		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
+		// 初始化缓存
+		CacheControl.initCache(this);
+		// 开始监控网络
+		SystemInfo.startJudge();
+	}
+
+	/**
+	 * 设置Web信息
+	 * 
+	 * @param web
+	 */
+	@SuppressLint("SetJavaScriptEnabled")
+	public void setWebView(WebView web) {
 		web.setWebViewClient(new MyWebViewClient(this));
 		web.setWebChromeClient(new MyWebChromeClient(this));
-		setWebSetting(web.getSettings());
+
+		WebSettings set = web.getSettings();
+		set.setJavaScriptEnabled(true);// 启用JS
+
+		set.setDomStorageEnabled(true);// 启用localStorage
+		set.setAppCacheEnabled(true);// 启用缓存
+		// set.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
+		// 先用缓存，缓存没有请求网络
+
+		set.setSupportZoom(true); // 设置是否支持缩放
+		set.setBuiltInZoomControls(true); // 设置是否显示内建缩放工具
+		// set.setSavePassword(true); //设置是否保存密码
+
 		// 监听长按事件
 		web.setOnLongClickListener(new OnLongClickListener() {
 			@Override
@@ -75,33 +110,6 @@ public class MainActivity extends BaseActivity {
 		});
 		// web 获得焦点
 		web.requestFocus();
-
-		// 初始化MIME
-		MIME.initMIME(this.getAssets());
-		// 初始化过滤器
-		Config.initFilter(this.getAssets());
-		// 初始化缓存策略
-		CachePolicy.initPolicy(this.getAssets());
-		// 初始化AsyncHttpClient
-		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
-		// 初始化缓存
-		CacheControl.initCache(this);
-		// 开始监控网络
-		SystemInfo.startJudge();
-	}
-
-	@SuppressLint("SetJavaScriptEnabled")
-	public void setWebSetting(WebSettings set) {
-		set.setJavaScriptEnabled(true);// 启用JS
-
-		set.setDomStorageEnabled(true);// 启用localStorage
-		set.setAppCacheEnabled(true);// 启用缓存
-		// set.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
-		// 先用缓存，缓存没有请求网络
-
-		set.setSupportZoom(true); // 设置是否支持缩放
-		set.setBuiltInZoomControls(true); // 设置是否显示内建缩放工具
-		// set.setSavePassword(true); //设置是否保存密码
 	}
 
 	@Override
