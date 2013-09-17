@@ -294,10 +294,10 @@ public class HttpUtil {
 				}
 				res = true;
 				Log.i("downUrlToFile", "Down Ok, size: " + fileData.length
-						+ " " + url);
+						+ " | " + url);
 			} else {
 				Log.i("downUrlToFile", "Down Fail : receive is null or len is "
-						+ fileData.length + " lt " + maxAllowByteLen + " "
+						+ fileData.length + " lt " + maxAllowByteLen + " | "
 						+ url);
 			}
 			updateDB(cacheObj, res);

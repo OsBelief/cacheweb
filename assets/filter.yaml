@@ -20,6 +20,7 @@ disCacheUrl:
   - ^http://tbook.yicha.cn/tb/tj.gif.*
   # 评论系统
   - ^http://comment.yicha.cn/.*
+  - ^http://i.yicha.cn/ti/newrec.html$
 
 # URL地址替换
 cacheUrlReplace:
@@ -43,7 +44,7 @@ cacheTypeUrl:
     jpg : .*\.(jpg|JPG|jpeg|JPEG)(\?[^/]*)?$
     png : .*\.(png|PNG)(\?[^/]*)?$
     gif : .*\.(gif|GIF)(\?[^/]*)?$
-   
+
     pdf : .*\.(pdf|PDF)(\?[^/]*)?$
     doc : .*\.(doc|DOC)(\?[^/]*)?$
     xls : .*\.(xls|XLS)(\?[^/]*)?$

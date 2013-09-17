@@ -104,7 +104,6 @@ public class IOUtil {
 			File file = new File(fileName);
 			File parent = file.getParentFile();
 			if (!parent.exists()) {
-				Log.d("fileIO", "mkdir " + parent.getAbsolutePath());
 				parent.mkdirs();
 			}
 			FileOutputStream outputStream = new FileOutputStream(file);

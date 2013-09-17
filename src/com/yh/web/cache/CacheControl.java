@@ -103,11 +103,10 @@ public class CacheControl {
 				InputStream is = IOUtil.readExternalFile(obj.getFileName());
 				if (is != null) {
 					// 缓存文件仍然存在
-					Log.i("getDefaultInfo", "From Cache: " + obj.getUrl());
 					res = IOUtil.generateResource(obj.getMime(), encoding, is);
 					obj.setUseCount(obj.getUseCount() + 1);
-					Log.d("updateDB",
-							obj.getUrl() + "useCount " + obj.getUseCount());
+					Log.d("updateDB", "UseCount " + obj.getUseCount() + " | "
+							+ obj.getUrl());
 					orm.updateUseCount(obj);
 				} else {
 					Log.i("getDefaultInfo", "File NotExist | " + obj.getUrl()

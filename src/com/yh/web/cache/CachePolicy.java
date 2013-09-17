@@ -102,7 +102,12 @@ public class CachePolicy {
 		// 此处实现判断过期代码
 		try {
 			CachePolicy cp = policys.get(cachePolicy);
-
+			Log.d("Expire", cachePolicy + " " + createTime + " " + nowTime + " " + (nowTime - createTime) + " " + cp.time + " " + cp.id);
+			// 如果只有时间的话就不用Calendar了
+			if(cp.policy.length == 1 && cp.policy[0].equals("time")){
+				return (nowTime - createTime > cp.time);
+			}
+			
 			Calendar createCal = Calendar.getInstance();
 			createCal.setTimeInMillis(createTime);
 			Calendar nowCal = Calendar.getInstance();

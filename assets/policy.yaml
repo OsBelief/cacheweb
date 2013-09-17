@@ -7,7 +7,7 @@ cachePolicy:
     month : 0
     week : 0
     day : 0
-    time : 86400
+    time : 43200
     
   # »º´æ12Ð¡Ê±
   - id : 1
