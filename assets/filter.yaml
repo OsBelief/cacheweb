@@ -26,7 +26,7 @@ disCacheUrl:
 cacheUrlReplace:
   - src : (^http://yicha.mobi/?$|^http://yicha.cn/?$)
     dest : http://page.yicha.cn/tp/i.y
-  - src : (^http://yicha.mobi.*|^http://yicha.cn.*|http://page.yicha.cn/tp/i.y\?.*)
+  - src : (^http://yicha.mobi.*|http://page.yicha.cn/tp/i.y\?.*)
     dest : http://page.yicha.cn/tp/i.y
   - src : (^http://manhua.yicha.cn/\?)(.*?)
     dest : http://manhua.yicha.cn/manhua/?$2

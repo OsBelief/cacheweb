@@ -22,12 +22,12 @@ import android.widget.Toast;
 
 import com.yh.web.R;
 import com.yh.web.cache.CacheControl;
+import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
 import com.yh.web.cache.CachePolicy;
-import com.yh.web.cache.Config;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.MIME;
-import com.yh.web.cache.SystemInfo;
+import com.yh.web.cache.NetMonitor;
 
 public class MainActivity extends BaseActivity {
 
@@ -57,7 +57,7 @@ public class MainActivity extends BaseActivity {
 		// 初始化MIME
 		MIME.initMIME(this.getAssets());
 		// 初始化过滤器
-		Config.initFilter(this.getAssets());
+		CacheFilter.initFilter(this.getAssets());
 		// 初始化缓存策略
 		CachePolicy.initPolicy(this.getAssets());
 		// 初始化AsyncHttpClient
@@ -65,7 +65,7 @@ public class MainActivity extends BaseActivity {
 		// 初始化缓存
 		CacheControl.initCache(this);
 		// 开始监控网络
-		SystemInfo.startJudge();
+		NetMonitor.startJudge();
 	}
 
 	/**

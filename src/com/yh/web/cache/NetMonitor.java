@@ -6,7 +6,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import android.util.Log;
 
-public class SystemInfo {
+public class NetMonitor {
 
 	// 系统流量文件
 	private final static String DEV_FILE = "/proc/self/net/dev";
@@ -50,16 +50,16 @@ public class SystemInfo {
 	public static void setParameter(long byteMax, long packetMax, long dropMax,
 			long judgeSleep) {
 		if (byteMax != -1) {
-			SystemInfo.byteMax = byteMax;
+			NetMonitor.byteMax = byteMax;
 		}
 		if (packetMax != -1) {
-			SystemInfo.packetMax = packetMax;
+			NetMonitor.packetMax = packetMax;
 		}
 		if (dropMax != -1) {
-			SystemInfo.dropMax = dropMax;
+			NetMonitor.dropMax = dropMax;
 		}
 		if (judgeSleep != -1) {
-			SystemInfo.judgeSleep = judgeSleep;
+			NetMonitor.judgeSleep = judgeSleep;
 		}
 	}
 
@@ -83,10 +83,10 @@ public class SystemInfo {
 			public void run() {
 				while (isJudge) {
 					try {
-						SystemInfo.judgeNetBuzy();
+						NetMonitor.judgeNetBuzy();
 
 						// 延时
-						Thread.sleep(SystemInfo.judgeSleep);
+						Thread.sleep(NetMonitor.judgeSleep);
 					} catch (Exception e) {
 						Log.e("NetInfo", e.getMessage());
 					}

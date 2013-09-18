@@ -106,11 +106,11 @@ public class HttpUtil {
 	 * @return
 	 */
 	public static String getToUrl(String url) {
-		if (url.length() > Config.maxUrlLength) {
+		if (url.length() > CacheFilter.maxUrlLength) {
 			return null;
 		}
 		// ÅÅ³ý¹ýÂËURL
-		List<String> disCacheUrlList = Config.disCacheUrlList;
+		List<String> disCacheUrlList = CacheFilter.disCacheUrlList;
 		for (String reg : disCacheUrlList) {
 			if (url.matches(reg)) {
 				return null;
@@ -118,7 +118,7 @@ public class HttpUtil {
 		}
 		// ×ª»»URL
 		String urlb = url;
-		List<HashMap<String, Object>> cacheUrlReplaceList = Config.cacheUrlReplaceList;
+		List<HashMap<String, Object>> cacheUrlReplaceList = CacheFilter.cacheUrlReplaceList;
 		for (HashMap<String, Object> one : cacheUrlReplaceList) {
 			Matcher m = Pattern.compile(one.get("src").toString()).matcher(url);
 			if (m.find()) {
@@ -137,7 +137,7 @@ public class HttpUtil {
 	 * @return
 	 */
 	public static String getUrlType(String url) {
-		Map<String, String> typeReg = Config.cacheTypeUrlMap;
+		Map<String, String> typeReg = CacheFilter.cacheTypeUrlMap;
 		Set<String> types = typeReg.keySet();
 		for (String type : types) {
 			String regex = typeReg.get(type);

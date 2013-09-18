@@ -70,7 +70,7 @@ public class CacheControl {
 		} else if (obj.getMime().equals("text/css")) {
 			// CSS 处理
 			res = getDefaultInfo(context, obj, null);
-		} else if (Config.notCacheType.contains(obj.getType())) {
+		} else if (CacheFilter.notCacheType.contains(obj.getType())) {
 			// 不缓存处理
 
 		} else if (obj.getMime().equals("none")) {

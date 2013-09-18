@@ -1,42 +1,55 @@
 
+# 缓存匹配，什么样的URL使用相应的缓存策略
+cacheMatch:
+  - mime : image/.*
+    id : 3
+  - type : (css|js)
+    id : 1
+
+
+########################################
+
 # 缓存策略，根据month, week, day, time综合缓存策略
 cachePolicy:
   # 缓存24小时
   - id : 0
     policy : [ time ]
-    month : 0
-    week : 0
-    day : 0
-    time : 43200
-    
-  # 缓存12小时
+    time : 86400
+
+  # 缓存48小时
   - id : 1
     policy : [ time ]
-    month : 0
-    week : 0
-    day : 0
-    time : 43200
+    time : 172800
+
+  # 缓存72小时
+  - id : 2
+    policy : [ time ]
+    time : 259200
+
+  # 缓存一周,7*24小时
+  - id : 3
+    policy : [ time ]
+    time : 604800
 
   # 缓存不过月24小时
-  - id : 2
-    policy : [ week, time ]
+  - id : 4
+    policy : [ month, time ]
     month : 0
-    week : 0
-    day : 0
     time : 86400
 
   # 缓存不过周24小时
-  - id : 3
+  - id : 5
     policy : [ week, time ]
-    month : 0
     week : 0
-    day : 0
     time : 86400
 
   # 缓存不过天12小时
-  - id : 3
-    policy : [ week, time ]
-    month : 0
-    week : 0
+  - id : 6
+    policy : [ day, time ]
     day : 0
     time : 43200
+
+  # 缓存时间为0
+  - id : 50
+    policy : [ time ]
+    time : 0

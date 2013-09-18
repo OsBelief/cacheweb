@@ -19,7 +19,7 @@ import android.util.Log;
  * 
  *         ÅäÖÃÎÄ¼ş
  */
-public class Config {
+public class CacheFilter {
 
 	public final static String filterName = "filter.yaml";
 	public final static String configName = "config.yaml";

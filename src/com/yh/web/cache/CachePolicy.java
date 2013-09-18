@@ -14,7 +14,9 @@ import android.util.Log;
 import android.util.SparseArray;
 
 /**
- * @author gudh 缓存策略
+ * @author gudh
+ * 
+ *         缓存策略
  */
 public class CachePolicy {
 
@@ -22,8 +24,11 @@ public class CachePolicy {
 
 	public final static int defaultPolicy = 0;
 
+	// 存储所有的缓存匹配规则
+	private static List<CacheMatch> cacheMatchs = new ArrayList<CacheMatch>();
+
 	// 存储所有缓存策略
-	private static SparseArray<CachePolicy> policys = new SparseArray<CachePolicy>();
+	private static SparseArray<CachePolicy> cachePolicys = new SparseArray<CachePolicy>();
 
 	private int id;
 	private String[] policy;
@@ -42,24 +47,24 @@ public class CachePolicy {
 		try {
 			String yamltxt = IOUtil.readStream(assets.open(policyFileName))
 					.trim();
-			// String yamltxt = IOUtil.readStream(new
-			// FileInputStream("D:\\Android\\YichaWeb\\assets\\policy.yaml"));
+			Log.d("initPolicy", yamltxt);
 
 			HashMap<String, Object> obj = (HashMap<String, Object>) yaml
 					.load(yamltxt);
+			// 解析cachePolicy
 			List<HashMap<String, Object>> pols = (List<HashMap<String, Object>>) obj
 					.get("cachePolicy");
 			for (HashMap<String, Object> pol : pols) {
 				Integer id = (Integer) pol.get("id");
 				if (id != null) {
-					// 新建对象放入map
 					CachePolicy pObj = new CachePolicy(id);
-					policys.put(id, pObj);
+					cachePolicys.put(id, pObj);
 
 					// 获取对象的信息
 					List<String> fields = (List<String>) pol.get("policy");
 					pObj.set("policy", fields);
 
+					// 仅对给定属性进行设置
 					for (String field : fields) {
 						if (pol.containsKey(field)) {
 							pObj.set(field, pol.get(field));
@@ -67,7 +72,24 @@ public class CachePolicy {
 					}
 				}
 			}
-			Log.d("initPolicy", obj.toString());
+			// 解析cacheMatch
+			List<HashMap<String, Object>> mats = (List<HashMap<String, Object>>) obj
+					.get("cacheMatch");
+			for (HashMap<String, Object> mat : mats) {
+				Integer id = (Integer) mat.get("id");
+				if (id != null) {
+					// 新建对象放入map，CacheMatch三个匹配属性按顺序只取一个
+					CacheMatch mObj = new CacheMatch(id);
+					cacheMatchs.add(mObj);
+					if (mat.containsKey("type")) {
+						mObj.type = (String) mat.get("type");
+					} else if (mat.containsKey("mime")) {
+						mObj.mime = (String) mat.get("mime");
+					} else if (mat.containsKey("url")) {
+						mObj.url = (String) mat.get("url");
+					}
+				}
+			}
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -84,7 +106,20 @@ public class CachePolicy {
 	 * @return
 	 */
 	public static int getCachePolicy(String url, String type, String mime) {
-
+		// 按顺序扫描，是否符合缓存策略
+		for (CacheMatch mat : cacheMatchs) {
+			if (mat.type != null && type.matches(mat.type)) {
+				System.out.println(url + " cachePolicy " + mat.id);
+				return mat.id;
+			} else if (mat.mime != null && mime.matches(mat.mime)) {
+				System.out.println(url + " cachePolicy " + mat.id);
+				return mat.id;
+			} else if (mat.url != null && url.matches(mat.url)) {
+				System.out.println(url + " cachePolicy " + mat.id);
+				return mat.id;
+			}
+		}
+		System.out.println(url + " cachePolicy default");
 		// 返回默认策略
 		return defaultPolicy;
 	}
@@ -101,13 +136,15 @@ public class CachePolicy {
 			int cachePolicy) {
 		// 此处实现判断过期代码
 		try {
-			CachePolicy cp = policys.get(cachePolicy);
-			Log.d("Expire", cachePolicy + " " + createTime + " " + nowTime + " " + (nowTime - createTime) + " " + cp.time + " " + cp.id);
+			CachePolicy cp = cachePolicys.get(cachePolicy);
+			Log.d("Expire", cachePolicy + " " + createTime + " " + nowTime
+					+ " " + (nowTime - createTime) + " " + cp.time + " "
+					+ cp.id);
 			// 如果只有时间的话就不用Calendar了
-			if(cp.policy.length == 1 && cp.policy[0].equals("time")){
+			if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
 				return (nowTime - createTime > cp.time);
 			}
-			
+
 			Calendar createCal = Calendar.getInstance();
 			createCal.setTimeInMillis(createTime);
 			Calendar nowCal = Calendar.getInstance();
@@ -180,6 +217,23 @@ public class CachePolicy {
 			this.day = (Integer) value;
 		} else if (field.equals("time")) {
 			this.time = (long) ((Integer) value) * 1000;
+		}
+	}
+
+	/**
+	 * 存储缓存匹配规则，type,mime,url按顺序只取一个。如果有type则不要mime，否则有mime不要url
+	 * 
+	 * @author gudh
+	 * 
+	 */
+	static class CacheMatch {
+		int id;
+		String type;
+		String url;
+		String mime;
+
+		public CacheMatch(int id) {
+			this.id = id;
 		}
 	}
 }
