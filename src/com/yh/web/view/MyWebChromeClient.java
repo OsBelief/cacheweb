@@ -8,7 +8,7 @@ import android.webkit.WebView;
 import android.widget.ProgressBar;
 
 /**
- * @author gudh ×Ô¶¨Òåä¯ÀÀÆ÷WebChromeClient
+ * @author gudh è‡ªå®šä¹‰æµè§ˆå™¨WebChromeClient
  */
 public class MyWebChromeClient extends WebChromeClient {
 
@@ -19,7 +19,7 @@ public class MyWebChromeClient extends WebChromeClient {
 	}
 
 	/**
-	 * ½ø¶ÈÌõ
+	 * è¿›åº¦æ¡
 	 * 
 	 * @param view
 	 * @param newProgress

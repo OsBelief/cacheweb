@@ -17,27 +17,27 @@ import android.util.Log;
 /**
  * @author gudh
  * 
- *         ÅäÖÃÎÄ¼ş
+ *         é…ç½®æ–‡ä»¶
  */
 public class CacheFilter {
 
 	public final static String filterName = "filter.yaml";
 	public final static String configName = "config.yaml";
 
-	// ×î´óÔÊĞíµÄURL³¤¶È
+	// æœ€å¤§å…è®¸çš„URLé•¿åº¦
 	public static int maxUrlLength = 200;
-	// ²»»º´æµÄURLÆ¥Åä
+	// ä¸ç¼“å­˜çš„URLåŒ¹é…
 	public static List<String> disCacheUrlList;
-	// URLµØÖ·Ìæ»»
+	// URLåœ°å€æ›¿æ¢
 	public static List<HashMap<String, Object>> cacheUrlReplaceList;
-	// ĞèÒª»º´æURLµÄÀàĞÍºÍ¶ÔÓ¦µÄÆ¥ÅäÕıÔò
+	// éœ€è¦ç¼“å­˜URLçš„ç±»å‹å’Œå¯¹åº”çš„åŒ¹é…æ­£åˆ™
 	public static LinkedHashMap<String, String> cacheTypeUrlMap;
-	// ²»»º´æµÄÀàĞÍ
+	// ä¸ç¼“å­˜çš„ç±»å‹
 	public static HashSet<String> notCacheType;
 
 	@SuppressWarnings("unchecked")
 	/**
-	 * ³õÊ¼»¯¹ıÂË¹æÔò
+	 * åˆå§‹åŒ–è¿‡æ»¤è§„åˆ™
 	 */
 	public static void initFilter(AssetManager assets) {
 		if (disCacheUrlList == null) {
@@ -83,7 +83,7 @@ public class CacheFilter {
 	}
 
 	/**
-	 * ³õÊ¼»¯ÅäÖÃÎÄ¼ş
+	 * åˆå§‹åŒ–é…ç½®æ–‡ä»¶
 	 */
 	public static void initConfig(AssetManager assets) {
 		Yaml yaml = new Yaml();

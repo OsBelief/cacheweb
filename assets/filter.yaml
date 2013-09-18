@@ -1,28 +1,28 @@
 
-# ×î´óÔÊĞíµÄURL³¤¶È
+# æœ€å¤§å…è®¸çš„URLé•¿åº¦
 maxUrlLength : 250
 
-# ²»»º´æµÄURL
+# ä¸ç¼“å­˜çš„URL
 disCacheUrl:
-  # °Ù¶ÈÍ³¼Æ
+  # ç™¾åº¦ç»Ÿè®¡
   - ^http://hm.baidu.com/.*
   - ^http://mobads-logs.baidu.com.*
   - ^http://mobads.baidu.com.*
   - ^http://drmcmm.baidu.com/.*
-  # ´øÊ±¼äµÄ
+  # å¸¦æ—¶é—´çš„
   - .+t=?\d{10,13}([^\d].*|$)
   - ^http://127.0.0.1.*
   - ^http://localhost.*
-  # Ò×²é¹ã¸æ
+  # æ˜“æŸ¥å¹¿å‘Š
   - .*/adiSmart/.*
   - .*/cnadsmart/.*
-  # Ò×²éÍ³¼Æ
+  # æ˜“æŸ¥ç»Ÿè®¡
   - ^http://tbook.yicha.cn/tb/tj.gif.*
-  # ÆÀÂÛÏµÍ³
+  # è¯„è®ºç³»ç»Ÿ
   - ^http://comment.yicha.cn/.*
   - ^http://i.yicha.cn/ti/newrec.html$
 
-# URLµØÖ·Ìæ»»
+# URLåœ°å€æ›¿æ¢
 cacheUrlReplace:
   - src : (^http://yicha.mobi/?$|^http://yicha.cn/?$)
     dest : http://page.yicha.cn/tp/i.y
@@ -34,7 +34,7 @@ cacheUrlReplace:
     dest : $1
 
 
-# URLµÄÀàĞÍ
+# URLçš„ç±»å‹
 cacheTypeUrl:
     html : .*\.(html|HTML|htm|HTM)(\?[^/]*)?$
     
@@ -50,7 +50,7 @@ cacheTypeUrl:
     xls : .*\.(xls|XLS)(\?[^/]*)?$
     mp3 : .*\.(mp3|MP3)(\?[^/]*)?$
 
-# ²»»º´æµÄÀàĞÍ
+# ä¸ç¼“å­˜çš„ç±»å‹
 notCacheType:
   - pdf
   - doc

@@ -18,15 +18,15 @@ public class CacheOrm {
 	private SQLiteDatabase db;
 
 	public CacheOrm(Context context) {
-		// ÒòÎªgetWritableDatabaseÄÚ²¿µ÷ÓÃÁËmContext.openOrCreateDatabase(mName, 0,
+		// å› ä¸ºgetWritableDatabaseå†…éƒ¨è°ƒç”¨äº†mContext.openOrCreateDatabase(mName, 0,
 		// mFactory);
-		// ËùÒÔÒªÈ·±£contextÒÑ³õÊ¼»¯,ÎÒÃÇ¿ÉÒÔ°ÑÊµÀı»¯DBManagerµÄ²½Öè·ÅÔÚActivityµÄonCreateÀï
+		// æ‰€ä»¥è¦ç¡®ä¿contextå·²åˆå§‹åŒ–,æˆ‘ä»¬å¯ä»¥æŠŠå®ä¾‹åŒ–DBManagerçš„æ­¥éª¤æ”¾åœ¨Activityçš„onCreateé‡Œ
 		helper = new DBHelper(context);
 		db = helper.getWritableDatabase();
 	}
 
 	/**
-	 * ²åÈëÒ»ÌõÊı¾İ
+	 * æ’å…¥ä¸€æ¡æ•°æ®
 	 * 
 	 * @param obj
 	 */
@@ -40,12 +40,12 @@ public class CacheOrm {
 	}
 
 	/**
-	 * ²åÈëÊı¾İ
+	 * æ’å…¥æ•°æ®
 	 * 
 	 * @param objs
 	 */
 	public void add(List<CacheObject> objs) {
-		db.beginTransaction(); // ¿ªÊ¼ÊÂÎñ
+		db.beginTransaction(); // å¼€å§‹äº‹åŠ¡
 		try {
 			for (CacheObject obj : objs) {
 				db.execSQL(
@@ -55,14 +55,14 @@ public class CacheOrm {
 								obj.getFileName(), obj.getCreateTime(),
 								obj.getCachePolicy(), obj.getUseCount() });
 			}
-			db.setTransactionSuccessful(); // ÉèÖÃÊÂÎñ³É¹¦Íê³É
+			db.setTransactionSuccessful(); // è®¾ç½®äº‹åŠ¡æˆåŠŸå®Œæˆ
 		} finally {
-			db.endTransaction(); // ½áÊøÊÂÎñ
+			db.endTransaction(); // ç»“æŸäº‹åŠ¡
 		}
 	}
 
 	/**
-	 * ¸üĞÂÊ±¼ä
+	 * æ›´æ–°æ—¶é—´
 	 * 
 	 * @param obj
 	 */
@@ -73,7 +73,7 @@ public class CacheOrm {
 	}
 
 	/**
-	 * ¸üĞÂuseCount
+	 * æ›´æ–°useCount
 	 * 
 	 * @param obj
 	 */
@@ -84,7 +84,7 @@ public class CacheOrm {
 	}
 
 	/**
-	 * É¾³ıÒ»Ìõ¼ÇÂ¼
+	 * åˆ é™¤ä¸€æ¡è®°å½•
 	 * 
 	 * @param obj
 	 */
@@ -93,7 +93,7 @@ public class CacheOrm {
 	}
 
 	/**
-	 * É¾³ıÒ»Ìõ¼ÇÂ¼
+	 * åˆ é™¤ä¸€æ¡è®°å½•
 	 * 
 	 * @param obj
 	 */
@@ -108,7 +108,7 @@ public class CacheOrm {
 	}
 
 	/**
-	 * ²éÑ¯¼ÇÂ¼
+	 * æŸ¥è¯¢è®°å½•
 	 * 
 	 * @return
 	 */
@@ -124,7 +124,7 @@ public class CacheOrm {
 	}
 
 	/**
-	 * ´Óµ±Ç°ÓÎ±ê´¦»ñÈ¡»º´æ¶ÔÏóĞÅÏ¢
+	 * ä»å½“å‰æ¸¸æ ‡å¤„è·å–ç¼“å­˜å¯¹è±¡ä¿¡æ¯
 	 * 
 	 * @param c
 	 * @return
@@ -141,13 +141,13 @@ public class CacheOrm {
 		obj.setCachePolicy(c.getInt(c.getColumnIndex("cachePolicy")));
 		obj.setUseCount(c.getInt(c.getColumnIndex("useCount")));
 
-		// À´×ÔÊı¾İ¿â»º´æ
+		// æ¥è‡ªæ•°æ®åº“ç¼“å­˜
 		obj.setComeFromCache(true);
 		return obj;
 	}
 
 	/**
-	 * ¹Ø±ÕÊı¾İ¿â
+	 * å…³é—­æ•°æ®åº“
 	 */
 	public void closeDB() {
 		db.close();

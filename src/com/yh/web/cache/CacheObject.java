@@ -5,7 +5,7 @@ import android.os.Environment;
 /**
  * @author gudh
  * 
- *         »º´æ¶ÔÏó
+ *         ç¼“å­˜å¯¹è±¡
  */
 public class CacheObject {
 
@@ -18,19 +18,19 @@ public class CacheObject {
 	private String type;
 	private String mime;
 
-	// »º´æ±¾µØÎÄ¼ş
+	// ç¼“å­˜æœ¬åœ°æ–‡ä»¶
 	private String fileName;
 
-	// ¸ù¾İ´´½¨Ê±¼äºÍ»º´æ²ßÂÔ¼ÆËãÊÇ·ñ¹ıÆÚ
+	// æ ¹æ®åˆ›å»ºæ—¶é—´å’Œç¼“å­˜ç­–ç•¥è®¡ç®—æ˜¯å¦è¿‡æœŸ
 	private int cachePolicy = -1;
 	private long createTime;
 
-	// Ê¹ÓÃ´ÎÊı
+	// ä½¿ç”¨æ¬¡æ•°
 	private int useCount = 0;
 
-	// isExpire ²»´æÊı¾İ¿â£¬ÓÃÊ±ÅĞ¶Ï
+	// isExpire ä¸å­˜æ•°æ®åº“ï¼Œç”¨æ—¶åˆ¤æ–­
 	private boolean isExpire;
-	// À´×Ô»º´æ£¬´ÓÊı¾İ¿â»ñÈ¡ÊÇÉèÖÃÎªtrue£¬ ·ñÔò²»ÉèÖÃ
+	// æ¥è‡ªç¼“å­˜ï¼Œä»æ•°æ®åº“è·å–æ˜¯è®¾ç½®ä¸ºtrueï¼Œ å¦åˆ™ä¸è®¾ç½®
 	private boolean comeFromCache = false;
 
 	public CacheObject() {
@@ -38,11 +38,11 @@ public class CacheObject {
 
 	public CacheObject(String url) {
 		this.url = url;
-		// ÑÓÊ±³õÊ¼»¯ÆäËûÊı¾İ
+		// å»¶æ—¶åˆå§‹åŒ–å…¶ä»–æ•°æ®
 	}
 
 	/**
-	 * ¸ù¾İURL¼ÆËãÎÄ¼şÃû£¬´æ´¢ÓÃ»§ÏÂÔØµÄÄÚÈİ
+	 * æ ¹æ®URLè®¡ç®—æ–‡ä»¶åï¼Œå­˜å‚¨ç”¨æˆ·ä¸‹è½½çš„å†…å®¹
 	 * 
 	 * @param url
 	 * @return
@@ -57,7 +57,7 @@ public class CacheObject {
 	}
 
 	/**
-	 * ¸ù¾İ±ØÒªĞÅÏ¢»ñÈ¡ÎÄ¼şÃû£¬´æ´¢³ÌĞòÏÂÔØµÄÄÚÈİ
+	 * æ ¹æ®å¿…è¦ä¿¡æ¯è·å–æ–‡ä»¶åï¼Œå­˜å‚¨ç¨‹åºä¸‹è½½çš„å†…å®¹
 	 * 
 	 * @param id
 	 * @param host
@@ -164,10 +164,10 @@ public class CacheObject {
 	}
 
 	/**
-	 * ¸ù¾İµ±Ç°Ê±¼ä£¬ÅĞ¶ÏÊÇ·ñ¹ıÆÚ£¬²¢ÉèÖÃ
+	 * æ ¹æ®å½“å‰æ—¶é—´ï¼Œåˆ¤æ–­æ˜¯å¦è¿‡æœŸï¼Œå¹¶è®¾ç½®
 	 * 
 	 * @param now
-	 *            Îª-1Ê±²»ÅĞ¶Ï£¬·µ»ØÔ­ÓĞÖµ
+	 *            ä¸º-1æ—¶ä¸åˆ¤æ–­ï¼Œè¿”å›åŸæœ‰å€¼
 	 * @return
 	 */
 	public boolean isExpire(long now) {

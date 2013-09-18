@@ -10,12 +10,12 @@ public class DBHelper extends SQLiteOpenHelper {
 	private static final int DATABASE_VERSION = 1;
 
 	public DBHelper(Context context) {
-		// CursorFactoryÉèÖÃÎªnull,Ê¹ÓÃÄ¬ÈÏÖµ
+		// CursorFactoryè®¾ç½®ä¸ºnull,ä½¿ç”¨é»˜è®¤å€¼
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
 
 	/**
-	 * Êı¾İ¿âµÚÒ»´Î±»´´½¨Ê±onCreate»á±»µ÷ÓÃ
+	 * æ•°æ®åº“ç¬¬ä¸€æ¬¡è¢«åˆ›å»ºæ—¶onCreateä¼šè¢«è°ƒç”¨
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
@@ -26,11 +26,11 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 	/**
-	 * Êı¾İ¿â°æ±¾¸ü¸ÄÊ±µÄÊÂ¼ş
+	 * æ•°æ®åº“ç‰ˆæœ¬æ›´æ”¹æ—¶çš„äº‹ä»¶
 	 */
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// Èç¹ûDATABASE_VERSIONÖµ±»¸ÄÎª2,ÏµÍ³·¢ÏÖÏÖÓĞÊı¾İ¿â°æ±¾²»Í¬,¼´»áµ÷ÓÃonUpgrade
+		// å¦‚æœDATABASE_VERSIONå€¼è¢«æ”¹ä¸º2,ç³»ç»Ÿå‘ç°ç°æœ‰æ•°æ®åº“ç‰ˆæœ¬ä¸åŒ,å³ä¼šè°ƒç”¨onUpgrade
 		// db.execSQL("ALTER TABLE person ADD COLUMN other STRING");
 	}
 }

@@ -6,7 +6,7 @@ import android.app.Activity;
 import android.os.Bundle;
 
 /**
- * @author gudh ×Ô¶¨ÒåActivityµÄ»ùÀà
+ * @author gudh è‡ªå®šä¹‰Activityçš„åŸºç±»
  */
 public class BaseActivity extends Activity {
 
@@ -32,11 +32,11 @@ public class BaseActivity extends Activity {
 	}
 
 	/**
-	 * Õâ¸öÖ÷ÒªÊÇÓÃÀ´¹Ø±Õ½ø³ÌµÄ
+	 * è¿™ä¸ªä¸»è¦æ˜¯ç”¨æ¥å…³é—­è¿›ç¨‹çš„
 	 */
 	public static void exit() {
 		finishAll();
-		// ¹Ø°ÑËùÓĞactivity finish µÄ»°£¬½ø³ÌÊÇ²»»á¹Ø±ÕµÄ
+		// å…³æŠŠæ‰€æœ‰activity finish çš„è¯ï¼Œè¿›ç¨‹æ˜¯ä¸ä¼šå…³é—­çš„
 		System.exit(0);
 	}
 }

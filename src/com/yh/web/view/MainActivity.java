@@ -36,9 +36,9 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// Ìí¼ÓÊÂ¼ş£¬µã»÷GOµÄÊ±ºò×Ô¶¯µ÷ÓÃGoBtn·½·¨Ìøµ½Ö¸¶¨URL
+		// æ·»åŠ äº‹ä»¶ï¼Œç‚¹å‡»GOçš„æ—¶å€™è‡ªåŠ¨è°ƒç”¨GoBtnæ–¹æ³•è·³åˆ°æŒ‡å®šURL
 		EditText uText = (EditText) findViewById(R.id.uText);
-		// °²×°»Ø³µ×Ô¶¯¼ÓÔØ
+		// å®‰è£…å›è½¦è‡ªåŠ¨åŠ è½½
 		uText.setOnKeyListener(new OnKeyListener() {
 			@Override
 			public boolean onKey(View v, int keyCode, KeyEvent event) {
@@ -50,26 +50,26 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 
-		// ÉèÖÃWebClient
+		// è®¾ç½®WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
 		setWebView(web);
 		
-		// ³õÊ¼»¯MIME
+		// åˆå§‹åŒ–MIME
 		MIME.initMIME(this.getAssets());
-		// ³õÊ¼»¯¹ıÂËÆ÷
+		// åˆå§‹åŒ–è¿‡æ»¤å™¨
 		CacheFilter.initFilter(this.getAssets());
-		// ³õÊ¼»¯»º´æ²ßÂÔ
+		// åˆå§‹åŒ–ç¼“å­˜ç­–ç•¥
 		CachePolicy.initPolicy(this.getAssets());
-		// ³õÊ¼»¯AsyncHttpClient
+		// åˆå§‹åŒ–AsyncHttpClient
 		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
-		// ³õÊ¼»¯»º´æ
+		// åˆå§‹åŒ–ç¼“å­˜
 		CacheControl.initCache(this);
-		// ¿ªÊ¼¼à¿ØÍøÂç
+		// å¼€å§‹ç›‘æ§ç½‘ç»œ
 		NetMonitor.startJudge();
 	}
 
 	/**
-	 * ÉèÖÃWebĞÅÏ¢
+	 * è®¾ç½®Webä¿¡æ¯
 	 * 
 	 * @param web
 	 */
@@ -79,36 +79,36 @@ public class MainActivity extends BaseActivity {
 		web.setWebChromeClient(new MyWebChromeClient(this));
 
 		WebSettings set = web.getSettings();
-		set.setJavaScriptEnabled(true);// ÆôÓÃJS
+		set.setJavaScriptEnabled(true);// å¯ç”¨JS
 
-		set.setDomStorageEnabled(true);// ÆôÓÃlocalStorage
-		set.setAppCacheEnabled(true);// ÆôÓÃ»º´æ
+		set.setDomStorageEnabled(true);// å¯ç”¨localStorage
+		set.setAppCacheEnabled(true);// å¯ç”¨ç¼“å­˜
 		// set.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
-		// ÏÈÓÃ»º´æ£¬»º´æÃ»ÓĞÇëÇóÍøÂç
+		// å…ˆç”¨ç¼“å­˜ï¼Œç¼“å­˜æ²¡æœ‰è¯·æ±‚ç½‘ç»œ
 
-		set.setSupportZoom(true); // ÉèÖÃÊÇ·ñÖ§³ÖËõ·Å
-		set.setBuiltInZoomControls(true); // ÉèÖÃÊÇ·ñÏÔÊ¾ÄÚ½¨Ëõ·Å¹¤¾ß
-		// set.setSavePassword(true); //ÉèÖÃÊÇ·ñ±£´æÃÜÂë
+		set.setSupportZoom(true); // è®¾ç½®æ˜¯å¦æ”¯æŒç¼©æ”¾
+		set.setBuiltInZoomControls(true); // è®¾ç½®æ˜¯å¦æ˜¾ç¤ºå†…å»ºç¼©æ”¾å·¥å…·
+		// set.setSavePassword(true); //è®¾ç½®æ˜¯å¦ä¿å­˜å¯†ç 
 
-		// ¼àÌı³¤°´ÊÂ¼ş
+		// ç›‘å¬é•¿æŒ‰äº‹ä»¶
 		web.setOnLongClickListener(new OnLongClickListener() {
 			@Override
 			public boolean onLongClick(View view) {
 				HitTestResult result = ((WebView) view).getHitTestResult();
 				if (result.getType() == WebView.HitTestResult.IMAGE_TYPE) {
-					// ´¦Àí³¤°´Í¼Æ¬µÄ²Ëµ¥Ïî
+					// å¤„ç†é•¿æŒ‰å›¾ç‰‡çš„èœå•é¡¹
 					ClipboardManager clipboard = (ClipboardManager) getSystemService(CLIPBOARD_SERVICE);
 					ClipData textCd = ClipData.newPlainText("ImageUrl",
 							result.getExtra());
 					clipboard.setPrimaryClip(textCd);
-					Toast.makeText(view.getContext(), "Í¼Æ¬URLÒÑ¿½±´",
+					Toast.makeText(view.getContext(), "å›¾ç‰‡URLå·²æ‹·è´",
 							Toast.LENGTH_LONG).show();
 					return true;
 				}
 				return false;
 			}
 		});
-		// web »ñµÃ½¹µã
+		// web è·å¾—ç„¦ç‚¹
 		web.requestFocus();
 	}
 
@@ -120,14 +120,14 @@ public class MainActivity extends BaseActivity {
 	}
 
 	/**
-	 * ²Ëµ¥Ñ¡Ôñ´¦Àí
+	 * èœå•é€‰æ‹©å¤„ç†
 	 */
 	@Override
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.action_download:
-			// ÏÂÔØURLµÄÊı¾İ
+			// ä¸‹è½½URLçš„æ•°æ®
 			String url = ((EditText) findViewById(R.id.uText)).getText()
 					.toString();
 			String fileName = CacheObject.getCacheFileName(url);
@@ -147,20 +147,20 @@ public class MainActivity extends BaseActivity {
 	}
 
 	/**
-	 * ÏÔÊ¾ÍË³öÌáÊ¾
+	 * æ˜¾ç¤ºé€€å‡ºæç¤º
 	 */
 	protected void showExitDialog() {
 		Builder builder = new Builder(this);
-		builder.setMessage("È·ÈÏÍË³öÂğ£¿");
-		builder.setTitle("ÌáÊ¾");
-		builder.setPositiveButton("È·ÈÏ", new OnClickListener() {
+		builder.setMessage("ç¡®è®¤é€€å‡ºå—ï¼Ÿ");
+		builder.setTitle("æç¤º");
+		builder.setPositiveButton("ç¡®è®¤", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
 				exit();
 			}
 		});
-		builder.setNegativeButton("È¡Ïû", new OnClickListener() {
+		builder.setNegativeButton("å–æ¶ˆ", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
 				dialog.dismiss();
@@ -170,7 +170,7 @@ public class MainActivity extends BaseActivity {
 	}
 
 	/**
-	 * µ¥»÷Go°´Å¥
+	 * å•å‡»GoæŒ‰é’®
 	 * 
 	 * @param view
 	 * @return
@@ -193,7 +193,7 @@ public class MainActivity extends BaseActivity {
 	}
 
 	/**
-	 * ²¶×½·µ»Ø¼ü´¦Àí
+	 * æ•æ‰è¿”å›é”®å¤„ç†
 	 */
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		WebView web = (WebView) findViewById(R.id.webView1);

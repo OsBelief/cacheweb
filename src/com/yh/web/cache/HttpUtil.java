@@ -23,15 +23,15 @@ import com.loopj.android.http.BinaryHttpResponseHandler;
 
 /**
  * 
- * @author gudh Éæ¼°HTTPµÄ´¦Àí£¬Òì²½·½·¨
+ * @author gudh æ¶‰åŠHTTPçš„å¤„ç†ï¼Œå¼‚æ­¥æ–¹æ³•
  */
 public class HttpUtil {
-	// Òì²½HTTPClient
+	// å¼‚æ­¥HTTPClient
 	private static AsyncHttpClient client = null;
 	private static String[] allowedContentTypes = null;
 
 	/**
-	 * ¿ÉÒÔ¶¨Ê±¼ì²éÍøÂçÊÇ·ñ¿ÉÓÃ
+	 * å¯ä»¥å®šæ—¶æ£€æŸ¥ç½‘ç»œæ˜¯å¦å¯ç”¨
 	 */
 	private static boolean netAvailable = true;
 
@@ -46,7 +46,7 @@ public class HttpUtil {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÇ·ñÓĞ¿ÉÓÃµÄÍøÂç
+	 * åˆ¤æ–­æ˜¯å¦æœ‰å¯ç”¨çš„ç½‘ç»œ
 	 * 
 	 * @param context
 	 * @return
@@ -62,7 +62,7 @@ public class HttpUtil {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊÖ»úÍøÂçÊÇ·ñ
+	 * åˆ¤æ–­æ‰‹æœºç½‘ç»œæ˜¯å¦
 	 * 
 	 * @param context
 	 * @return
@@ -79,17 +79,17 @@ public class HttpUtil {
 	}
 
 	/**
-	 * ÅĞ¶ÏÊäÈëÊÇ·ñÊÇURL
+	 * åˆ¤æ–­è¾“å…¥æ˜¯å¦æ˜¯URL
 	 * 
 	 * @param url
 	 * @return
 	 */
 	public static boolean isUrl(String url) {
-		String regex = "^((https|http)://)?"// IPĞÎÊ½µÄURL-
+		String regex = "^((https|http)://)?"// IPå½¢å¼çš„URL-
 				+ "(([0-9]{1,3}\\.){3}[0-9]{1,3}" // 199.194.52.184
-				+ "|" // ÔÊĞíIPºÍDOMAIN£¨ÓòÃû£©
+				+ "|" // å…è®¸IPå’ŒDOMAINï¼ˆåŸŸåï¼‰
 				+ "(www.)?" // www.
-				+ "([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]" // ¶ş¼¶ÓòÃû
+				+ "([0-9a-zA-Z][0-9a-zA-Z-]{0,61})?[0-9a-zA-Z]" // äºŒçº§åŸŸå
 				+ "(\\.[a-zA-Z]{2,6})+)" // .com or .com.cn
 				+ "(:[0-9]{1,4})?" // :80
 				+ "((/?)|" + ".+/?)$";
@@ -100,7 +100,7 @@ public class HttpUtil {
 	}
 
 	/**
-	 * Èç¹ûÓĞĞ§£¬×ª»»URL£¬ÎŞĞ§·µ»Ønull
+	 * å¦‚æœæœ‰æ•ˆï¼Œè½¬æ¢URLï¼Œæ— æ•ˆè¿”å›null
 	 * 
 	 * @param url
 	 * @return
@@ -109,14 +109,14 @@ public class HttpUtil {
 		if (url.length() > CacheFilter.maxUrlLength) {
 			return null;
 		}
-		// ÅÅ³ı¹ıÂËURL
+		// æ’é™¤è¿‡æ»¤URL
 		List<String> disCacheUrlList = CacheFilter.disCacheUrlList;
 		for (String reg : disCacheUrlList) {
 			if (url.matches(reg)) {
 				return null;
 			}
 		}
-		// ×ª»»URL
+		// è½¬æ¢URL
 		String urlb = url;
 		List<HashMap<String, Object>> cacheUrlReplaceList = CacheFilter.cacheUrlReplaceList;
 		for (HashMap<String, Object> one : cacheUrlReplaceList) {
@@ -131,7 +131,7 @@ public class HttpUtil {
 	}
 
 	/**
-	 * »ñÈ¡URL±íÊ¾µÄÊı¾İÀàĞÍ
+	 * è·å–URLè¡¨ç¤ºçš„æ•°æ®ç±»å‹
 	 * 
 	 * @param url
 	 * @return
@@ -145,12 +145,12 @@ public class HttpUtil {
 				return type;
 			}
 		}
-		// ·ñÔòÎªHTML
+		// å¦åˆ™ä¸ºHTML
 		return MIME.defaultType;
 	}
 
 	/**
-	 * »ñÈ¡URLµÄMIME
+	 * è·å–URLçš„MIME
 	 * 
 	 * @param url
 	 * @return
@@ -160,7 +160,7 @@ public class HttpUtil {
 	}
 
 	/**
-	 * »ñÈ¡URLµÄhost
+	 * è·å–URLçš„host
 	 * 
 	 * @param url
 	 * @return
@@ -175,7 +175,7 @@ public class HttpUtil {
 	}
 
 	/**
-	 * ÏÂÔØURLµÄÄÚÈİµ½ÎÄ¼ş
+	 * ä¸‹è½½URLçš„å†…å®¹åˆ°æ–‡ä»¶
 	 * 
 	 * @param url
 	 * @param fileName
@@ -185,11 +185,11 @@ public class HttpUtil {
 			Log.i("downUrlToFile", "Save | " + url);
 
 			if (!isUrl(url)) {
-				Toast.makeText(act, "ÏÂÔØÁ´½ÓµØÖ·²»ÕıÈ·£¡" + url, Toast.LENGTH_LONG)
+				Toast.makeText(act, "ä¸‹è½½é“¾æ¥åœ°å€ä¸æ­£ç¡®ï¼" + url, Toast.LENGTH_LONG)
 						.show();
 				return;
 			}
-			// Ìí¼Óµ±Ç°hostÎªReferer
+			// æ·»åŠ å½“å‰hostä¸ºReferer
 			try {
 				URL u = new URL(url);
 				client.addHeader("Referer",
@@ -205,7 +205,7 @@ public class HttpUtil {
 	}
 
 	/**
-	 * ÏÂÔØ»º´æ
+	 * ä¸‹è½½ç¼“å­˜
 	 * 
 	 * @param act
 	 * @param obj
@@ -216,7 +216,7 @@ public class HttpUtil {
 
 			try {
 				URL u = new URL(obj.getUrl());
-				// Ìí¼Óµ±Ç°hostÎªReferer
+				// æ·»åŠ å½“å‰hostä¸ºReferer
 				client.addHeader("Referer",
 						u.getProtocol() + "://" + u.getHost());
 			} catch (MalformedURLException e) {
@@ -254,7 +254,7 @@ public class HttpUtil {
 		}
 
 		/**
-		 * ¸üĞÂÊı¾İ¿â
+		 * æ›´æ–°æ•°æ®åº“
 		 * 
 		 * @param obj
 		 * @param result
@@ -262,13 +262,13 @@ public class HttpUtil {
 		public void updateDB(CacheObject obj, boolean result) {
 			try {
 				if (!result) {
-					// Ê§°ÜÔòÉ¾³ıÊı¾İ¿â¼ÇÂ¼
+					// å¤±è´¥åˆ™åˆ é™¤æ•°æ®åº“è®°å½•
 					if (obj != null && obj.isComeFromCache()) {
 						CacheControl.orm.delete(obj);
 						Log.i("updateDB", "DELETE | " + obj.getUrl());
 					}
 				} else {
-					// ³É¹¦²¢´æÔÚÔò¸üĞÂ´´½¨Ê±¼ä
+					// æˆåŠŸå¹¶å­˜åœ¨åˆ™æ›´æ–°åˆ›å»ºæ—¶é—´
 					obj.setCreateTime(System.currentTimeMillis());
 					if (obj != null && obj.isComeFromCache()) {
 						CacheControl.orm.updateTime(obj);

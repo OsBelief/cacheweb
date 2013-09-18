@@ -24,12 +24,12 @@ import android.util.Log;
 import android.webkit.WebResourceResponse;
 
 /**
- * @author gudh IO´¦Àí£¬°üÀ¨ÄÚ²¿ÎÄ¼ş£¬Íâ²¿ÎÄ¼ş£¬key-valueµÈ
+ * @author gudh IOå¤„ç†ï¼ŒåŒ…æ‹¬å†…éƒ¨æ–‡ä»¶ï¼Œå¤–éƒ¨æ–‡ä»¶ï¼Œkey-valueç­‰
  */
 public class IOUtil {
 
 	/**
-	 * Ğ´KeyValueÊı¾İ¿â
+	 * å†™KeyValueæ•°æ®åº“
 	 * 
 	 * @param fileName
 	 * @param os
@@ -42,7 +42,7 @@ public class IOUtil {
 	}
 
 	/**
-	 * ¶ÁKeyValueÊı¾İ¿â
+	 * è¯»KeyValueæ•°æ®åº“
 	 * 
 	 * @param act
 	 * @param id
@@ -56,7 +56,7 @@ public class IOUtil {
 	}
 
 	/**
-	 * Ğ´ÈëÄÚ²¿ÎÄ¼ş
+	 * å†™å…¥å†…éƒ¨æ–‡ä»¶
 	 * 
 	 * @param act
 	 * @param fileName
@@ -75,7 +75,7 @@ public class IOUtil {
 	}
 
 	/**
-	 * ´ÓÄÚ²¿ÎÄ¼ş»ñÈ¡ÊäÈëÁ÷
+	 * ä»å†…éƒ¨æ–‡ä»¶è·å–è¾“å…¥æµ
 	 * 
 	 * @param act
 	 * @param fileName
@@ -94,7 +94,7 @@ public class IOUtil {
 	}
 
 	/**
-	 * Ğ´ÈëÍâ²¿ÎÄ¼ş
+	 * å†™å…¥å¤–éƒ¨æ–‡ä»¶
 	 * 
 	 * @param fileName
 	 * @param bytes
@@ -115,7 +115,7 @@ public class IOUtil {
 	}
 
 	/**
-	 * ´ÓÍâ²¿ÎÄ¼ş»ñÈ¡ÊäÈëÁ÷
+	 * ä»å¤–éƒ¨æ–‡ä»¶è·å–è¾“å…¥æµ
 	 * 
 	 * @param fileName
 	 * @return
@@ -132,11 +132,11 @@ public class IOUtil {
 	}
 
 	/**
-	 * ´Ó×Ö·û´®»ñÈ¡×Ö½ÚÁ÷
+	 * ä»å­—ç¬¦ä¸²è·å–å­—èŠ‚æµ
 	 * 
 	 * @param text
 	 * @param charSet
-	 *            ¸ø¶¨×Ö·û´®µÄ±àÂë£¬Èç¹û³ö´íÔòÄ¬ÈÏutf-8
+	 *            ç»™å®šå­—ç¬¦ä¸²çš„ç¼–ç ï¼Œå¦‚æœå‡ºé”™åˆ™é»˜è®¤utf-8
 	 * @return
 	 */
 	public static InputStream getInputStreamFromString(String text,
@@ -145,7 +145,7 @@ public class IOUtil {
 			try {
 				return new ByteArrayInputStream(text.getBytes(charSet));
 			} catch (UnsupportedEncodingException e) {
-				// Èç¹ûÊ§°ÜÔò·µ»Øutf-8
+				// å¦‚æœå¤±è´¥åˆ™è¿”å›utf-8
 				try {
 					return new ByteArrayInputStream(text.getBytes("utf-8"));
 				} catch (UnsupportedEncodingException e1) {
@@ -156,11 +156,11 @@ public class IOUtil {
 	}
 
 	/**
-	 * ´ÓDrawable¶ÔÏñ»ñÈ¡InputDream
+	 * ä»Drawableå¯¹åƒè·å–InputDream
 	 * 
 	 * @param drawObj
 	 * @param mime
-	 *            ¸ñÊ½£¬Èôº¬pngÔòÎªpng£¬·ñÔò¶¼½«×ª³Éjpeg¸ñÊ½
+	 *            æ ¼å¼ï¼Œè‹¥å«pngåˆ™ä¸ºpngï¼Œå¦åˆ™éƒ½å°†è½¬æˆjpegæ ¼å¼
 	 * @return
 	 */
 	public static InputStream getInputStreamFromDrawable(Drawable drawObj,
@@ -168,7 +168,7 @@ public class IOUtil {
 		if (drawObj != null) {
 			ByteArrayOutputStream stream = new ByteArrayOutputStream();
 			BitmapDrawable bDrawObj = (BitmapDrawable) drawObj;
-			// »ñÈ¡ÊäÈëÁ÷¸ñÊ½
+			// è·å–è¾“å…¥æµæ ¼å¼
 			CompressFormat cFormat = null;
 			if (mime != null
 					&& mime.toLowerCase(Locale.getDefault()).contains("png")) {
@@ -183,7 +183,7 @@ public class IOUtil {
 	}
 
 	/**
-	 * ¸ù¾İId»ñÈ¡ÊäÈëÁ÷
+	 * æ ¹æ®Idè·å–è¾“å…¥æµ
 	 * 
 	 * @param resources
 	 * @param id
@@ -197,14 +197,14 @@ public class IOUtil {
 	}
 
 	/**
-	 * ´ÓÁ÷ÖĞ¶ÁÈ¡ÎÄ±¾
+	 * ä»æµä¸­è¯»å–æ–‡æœ¬
 	 * 
 	 * @param in
 	 * @return
 	 * @throws IOException
 	 */
 	public static String readStream(InputStream in) throws IOException {
-		InputStreamReader reader = new InputStreamReader(in, "gbk");
+		InputStreamReader reader = new InputStreamReader(in, "utf-8");
 		StringBuffer sb = new StringBuffer();
 		int len = -1;
 		char[] buf = new char[2048];
@@ -217,11 +217,11 @@ public class IOUtil {
 	}
 
 	/**
-	 * ²úÉúWebResourceResponse
+	 * äº§ç”ŸWebResourceResponse
 	 * 
 	 * @param mime
 	 * @param encoding
-	 *            Ä¬ÈÏÊÇutf-8
+	 *            é»˜è®¤æ˜¯utf-8
 	 * @param is
 	 * @return
 	 */

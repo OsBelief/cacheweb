@@ -8,44 +8,44 @@ import android.util.Log;
 
 public class NetMonitor {
 
-	// ÏµÍ³Á÷Á¿ÎÄ¼ş
+	// ç³»ç»Ÿæµé‡æ–‡ä»¶
 	private final static String DEV_FILE = "/proc/self/net/dev";
 
-	// ethÊÇÒÔÌ«ÍøĞÅÏ¢ tiwlan0 ÊÇ Wifi rmnet0 ÊÇ GPRS
+	// ethæ˜¯ä»¥å¤ªç½‘ä¿¡æ¯ tiwlan0 æ˜¯ Wifi rmnet0 æ˜¯ GPRS
 	private static final String GPRSLINE = "rmnet0";
 	private static final String ETHLINE = "  eth0";
-	// tiwlan0£¬ 2.1Îªwlan0£¬ ¼æÈİ
+	// tiwlan0ï¼Œ 2.1ä¸ºwlan0ï¼Œ å…¼å®¹
 	private static final String WIFILINE = " wlan0";
 
-	// ÉÏÒ»´ÎµÄÇé¿öBytePacketDrop
+	// ä¸Šä¸€æ¬¡çš„æƒ…å†µBytePacketDrop
 	private static long[] bpdLast = { 0, 0, 0 };
-	// ÏÖÔÚµÄÇé¿ö BytePacketDrop
+	// ç°åœ¨çš„æƒ…å†µ BytePacketDrop
 	private static long[] bpdNow = { 0, 0, 0 };
-	// Ëø£¬Í¬Ê±Ö»ÓĞÒ»¸öÔÚÍ³¼Æ
+	// é”ï¼ŒåŒæ—¶åªæœ‰ä¸€ä¸ªåœ¨ç»Ÿè®¡
 	private static boolean lock = false;
-	// ÊÇ·ñÒª¼ÌĞø¼à¿ØÍøÂç
+	// æ˜¯å¦è¦ç»§ç»­ç›‘æ§ç½‘ç»œ
 	private static boolean isJudge = true;
-	// ÉÏ´ÎÍ³¼ÆÊ±¼ä
+	// ä¸Šæ¬¡ç»Ÿè®¡æ—¶é—´
 	private static long lastTime = -1;
-	// ±êÖ¾µ±Ç°ÍøÂçÊÇ·ñ·±Ã¦
+	// æ ‡å¿—å½“å‰ç½‘ç»œæ˜¯å¦ç¹å¿™
 	private static boolean isNetBuzy = false;
 
-	private static long byteMax = 102400; // ×î´óÍøËÙ(byte/s)
-	private static long packetMax = 200; // ×î´ó·¢°ü (p/s)
-	private static long dropMax = 10; // ×î´ó¶ª°ü(p/s)
-	private static long judgeSleep = 5000; // ÅĞ¶ÏÖÜÆÚ(ms)
+	private static long byteMax = 102400; // æœ€å¤§ç½‘é€Ÿ(byte/s)
+	private static long packetMax = 200; // æœ€å¤§å‘åŒ… (p/s)
+	private static long dropMax = 10; // æœ€å¤§ä¸¢åŒ…(p/s)
+	private static long judgeSleep = 5000; // åˆ¤æ–­å‘¨æœŸ(ms)
 
 	/**
-	 * ÉèÖÃ¼à¿ØµÄ²ÎÊı£¬²ÎÊıÎª-1Ôò²»¸ü¸Ä
+	 * è®¾ç½®ç›‘æ§çš„å‚æ•°ï¼Œå‚æ•°ä¸º-1åˆ™ä¸æ›´æ”¹
 	 * 
 	 * @param byteMax
-	 *            ×î´óÍøËÙ(byte/s)£¬Ä¬ÈÏ102400(100k)
+	 *            æœ€å¤§ç½‘é€Ÿ(byte/s)ï¼Œé»˜è®¤102400(100k)
 	 * @param packetMax
-	 *            ×î´ó·¢°ü (p/s)£¬Ä¬ÈÏ200
+	 *            æœ€å¤§å‘åŒ… (p/s)ï¼Œé»˜è®¤200
 	 * @param dropMax
-	 *            ×î´ó¶ª°ü(p/s)£¬Ä¬ÈÏ10
+	 *            æœ€å¤§ä¸¢åŒ…(p/s)ï¼Œé»˜è®¤10
 	 * @param judgeSleep
-	 *            ÅĞ¶ÏÖÜÆÚ(ms)£¬Ä¬ÈÏ5000(5s)
+	 *            åˆ¤æ–­å‘¨æœŸ(ms)ï¼Œé»˜è®¤5000(5s)
 	 */
 	public static void setParameter(long byteMax, long packetMax, long dropMax,
 			long judgeSleep) {
@@ -64,7 +64,7 @@ public class NetMonitor {
 	}
 
 	/**
-	 * »ñÈ¡µ±Ç°ÍøÂçÊÇ·ñÃ¦Âµ×´Ì¬
+	 * è·å–å½“å‰ç½‘ç»œæ˜¯å¦å¿™ç¢ŒçŠ¶æ€
 	 * 
 	 * @return
 	 */
@@ -73,10 +73,10 @@ public class NetMonitor {
 	}
 
 	/**
-	 * ³õÊ¼»¯ÍøÂç¼à¿Ø
+	 * åˆå§‹åŒ–ç½‘ç»œç›‘æ§
 	 */
 	public static void startJudge() {
-		// Æô¶¯Ïß³Ì¶¨Ê±¼à¿Ø
+		// å¯åŠ¨çº¿ç¨‹å®šæ—¶ç›‘æ§
 		isJudge = true;
 		new Thread(new Runnable() {
 			@Override
@@ -85,7 +85,7 @@ public class NetMonitor {
 					try {
 						NetMonitor.judgeNetBuzy();
 
-						// ÑÓÊ±
+						// å»¶æ—¶
 						Thread.sleep(NetMonitor.judgeSleep);
 					} catch (Exception e) {
 						Log.e("NetInfo", e.getMessage());
@@ -96,19 +96,19 @@ public class NetMonitor {
 	}
 
 	/**
-	 * ½áÊøÍøÂç¼à¿Ø
+	 * ç»“æŸç½‘ç»œç›‘æ§
 	 */
 	public static void stopJudge() {
 		isJudge = false;
 	}
 
 	/**
-	 * ÅĞ¶ÏÍøÂçÊÇ·ñ·±Ã¦
+	 * åˆ¤æ–­ç½‘ç»œæ˜¯å¦ç¹å¿™
 	 * 
 	 * @return
 	 */
 	public static boolean judgeNetBuzy() {
-		// »ñÈ¡µ±Ç°µÄÍøÂçĞÅÏ¢
+		// è·å–å½“å‰çš„ç½‘ç»œä¿¡æ¯
 		long[] netInfo = getLastNetTraffic();
 		if (netInfo == null) {
 			return isNetBuzy;
@@ -116,13 +116,13 @@ public class NetMonitor {
 		long seconds = netInfo[4] / 1000;
 
 		if (netInfo[0] > byteMax * seconds) {
-			// Ã¿Ãë³¬¹ı200k
+			// æ¯ç§’è¶…è¿‡200k
 			isNetBuzy = true;
 		} else if (netInfo[1] > packetMax * seconds) {
-			// Ã¿Ãë·¢°ü³¬¹ı200
+			// æ¯ç§’å‘åŒ…è¶…è¿‡200
 			isNetBuzy = true;
 		} else if (netInfo[2] > dropMax * seconds) {
-			// Ã¿Ãë¶ª°üÊı´óÓÚ10
+			// æ¯ç§’ä¸¢åŒ…æ•°å¤§äº10
 			isNetBuzy = true;
 		} else {
 			isNetBuzy = false;
@@ -141,12 +141,12 @@ public class NetMonitor {
 	}
 
 	/**
-	 * »ñÈ¡¹ıÈ¥µÄÒ»¶ÎÊ±¼äÄÚ£¬Í³¼ÆµÄÁ÷Á¿£¨×Ö½Ú£¬°ü£¬¶ª°ü£¬Í³¼ÆÍø¿¨Êı£¬Í³¼ÆÊ±¼ä£©ĞÅÏ¢¡£
+	 * è·å–è¿‡å»çš„ä¸€æ®µæ—¶é—´å†…ï¼Œç»Ÿè®¡çš„æµé‡ï¼ˆå­—èŠ‚ï¼ŒåŒ…ï¼Œä¸¢åŒ…ï¼Œç»Ÿè®¡ç½‘å¡æ•°ï¼Œç»Ÿè®¡æ—¶é—´ï¼‰ä¿¡æ¯ã€‚
 	 * 
 	 * @return
 	 */
 	public static long[] getLastNetTraffic() {
-		// »ñÈ¡Ëø
+		// è·å–é”
 		if (lock) {
 			Log.d("NetInfo", "Now is runing!");
 			return null;

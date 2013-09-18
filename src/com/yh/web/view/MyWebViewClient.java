@@ -19,7 +19,7 @@ import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.HttpUtil;
 
 /**
- * @author gudh ×Ô¶¨Òåä¯ÀÀÆ÷WebViewClient
+ * @author gudh è‡ªå®šä¹‰æµè§ˆå™¨WebViewClient
  */
 public class MyWebViewClient extends WebViewClient {
 
@@ -27,7 +27,7 @@ public class MyWebViewClient extends WebViewClient {
 
 	private Activity act;
 
-	// ¼ÇÂ¼302Ìø×ªÇé¿ö
+	// è®°å½•302è·³è½¬æƒ…å†µ
 	private String pendingUrl;
 
 	public MyWebViewClient(Activity act) {
@@ -70,7 +70,7 @@ public class MyWebViewClient extends WebViewClient {
 	}
 
 	/**
-	 * Í¨¹ıFutureÔÚÖ¸¶¨Ê±¼äÄÚ»ñÈ¡Êı¾İ
+	 * é€šè¿‡Futureåœ¨æŒ‡å®šæ—¶é—´å†…è·å–æ•°æ®
 	 */
 	@Override
 	public WebResourceResponse shouldInterceptRequest(WebView view, String url) {
@@ -80,9 +80,9 @@ public class MyWebViewClient extends WebViewClient {
 				new MyCallable(act, view, url));
 		executor.execute(future);
 
-		// ÔÚÕâÀï¿ÉÒÔ×ö±ğµÄÈÎºÎÊÂÇé
+		// åœ¨è¿™é‡Œå¯ä»¥åšåˆ«çš„ä»»ä½•äº‹æƒ…
 		try {
-			// Îª1Ãë
+			// ä¸º1ç§’
 			res = future.get(1, TimeUnit.SECONDS);
 		} catch (Exception e) {
 			future.cancel(true);
@@ -93,7 +93,7 @@ public class MyWebViewClient extends WebViewClient {
 	}
 
 	/**
-	 * ¶ÁÈ¡ÎÄ¼şµÄ
+	 * è¯»å–æ–‡ä»¶çš„
 	 * 
 	 * @author gudh
 	 * 

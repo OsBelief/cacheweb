@@ -16,7 +16,7 @@ import android.util.SparseArray;
 /**
  * @author gudh
  * 
- *         »º´æ²ßÂÔ
+ *         ç¼“å­˜ç­–ç•¥
  */
 public class CachePolicy {
 
@@ -24,10 +24,10 @@ public class CachePolicy {
 
 	public final static int defaultPolicy = 0;
 
-	// ´æ´¢ËùÓĞµÄ»º´æÆ¥Åä¹æÔò
+	// å­˜å‚¨æ‰€æœ‰çš„ç¼“å­˜åŒ¹é…è§„åˆ™
 	private static List<CacheMatch> cacheMatchs = new ArrayList<CacheMatch>();
 
-	// ´æ´¢ËùÓĞ»º´æ²ßÂÔ
+	// å­˜å‚¨æ‰€æœ‰ç¼“å­˜ç­–ç•¥
 	private static SparseArray<CachePolicy> cachePolicys = new SparseArray<CachePolicy>();
 
 	private int id;
@@ -51,7 +51,7 @@ public class CachePolicy {
 
 			HashMap<String, Object> obj = (HashMap<String, Object>) yaml
 					.load(yamltxt);
-			// ½âÎöcachePolicy
+			// è§£æcachePolicy
 			List<HashMap<String, Object>> pols = (List<HashMap<String, Object>>) obj
 					.get("cachePolicy");
 			for (HashMap<String, Object> pol : pols) {
@@ -60,11 +60,11 @@ public class CachePolicy {
 					CachePolicy pObj = new CachePolicy(id);
 					cachePolicys.put(id, pObj);
 
-					// »ñÈ¡¶ÔÏóµÄĞÅÏ¢
+					// è·å–å¯¹è±¡çš„ä¿¡æ¯
 					List<String> fields = (List<String>) pol.get("policy");
 					pObj.set("policy", fields);
 
-					// ½ö¶Ô¸ø¶¨ÊôĞÔ½øĞĞÉèÖÃ
+					// ä»…å¯¹ç»™å®šå±æ€§è¿›è¡Œè®¾ç½®
 					for (String field : fields) {
 						if (pol.containsKey(field)) {
 							pObj.set(field, pol.get(field));
@@ -72,13 +72,13 @@ public class CachePolicy {
 					}
 				}
 			}
-			// ½âÎöcacheMatch
+			// è§£æcacheMatch
 			List<HashMap<String, Object>> mats = (List<HashMap<String, Object>>) obj
 					.get("cacheMatch");
 			for (HashMap<String, Object> mat : mats) {
 				Integer id = (Integer) mat.get("id");
 				if (id != null) {
-					// ĞÂ½¨¶ÔÏó·ÅÈëmap£¬CacheMatchÈı¸öÆ¥ÅäÊôĞÔ°´Ë³ĞòÖ»È¡Ò»¸ö
+					// æ–°å»ºå¯¹è±¡æ”¾å…¥mapï¼ŒCacheMatchä¸‰ä¸ªåŒ¹é…å±æ€§æŒ‰é¡ºåºåªå–ä¸€ä¸ª
 					CacheMatch mObj = new CacheMatch(id);
 					cacheMatchs.add(mObj);
 					if (mat.containsKey("type")) {
@@ -98,7 +98,7 @@ public class CachePolicy {
 	}
 
 	/**
-	 * ¸ù¾İÀàĞÍ»ñÈ¡»º´æ²ßÂÔ
+	 * æ ¹æ®ç±»å‹è·å–ç¼“å­˜ç­–ç•¥
 	 * 
 	 * @param url
 	 * @param type
@@ -106,7 +106,7 @@ public class CachePolicy {
 	 * @return
 	 */
 	public static int getCachePolicy(String url, String type, String mime) {
-		// °´Ë³ĞòÉ¨Ãè£¬ÊÇ·ñ·ûºÏ»º´æ²ßÂÔ
+		// æŒ‰é¡ºåºæ‰«æï¼Œæ˜¯å¦ç¬¦åˆç¼“å­˜ç­–ç•¥
 		for (CacheMatch mat : cacheMatchs) {
 			if (mat.type != null && type.matches(mat.type)) {
 				System.out.println(url + " cachePolicy " + mat.id);
@@ -120,12 +120,12 @@ public class CachePolicy {
 			}
 		}
 		System.out.println(url + " cachePolicy default");
-		// ·µ»ØÄ¬ÈÏ²ßÂÔ
+		// è¿”å›é»˜è®¤ç­–ç•¥
 		return defaultPolicy;
 	}
 
 	/**
-	 * ¸ù¾İ´´½¨Ê±¼ä¡¢µ±Ç°Ê±¼äºÍ»º´æ²ßÂÔ£¬ÅĞ¶ÏÊÇ·ñ¹ıÆÚ
+	 * æ ¹æ®åˆ›å»ºæ—¶é—´ã€å½“å‰æ—¶é—´å’Œç¼“å­˜ç­–ç•¥ï¼Œåˆ¤æ–­æ˜¯å¦è¿‡æœŸ
 	 * 
 	 * @param createTime
 	 * @param now
@@ -134,13 +134,13 @@ public class CachePolicy {
 	 */
 	public static boolean isExpire(long createTime, long nowTime,
 			int cachePolicy) {
-		// ´Ë´¦ÊµÏÖÅĞ¶Ï¹ıÆÚ´úÂë
+		// æ­¤å¤„å®ç°åˆ¤æ–­è¿‡æœŸä»£ç 
 		try {
 			CachePolicy cp = cachePolicys.get(cachePolicy);
 			Log.d("Expire", cachePolicy + " " + createTime + " " + nowTime
 					+ " " + (nowTime - createTime) + " " + cp.time + " "
 					+ cp.id);
-			// Èç¹ûÖ»ÓĞÊ±¼äµÄ»°¾Í²»ÓÃCalendarÁË
+			// å¦‚æœåªæœ‰æ—¶é—´çš„è¯å°±ä¸ç”¨Calendaräº†
 			if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
 				return (nowTime - createTime > cp.time);
 			}
@@ -221,7 +221,7 @@ public class CachePolicy {
 	}
 
 	/**
-	 * ´æ´¢»º´æÆ¥Åä¹æÔò£¬type,mime,url°´Ë³ĞòÖ»È¡Ò»¸ö¡£Èç¹ûÓĞtypeÔò²»Òªmime£¬·ñÔòÓĞmime²»Òªurl
+	 * å­˜å‚¨ç¼“å­˜åŒ¹é…è§„åˆ™ï¼Œtype,mime,urlæŒ‰é¡ºåºåªå–ä¸€ä¸ªã€‚å¦‚æœæœ‰typeåˆ™ä¸è¦mimeï¼Œå¦åˆ™æœ‰mimeä¸è¦url
 	 * 
 	 * @author gudh
 	 * 

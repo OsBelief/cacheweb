@@ -7,9 +7,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 /**
- * md5µÄ»ñÈ¡£¬ÓÃÓÚÎÄ¼şÂ·¾¶ÃüÃû
+ * md5çš„è·å–ï¼Œç”¨äºæ–‡ä»¶è·¯å¾„å‘½å
  * 
- * @author yh ´´½¨Ê±¼ä£º2012-4-19
+ * @author yh åˆ›å»ºæ—¶é—´ï¼š2012-4-19
  */
 public class MD5Util {
 
@@ -25,7 +25,7 @@ public class MD5Util {
 	}
 
 	/**
-	 * ´ÓÒ»¸öµØÖ·»ñÈ¡¶ÔÓ¦md5²úÉúÂ·¾¶
+	 * ä»ä¸€ä¸ªåœ°å€è·å–å¯¹åº”md5äº§ç”Ÿè·¯å¾„
 	 * 
 	 * @param url
 	 * @return
@@ -37,7 +37,7 @@ public class MD5Util {
 	}
 
 	/**
-	 * »ñÈ¡buffµÄmd5
+	 * è·å–buffçš„md5
 	 * 
 	 * @param buff
 	 * @return
@@ -50,10 +50,10 @@ public class MD5Util {
 	}
 
 	/**
-	 * »ñÈ¡ÎÄ¼şÄÚÈİµÄmd5
+	 * è·å–æ–‡ä»¶å†…å®¹çš„md5
 	 * 
 	 * @param filePath
-	 *            ÎÄ¼şÂ·¾¶
+	 *            æ–‡ä»¶è·¯å¾„
 	 * @return
 	 * @throws Exception
 	 */
@@ -73,7 +73,7 @@ public class MD5Util {
 	}
 
 	/**
-	 * »ñÈ¡×Ö·û´®µÄmd5
+	 * è·å–å­—ç¬¦ä¸²çš„md5
 	 * 
 	 * @param str
 	 * @return
@@ -86,7 +86,7 @@ public class MD5Util {
 	}
 
 	/**
-	 * ½«buf×ªÎª×Ö·û´®
+	 * å°†bufè½¬ä¸ºå­—ç¬¦ä¸²
 	 * 
 	 * @param buff
 	 * @return

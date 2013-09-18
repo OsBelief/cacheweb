@@ -10,14 +10,14 @@ import android.webkit.WebView;
 import com.yh.web.cache.db.CacheOrm;
 
 /**
- * @author gudh »º´æ¿ØÖÆ²ßÂÔ
+ * @author gudh ç¼“å­˜æ§åˆ¶ç­–ç•¥
  */
 public class CacheControl {
 
 	public static CacheOrm orm = null;
 
 	/**
-	 * ³õÊ¼»¯»º´æORM
+	 * åˆå§‹åŒ–ç¼“å­˜ORM
 	 * 
 	 * @param context
 	 */
@@ -26,25 +26,25 @@ public class CacheControl {
 	}
 
 	/**
-	 * ²¶×½ÇëÇó£¬¿ØÖÆ»º´æ²ßÂÔ
+	 * æ•æ‰è¯·æ±‚ï¼Œæ§åˆ¶ç¼“å­˜ç­–ç•¥
 	 * 
 	 * @param context
-	 *            ÇëÇóWebËùÔÚµÄActivity
+	 *            è¯·æ±‚Webæ‰€åœ¨çš„Activity
 	 * @param url
-	 *            ÇëÇóµÄµØÖ·
-	 * @return ·µ»Ønull×ßÔ¶µØÖ·£¬·Ç¿ÕÔòÈ¡·µ»ØµÄ×ÊÔ´
+	 *            è¯·æ±‚çš„åœ°å€
+	 * @return è¿”å›nullèµ°è¿œåœ°å€ï¼Œéç©ºåˆ™å–è¿”å›çš„èµ„æº
 	 */
 	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
-		// »ñÈ¡×ª»»µÄURL
+		// è·å–è½¬æ¢çš„URL
 		String urlb = url;
 		url = HttpUtil.getToUrl(url);
 		if (url == null) {
 			Log.i("getResource", "DisCache url | " + urlb);
-			// Èç¹û×ª»»µÄURLÎªnull£¬Ôò±íÊ¾²»ĞèÒª»º´æ
+			// å¦‚æœè½¬æ¢çš„URLä¸ºnullï¼Œåˆ™è¡¨ç¤ºä¸éœ€è¦ç¼“å­˜
 			return null;
 		}
-		// ²éÑ¯Êı¾İ¿âÊÇ·ñÓĞ»º´æ
+		// æŸ¥è¯¢æ•°æ®åº“æ˜¯å¦æœ‰ç¼“å­˜
 		CacheObject obj = orm.queryByUrl(url);
 		if (obj == null) {
 			obj = new CacheObject(url);
@@ -59,22 +59,22 @@ public class CacheControl {
 
 		WebResourceResponse res = null;
 		if (obj.getMime().startsWith("image")) {
-			// Í¼Æ¬´¦Àí
+			// å›¾ç‰‡å¤„ç†
 			res = getImage(context, obj, null);
 		} else if (obj.getMime().equals("text/html")) {
-			// HTML ´¦Àí
+			// HTML å¤„ç†
 			res = getHtml(context, obj, null);
 		} else if (obj.getMime().equals("application/x-javascript")) {
-			// JS ´¦Àí
+			// JS å¤„ç†
 			res = getDefaultInfo(context, obj, null);
 		} else if (obj.getMime().equals("text/css")) {
-			// CSS ´¦Àí
+			// CSS å¤„ç†
 			res = getDefaultInfo(context, obj, null);
 		} else if (CacheFilter.notCacheType.contains(obj.getType())) {
-			// ²»»º´æ´¦Àí
+			// ä¸ç¼“å­˜å¤„ç†
 
 		} else if (obj.getMime().equals("none")) {
-			// Ã»ÕÒµ½MIME
+			// æ²¡æ‰¾åˆ°MIME
 
 		}
 
@@ -82,7 +82,7 @@ public class CacheControl {
 	}
 
 	/**
-	 * »ñÈ¡Ä¬ÈÏĞÅÏ¢
+	 * è·å–é»˜è®¤ä¿¡æ¯
 	 * 
 	 * @param context
 	 * @param obj
@@ -91,18 +91,18 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getDefaultInfo(Context context,
 			CacheObject obj, String encoding) {
-		// ÊÇ·ñĞèÒª¸üĞÂ»º´æ
+		// æ˜¯å¦éœ€è¦æ›´æ–°ç¼“å­˜
 		boolean needUpdate = false;
-		// ·µ»Ø½á¹û
+		// è¿”å›ç»“æœ
 		WebResourceResponse res = null;
 
 		if (obj.isComeFromCache()) {
-			// À´×Ô»º´æ
+			// æ¥è‡ªç¼“å­˜
 			if (!obj.isExpire(System.currentTimeMillis())) {
-				// »º´æÎ´¹ıÆÚ
+				// ç¼“å­˜æœªè¿‡æœŸ
 				InputStream is = IOUtil.readExternalFile(obj.getFileName());
 				if (is != null) {
-					// »º´æÎÄ¼şÈÔÈ»´æÔÚ
+					// ç¼“å­˜æ–‡ä»¶ä»ç„¶å­˜åœ¨
 					res = IOUtil.generateResource(obj.getMime(), encoding, is);
 					obj.setUseCount(obj.getUseCount() + 1);
 					Log.d("updateDB", "UseCount " + obj.getUseCount() + " | "
@@ -122,14 +122,14 @@ public class CacheControl {
 			needUpdate = true;
 		}
 		if (needUpdate) {
-			// ¸üĞÂ»º´æ
+			// æ›´æ–°ç¼“å­˜
 			HttpUtil.downUrlToFile(null, obj);
 		}
 		return res;
 	}
 
 	/**
-	 * »ñÈ¡html»º´æ
+	 * è·å–htmlç¼“å­˜
 	 * 
 	 * @param context
 	 * @param obj
@@ -142,7 +142,7 @@ public class CacheControl {
 	}
 
 	/**
-	 * »ñÈ¡Í¼Æ¬»º´æ
+	 * è·å–å›¾ç‰‡ç¼“å­˜
 	 * 
 	 * @param context
 	 * @param obj

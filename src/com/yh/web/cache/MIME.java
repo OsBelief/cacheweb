@@ -9,14 +9,14 @@ import android.content.res.AssetManager;
 /**
  * @author gudh
  * 
- *         ´æ´¢MIMEÀàĞÍĞÅÏ¢
+ *         å­˜å‚¨MIMEç±»å‹ä¿¡æ¯
  */
 public class MIME {
 
 	private static String mimesFileName = "mimes.txt";
 
 	/**
-	 * ËùÓĞµÄMIMEĞÅÏ¢ÅäÖÃÎÄ¼ş
+	 * æ‰€æœ‰çš„MIMEä¿¡æ¯é…ç½®æ–‡ä»¶
 	 */
 	private static HashMap<String, String> mimeMaps = new HashMap<String, String>();
 
@@ -24,7 +24,7 @@ public class MIME {
 	public final static String noneType = "none";
 
 	/**
-	 * ³õÊ¼»¯MIMEĞÅÏ¢£¬´ÓÅäÖÃÎÄ¼şÖĞ¶ÁÈ¡
+	 * åˆå§‹åŒ–MIMEä¿¡æ¯ï¼Œä»é…ç½®æ–‡ä»¶ä¸­è¯»å–
 	 * 
 	 * @param act
 	 */
@@ -49,7 +49,7 @@ public class MIME {
 	}
 
 	/**
-	 * »ñÈ¡Ö¸¶¨ÀàĞÍµÄMIME
+	 * è·å–æŒ‡å®šç±»å‹çš„MIME
 	 * 
 	 * @param type
 	 * @return
