@@ -27,6 +27,9 @@ public class CachePolicy {
 	// 存储所有的缓存匹配规则
 	private static List<CacheMatch> cacheMatchs = new ArrayList<CacheMatch>();
 
+	// 缓存策略的ID集
+	private static List<Integer> cacheIds = new ArrayList<Integer>();
+
 	// 存储所有缓存策略
 	private static SparseArray<CachePolicy> cachePolicys = new SparseArray<CachePolicy>();
 
@@ -59,6 +62,7 @@ public class CachePolicy {
 				if (id != null) {
 					CachePolicy pObj = new CachePolicy(id);
 					cachePolicys.put(id, pObj);
+					cacheIds.add(id);
 
 					// 获取对象的信息
 					List<String> fields = (List<String>) pol.get("policy");
@@ -177,6 +181,36 @@ public class CachePolicy {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	/**
+	 * 获取所有缓存策略的id和该策略允许的最早的创建时间集合
+	 * 
+	 * @return
+	 */
+	public static List<String[]> getAllCacheIdBeforeTimes() {
+		// 现在时间
+		long now = System.currentTimeMillis() / 1000;
+
+		// id和允许的最早创建时间
+		List<String[]> idTimeBefores = new ArrayList<String[]>(cacheIds.size());
+
+		// 循环获取每个缓存策略的最早允许创建时间
+		for (int i = 0; i < cacheIds.size(); i++) {
+			Integer id = cacheIds.get(i);
+			String[] idtb = new String[2];
+			idtb[0] = String.valueOf(id);
+
+			long timeBefore = cachePolicys.get(id).getTime();
+			// 如果time为0则为了效率不判断，直接保留，后期可加上
+			if (timeBefore > 0) {
+				timeBefore = now - timeBefore;
+				idtb[1] = String.valueOf(timeBefore);
+
+				idTimeBefores.add(idtb);
+			}
+		}
+		return idTimeBefores;
 	}
 
 	public int getId() {

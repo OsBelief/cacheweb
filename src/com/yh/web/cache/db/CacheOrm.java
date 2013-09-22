@@ -66,10 +66,10 @@ public class CacheOrm {
 	 * 
 	 * @param obj
 	 */
-	public void updateTime(CacheObject obj) {
+	public boolean updateTime(CacheObject obj) {
 		ContentValues cv = new ContentValues();
 		cv.put("createTime", obj.getCreateTime());
-		db.update(tableName, cv, "uid = ?", new String[] { obj.getUid() });
+		return db.update(tableName, cv, "uid = ?", new String[] { obj.getUid() }) == 1;
 	}
 
 	/**
@@ -77,10 +77,10 @@ public class CacheOrm {
 	 * 
 	 * @param obj
 	 */
-	public void updateUseCount(CacheObject obj) {
+	public boolean updateUseCount(CacheObject obj) {
 		ContentValues cv = new ContentValues();
 		cv.put("useCount", obj.getUseCount());
-		db.update(tableName, cv, "uid = ?", new String[] { obj.getUid() });
+		return db.update(tableName, cv, "uid = ?", new String[] { obj.getUid() }) == 1;
 	}
 
 	/**
@@ -88,12 +88,12 @@ public class CacheOrm {
 	 * 
 	 * @param obj
 	 */
-	public void delete(CacheObject obj) {
-		db.delete(tableName, "uid = ?", new String[] { obj.getUid() });
+	public boolean delete(CacheObject obj) {
+		return db.delete(tableName, "uid = ?", new String[] { obj.getUid() }) == 1;
 	}
 
 	/**
-	 * 删除一条记录
+	 * 通过URL查询
 	 * 
 	 * @param obj
 	 */
@@ -105,6 +105,26 @@ public class CacheOrm {
 			obj = getCacheObject(c);
 		}
 		return obj;
+	}
+
+	/**
+	 * 以指定的条件，按createTime排序，限制limit个结果
+	 * @param selection
+	 * @param selectionArgs
+	 * @param limit
+	 * @return
+	 */
+	public List<CacheObject> query(String selection, String[] selectionArgs,
+			String limit) {
+		List<CacheObject> objs = new ArrayList<CacheObject>();
+		Cursor c = db.query(tableName, null, selection, selectionArgs, null, null,
+				"createTime", limit);
+		while (c.moveToNext()) {
+			CacheObject obj = getCacheObject(c);
+			objs.add(obj);
+		}
+		c.close();
+		return objs;
 	}
 
 	/**
