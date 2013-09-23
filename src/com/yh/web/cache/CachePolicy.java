@@ -139,48 +139,21 @@ public class CachePolicy {
 	public static boolean isExpire(long createTime, long nowTime,
 			int cachePolicy) {
 		// 此处实现判断过期代码
+		boolean expire = false;
 		try {
 			CachePolicy cp = cachePolicys.get(cachePolicy);
 			Log.d("Expire", cachePolicy + " " + createTime + " " + nowTime
 					+ " " + (nowTime - createTime) + " " + cp.time + " "
 					+ cp.id);
-			// 如果只有时间的话就不用Calendar了
-			if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
-				return (nowTime - createTime > cp.time);
-			}
 
-			Calendar createCal = Calendar.getInstance();
-			createCal.setTimeInMillis(createTime);
-			Calendar nowCal = Calendar.getInstance();
-			nowCal.setTimeInMillis(nowTime);
+			// 获取是否过期
+			expire = judgeExpire(createTime, nowTime, cp);
 
-			// Log.d("time", createCal + " " + nowCal);
-			for (String pol : cp.policy) {
-				if (pol.equals("month")) {
-					if (nowCal.get(Calendar.MONTH)
-							- createCal.get(Calendar.MONTH) > cp.month) {
-						return true;
-					}
-				} else if (pol.equals("week")) {
-					if (nowCal.get(Calendar.WEDNESDAY)
-							- createCal.get(Calendar.WEDNESDAY) > cp.week) {
-						return true;
-					}
-				} else if (pol.equals("day")) {
-					if (nowCal.get(Calendar.DAY_OF_MONTH)
-							- createCal.get(Calendar.DAY_OF_MONTH) > cp.day) {
-						return true;
-					}
-				} else if (pol.equals("time")) {
-					if (nowTime - createTime > cp.time) {
-						return true;
-					}
-				}
-			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			Log.e("isExpire", e.getMessage());
+			expire = false;
 		}
-		return false;
+		return expire;
 	}
 
 	/**
@@ -201,16 +174,104 @@ public class CachePolicy {
 			String[] idtb = new String[2];
 			idtb[0] = String.valueOf(id);
 
-			long timeBefore = cachePolicys.get(id).getTime();
-			// 如果time为0则为了效率不判断，直接保留，后期可加上
-			if (timeBefore > 0) {
-				timeBefore = now - timeBefore;
-				idtb[1] = String.valueOf(timeBefore);
+			CachePolicy cp = cachePolicys.get(id);
+			// 获取当前id的最早未过期时间
+			long timeBefore = getBeforeTime(now, cp);
 
+			if (timeBefore > 0) {
+				idtb[1] = String.valueOf(timeBefore);
 				idTimeBefores.add(idtb);
 			}
 		}
 		return idTimeBefores;
+	}
+
+	private static boolean judgeExpire(long createTime, long nowTime,
+			CachePolicy cp) {
+		// 如果只有时间的话就不用Calendar了
+		if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
+			return (nowTime - createTime > cp.time);
+		}
+
+		Calendar createCal = Calendar.getInstance();
+		createCal.setTimeInMillis(createTime);
+		Calendar nowCal = Calendar.getInstance();
+		nowCal.setTimeInMillis(nowTime);
+
+		// Log.d("time", createCal + " " + nowCal);
+		for (String pol : cp.policy) {
+			if (pol.equals("month")) {
+				if (nowCal.get(Calendar.MONTH) - createCal.get(Calendar.MONTH) > cp.month) {
+					return true;
+				}
+			} else if (pol.equals("week")) {
+				if (nowCal.get(Calendar.WEEK_OF_YEAR)
+						- createCal.get(Calendar.WEDNESDAY) > cp.week) {
+					return true;
+				}
+			} else if (pol.equals("day")) {
+				if (nowCal.get(Calendar.DAY_OF_YEAR)
+						- createCal.get(Calendar.DAY_OF_MONTH) > cp.day) {
+					return true;
+				}
+			} else if (pol.equals("time")) {
+				if (nowTime - createTime > cp.time) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * 根据当前时间和规则获取最早未过期时间
+	 * 
+	 * @param now
+	 * @param cp
+	 * @return
+	 */
+	private static long getBeforeTime(long now, CachePolicy cp) {
+		long timeBefore = now;
+		if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
+			// 只有时间的话就不用Calendar对象了
+			timeBefore = now - cp.getTime();
+		} else {
+			// 根据日历判断月星期日
+			long tempTimeBefore = 0;
+			for (String pol : cp.policy) {
+				if (pol.equals("month")) {
+					Calendar nowCal = Calendar.getInstance();
+					nowCal.setTimeInMillis(now);
+					nowCal.add(Calendar.MONTH, 0 - cp.getMonth());
+					tempTimeBefore = nowCal.getTimeInMillis();
+					if (timeBefore > tempTimeBefore) {
+						timeBefore = tempTimeBefore;
+					}
+				} else if (pol.equals("week")) {
+					Calendar nowCal = Calendar.getInstance();
+					nowCal.setTimeInMillis(now);
+					nowCal.add(Calendar.WEEK_OF_YEAR, 0 - cp.getMonth());
+					tempTimeBefore = nowCal.getTimeInMillis();
+					if (timeBefore > tempTimeBefore) {
+						timeBefore = tempTimeBefore;
+					}
+				} else if (pol.equals("day")) {
+					Calendar nowCal = Calendar.getInstance();
+					nowCal.setTimeInMillis(now);
+					nowCal.add(Calendar.DAY_OF_YEAR, 0 - cp.getMonth());
+					tempTimeBefore = nowCal.getTimeInMillis();
+					if (timeBefore > tempTimeBefore) {
+						timeBefore = tempTimeBefore;
+					}
+				} else if (pol.equals("time")) {
+					tempTimeBefore = now - cp.getTime();
+					if (timeBefore > tempTimeBefore) {
+						timeBefore = tempTimeBefore;
+					}
+				}
+			}
+		}
+		return timeBefore;
 	}
 
 	public int getId() {
