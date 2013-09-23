@@ -76,7 +76,7 @@ public class ScheduleTask {
 				int i = 0;
 				while (runFlag) {
 					// 如果网络繁忙则咱不进行删除操作
-					if (!NetMonitor.isNetBuzy()) {
+					if (!NetMonitor.isNetBuzy() && !StatMonitor.isCPUBuzy()) {
 						start = System.currentTimeMillis();
 						try {
 							List<CacheObject> objs = ScheduleTask
@@ -89,7 +89,7 @@ public class ScheduleTask {
 						Log.i("DeleteTask", "delete cache use time : "
 								+ (end - start));
 					} else {
-						Log.d("DeleteTask", "Net is buzy, pass delete expire");
+						Log.d("DeleteTask", "Net or CPU is buzy, pass delete expire");
 					}
 
 					// 没删除十次缓存获取空文件夹的存在并删除

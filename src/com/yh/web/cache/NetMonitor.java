@@ -6,6 +6,11 @@ import java.io.FileReader;
 import java.io.IOException;
 import android.util.Log;
 
+/**
+ * 网络繁忙监控
+ * @author gudh
+ *
+ */
 public class NetMonitor {
 
 	// 系统流量文件
@@ -129,12 +134,11 @@ public class NetMonitor {
 		}
 
 		if (isNetBuzy) {
-			Log.w("NetInfo", "BDP Now True | " + netInfo[0] + "  " + netInfo[1]
+			Log.w("NetInfo", "Net Buzy | " + netInfo[0] + "  " + netInfo[1]
 					+ "  " + netInfo[2] + "  " + netInfo[3] + "  " + netInfo[4]);
 		} else {
-			Log.d("NetInfo", "BDP Now False | " + netInfo[0] + "  "
-					+ netInfo[1] + "  " + netInfo[2] + "  " + netInfo[3] + "  "
-					+ netInfo[4]);
+			Log.d("NetInfo", "Net Not Buzy | " + netInfo[0] + "  " + netInfo[1]
+					+ "  " + netInfo[2] + "  " + netInfo[3] + "  " + netInfo[4]);
 		}
 
 		return isNetBuzy;
