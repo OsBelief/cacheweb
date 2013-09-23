@@ -190,7 +190,7 @@ public class CachePolicy {
 	 */
 	public static List<String[]> getAllCacheIdBeforeTimes() {
 		// 现在时间
-		long now = System.currentTimeMillis() / 1000;
+		long now = System.currentTimeMillis();
 
 		// id和允许的最早创建时间
 		List<String[]> idTimeBefores = new ArrayList<String[]>(cacheIds.size());

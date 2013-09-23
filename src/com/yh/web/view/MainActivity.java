@@ -28,6 +28,7 @@ import com.yh.web.cache.CachePolicy;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.MIME;
 import com.yh.web.cache.NetMonitor;
+import com.yh.web.cache.ScheduleTask;
 
 public class MainActivity extends BaseActivity {
 
@@ -66,6 +67,8 @@ public class MainActivity extends BaseActivity {
 		CacheControl.initCache(this);
 		// 开始监控网络
 		NetMonitor.startJudge();
+		// 开始执行删除过期任务
+		ScheduleTask.initShedule(this);
 	}
 
 	/**
