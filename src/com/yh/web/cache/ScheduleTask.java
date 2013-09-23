@@ -2,6 +2,7 @@ package com.yh.web.cache;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import android.content.Context;
@@ -94,12 +95,14 @@ public class ScheduleTask {
 					// 没删除十次缓存获取空文件夹的存在并删除
 					if (++i >= 10 && !NetMonitor.isNetBuzy()) {
 						i = 0;
-						
+
 						start = System.currentTimeMillis();
 						try {
 							List<File> files = ScheduleTask
 									.scanEmptyFolders(CacheObject.rootPath);
-							ScheduleTask.deleteFolders(files);
+							Log.i("DeleteFolder",
+									"result "
+											+ ScheduleTask.deleteFolders(files));
 						} catch (Exception e) {
 							Log.e("DeleteTask", e.getMessage());
 						}
@@ -189,12 +192,13 @@ public class ScheduleTask {
 	 * @param files
 	 * @return
 	 */
-	private static boolean deleteFolders(List<File> files) {
+	public static boolean deleteFolders(List<File> files) {
 		int i = 0;
 		for (File f : files) {
 			if (f.exists()) {
 				if (f.delete()) {
 					i++;
+					Log.d("DeleteFolder", f.getAbsolutePath());
 				}
 			}
 		}
@@ -207,10 +211,39 @@ public class ScheduleTask {
 	 * @param path
 	 * @return
 	 */
-	private static List<File> scanEmptyFolders(String path) {
-		List<File> files = new ArrayList<File>();
+	public static List<File> scanEmptyFolders(String path) {
+		List<File> emptys = new ArrayList<File>();
 		// 算法实现
-		
-		return files;
+		File root = new File(path);
+		// 存储为遍历的文件夹
+		LinkedList<File> list = new LinkedList<File>();
+		File files[] = root.listFiles();
+		for (int i = 0; i < files.length; i++) {
+			// System.out.println(files[i].getAbsolutePath());
+			if (files[i].isDirectory()) {
+				list.add(files[i]);
+			}
+		}
+
+		File tmp;
+		while (!list.isEmpty()) {
+			tmp = list.removeLast();
+			// System.out.println(tmp.getAbsolutePath());
+			if (tmp.isDirectory()) {
+				files = tmp.listFiles();
+				if (files == null || files.length == 0) {
+					emptys.add(tmp);
+					continue;
+				}
+				for (int i = 0; i < files.length; i++) {
+					// System.out.println(files[i].getAbsolutePath());
+					if (files[i].isDirectory()) {
+						list.add(files[i]);
+					}
+				}
+			}
+		}
+		Log.d("GetEmptyFoler", "empty folder count : " + emptys.size());
+		return emptys;
 	}
 }
