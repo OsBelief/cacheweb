@@ -20,14 +20,14 @@ public class UpdateTask {
 	// 配置文件地址
 	private static String configUrl = "http://122.49.34.20:18167/u/config.txt";
 
-	private static long defaultSleepTime = 60000;
-	private static long sleepTime = 60000;
+	private static long defaultSleepTime = 600000;
+	private static long sleepTime = 600000;
 	private static boolean runFlag = false;
 	private static HttpClient getClient;
 	private static Context context;
 
 	/**
-	 * 以默认参数初始化，每次延时60s
+	 * 以默认参数初始化，每次延时600s
 	 * 
 	 * @param context
 	 */
@@ -82,7 +82,8 @@ public class UpdateTask {
 						Log.i("UpdateTask", "update use time : "
 								+ (end - start));
 					} else {
-						Log.d("UpdateTask", "Net or CPU is buzy, pass update");
+						Log.d("UpdateTask",
+								"Net or CPU is buzy, pass update config");
 					}
 
 					try {
@@ -114,14 +115,16 @@ public class UpdateTask {
 		List<String[]> needUpdate = getNeedUpdate();
 		// 是否含有sleepTime
 		boolean hasSleep = false;
-		for (String[] nameUrl : needUpdate) {
-			// 获取内容
-			String content = getStringFromUrl(nameUrl[1]);
-			if (content == null) {
-				continue;
-			}
 
+		// 存储删除缓存的where语句
+		List<String> delWheres = new ArrayList<String>(needUpdate.size());
+
+		for (String[] nameUrl : needUpdate) {
 			if (nameUrl[0].equals(CacheFilter.FILTER_NAME)) {
+				String content = getStringFromUrl(nameUrl[1]);
+				if (content == null) {
+					continue;
+				}
 				// 更新成功后写入文件
 				if (CacheFilter.initFilter(content)) {
 					IOUtil.writeInternalFile(context, nameUrl[0],
@@ -131,6 +134,10 @@ public class UpdateTask {
 					Log.i("UpdateConfig", "update " + nameUrl[0] + " fail");
 				}
 			} else if (nameUrl[0].equals(CachePolicy.POLICY_NAME)) {
+				String content = getStringFromUrl(nameUrl[1]);
+				if (content == null) {
+					continue;
+				}
 				// 更新成功后写入文件
 				if (CachePolicy.initPolicy(content)) {
 					IOUtil.writeInternalFile(context, nameUrl[0],
@@ -140,6 +147,10 @@ public class UpdateTask {
 					Log.i("UpdateConfig", "update " + nameUrl[0] + " fail");
 				}
 			} else if (nameUrl[0].equals(MIME.MIME_NAME)) {
+				String content = getStringFromUrl(nameUrl[1]);
+				if (content == null) {
+					continue;
+				}
 				// 更新成功后写入文件
 				if (MIME.initMIME(content)) {
 					IOUtil.writeInternalFile(context, nameUrl[0],
@@ -156,6 +167,10 @@ public class UpdateTask {
 							+ nameUrl[1]);
 				} catch (Exception e) {
 				}
+			} else if (nameUrl[0].equals("delWhere")) {
+				// 删除缓存
+				delWheres.add(nameUrl[1]);
+				Log.i("UpdateConfig", "delWhere | " + nameUrl[1]);
 			} else {
 				Log.w("UpdateConfig", "not fount nameUrl " + nameUrl[0] + " "
 						+ nameUrl[1]);
@@ -163,6 +178,18 @@ public class UpdateTask {
 		}
 		if (!hasSleep) {
 			sleepTime = defaultSleepTime;
+		}
+
+		// 删除指定URL的缓存
+		if (delWheres.size() > 0) {
+			boolean delRes = true;
+			List<CacheObject> delObjs = DeleteTask
+					.getNeedDeleteUrlCache(delWheres);
+			if (delObjs.size() > 0) {
+				delRes = DeleteTask.deleteExpireCache(delObjs);
+			}
+			Log.i("DelUrls",
+					"delete url " + delRes + " | count " + delObjs.size());
 		}
 
 		return res;
@@ -183,7 +210,7 @@ public class UpdateTask {
 				if (line.startsWith("#") || line.trim().equals("")) {
 					continue;
 				}
-				String infos[] = line.split(" +");
+				String infos[] = line.split("=");
 				if (infos.length != 2) {
 					continue;
 				}
@@ -224,6 +251,7 @@ public class UpdateTask {
 			}
 		} catch (Exception e) {
 			Log.v("UpdateConfig", e.getMessage());
+			e.printStackTrace();
 		}
 		return result;
 	}

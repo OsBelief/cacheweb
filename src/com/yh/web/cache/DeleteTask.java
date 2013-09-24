@@ -131,7 +131,7 @@ public class DeleteTask {
 	/**
 	 * 删除过期的缓存信息
 	 */
-	private static boolean deleteExpireCache(List<CacheObject> objs) {
+	public static boolean deleteExpireCache(List<CacheObject> objs) {
 		int i = 0;
 		for (CacheObject obj : objs) {
 			File file = new File(obj.getFileName());
@@ -156,6 +156,23 @@ public class DeleteTask {
 		}
 		// 删除数量是否为objs的数量
 		return i == objs.size();
+	}
+	
+	/**
+	 * 更加URL获取需要删除的缓存对象
+	 * @param delUrls
+	 * @return
+	 */
+	public static List<CacheObject> getNeedDeleteUrlCache(List<String> delUrlWheres){
+		ArrayList<CacheObject> list = new ArrayList<CacheObject>();
+		List<CacheObject> newList;
+		for(String where : delUrlWheres){
+			String sql = CacheOrm.baseQuery + where;
+			newList = orm.query(sql);
+			list.addAll(newList);
+			Log.d("getNeedDeleteUrlCache", sql + " | this count : " + newList.size() + " all count :" + list.size());
+		}
+		return list;
 	}
 
 	/**

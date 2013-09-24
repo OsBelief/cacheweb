@@ -12,7 +12,8 @@ import com.yh.web.cache.CacheObject;
 
 public class CacheOrm {
 
-	private String tableName = "cacheinfo";
+	public final static String tableName = "cacheinfo";
+	public final static String baseQuery = "select * from cacheinfo ";
 
 	private DBHelper helper;
 	private SQLiteDatabase db;
