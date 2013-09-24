@@ -63,9 +63,9 @@ public class CachePolicy {
 
 	@SuppressWarnings("unchecked")
 	public static boolean initPolicy(String yamltxt) {
-		cacheMatchs = new ArrayList<CacheMatch>();
-		cacheIds = new ArrayList<Integer>();
-		cachePolicys = new SparseArray<CachePolicy>();
+		ArrayList<CacheMatch> cacheMatchsNew = new ArrayList<CacheMatch>();
+		ArrayList<Integer> cacheIdsNew = new ArrayList<Integer>();
+		SparseArray<CachePolicy> cachePolicysNew = new SparseArray<CachePolicy>();
 
 		boolean res = false;
 		Yaml yaml = new Yaml();
@@ -81,8 +81,8 @@ public class CachePolicy {
 				Integer id = (Integer) pol.get("id");
 				if (id != null) {
 					CachePolicy pObj = new CachePolicy(id);
-					cachePolicys.put(id, pObj);
-					cacheIds.add(id);
+					cachePolicysNew.put(id, pObj);
+					cacheIdsNew.add(id);
 
 					// 获取对象的信息
 					List<String> fields = (List<String>) pol.get("policy");
@@ -96,6 +96,13 @@ public class CachePolicy {
 					}
 				}
 			}
+			if(cacheIdsNew.size() > 0){
+				// 切换
+				cachePolicys = cachePolicysNew;
+				cachePolicysNew = null;
+				cacheIds = cacheIdsNew;
+				cacheIdsNew = null;
+			}
 			// 解析cacheMatch
 			List<HashMap<String, Object>> mats = (List<HashMap<String, Object>>) obj
 					.get("cacheMatch");
@@ -104,7 +111,7 @@ public class CachePolicy {
 				if (id != null) {
 					// 新建对象放入map，CacheMatch三个匹配属性按顺序只取一个
 					CacheMatch mObj = new CacheMatch(id);
-					cacheMatchs.add(mObj);
+					cacheMatchsNew.add(mObj);
 					if (mat.containsKey("type")) {
 						mObj.type = (String) mat.get("type");
 					} else if (mat.containsKey("mime")) {
@@ -113,6 +120,11 @@ public class CachePolicy {
 						mObj.url = (String) mat.get("url");
 					}
 				}
+			}
+			if(cacheMatchsNew.size() > 0){
+				// 切换
+				cacheMatchs = cacheMatchsNew;
+				cacheMatchsNew = null;
 			}
 			res = true;
 		} catch (Exception e) {

@@ -146,7 +146,7 @@ public class HttpUtil {
 			}
 		}
 		// 否则为HTML
-		return MIME.defaultType;
+		return MIME.DEFAULT_TYPE;
 	}
 
 	/**

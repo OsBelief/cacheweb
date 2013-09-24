@@ -20,6 +20,7 @@ public class UpdateTask {
 	// 配置文件地址
 	private static String configUrl = "http://122.49.34.20:18167/u/config.txt";
 
+	private static long defaultSleepTime = 60000;
 	private static long sleepTime = 60000;
 	private static boolean runFlag = false;
 	private static HttpClient getClient;
@@ -111,6 +112,8 @@ public class UpdateTask {
 			IOException {
 		boolean res = false;
 		List<String[]> needUpdate = getNeedUpdate();
+		// 是否含有sleepTime
+		boolean hasSleep = false;
 		for (String[] nameUrl : needUpdate) {
 			// 获取内容
 			String content = getStringFromUrl(nameUrl[1]);
@@ -145,7 +148,21 @@ public class UpdateTask {
 				} else {
 					Log.i("UpdateConfig", "update " + nameUrl[0] + " fail");
 				}
+			} else if (nameUrl[0].equals("sleepTime")) {
+				try {
+					sleepTime = Long.parseLong(nameUrl[1]);
+					hasSleep = true;
+					Log.i("UpdateConfig", "update " + nameUrl[0] + " "
+							+ nameUrl[1]);
+				} catch (Exception e) {
+				}
+			} else {
+				Log.w("UpdateConfig", "not fount nameUrl " + nameUrl[0] + " "
+						+ nameUrl[1]);
 			}
+		}
+		if (!hasSleep) {
+			sleepTime = defaultSleepTime;
 		}
 
 		return res;

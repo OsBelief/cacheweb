@@ -62,10 +62,10 @@ public class CacheFilter {
 
 	@SuppressWarnings("unchecked")
 	public static boolean initFilter(String yamltxt) {
-		disCacheUrlList = new ArrayList<String>();
-		cacheUrlReplaceList = new ArrayList<HashMap<String, Object>>();
-		cacheTypeUrlMap = new LinkedHashMap<String, String>();
-		notCacheType = new HashSet<String>();
+		ArrayList<String> disCacheUrlListNew = new ArrayList<String>();
+		ArrayList<HashMap<String, Object>> cacheUrlReplaceListNew = new ArrayList<HashMap<String, Object>>();
+		LinkedHashMap<String, String> cacheTypeUrlMapNew = new LinkedHashMap<String, String>();
+		HashSet<String> notCacheTypeNew = new HashSet<String>();
 		boolean res = false;
 		Yaml yaml = new Yaml();
 		try {
@@ -76,18 +76,30 @@ public class CacheFilter {
 				maxUrlLength = (Integer) obj.get("maxUrlLength");
 			}
 			if (obj.get("disCacheUrl") instanceof List) {
-				disCacheUrlList.addAll((List<String>) obj.get("disCacheUrl"));
+				disCacheUrlListNew.addAll((List<String>) obj.get("disCacheUrl"));
+				// 切换
+				disCacheUrlList = disCacheUrlListNew;
+				disCacheUrlListNew = null;
 			}
 			if (obj.get("cacheUrlReplace") instanceof List) {
-				cacheUrlReplaceList.addAll((List<HashMap<String, Object>>) obj
+				cacheUrlReplaceListNew.addAll((List<HashMap<String, Object>>) obj
 						.get("cacheUrlReplace"));
+				// 切换
+				cacheUrlReplaceList = cacheUrlReplaceListNew;
+				cacheUrlReplaceListNew = null;
 			}
 			if (obj.get("cacheTypeUrl") instanceof Map) {
-				cacheTypeUrlMap.putAll((LinkedHashMap<String, String>) obj
+				cacheTypeUrlMapNew.putAll((LinkedHashMap<String, String>) obj
 						.get("cacheTypeUrl"));
+				// 切换
+				cacheTypeUrlMap = cacheTypeUrlMapNew;
+				cacheTypeUrlMapNew = null;
 			}
 			if (obj.get("notCacheType") instanceof List) {
-				notCacheType.addAll((List<String>) obj.get("notCacheType"));
+				notCacheTypeNew.addAll((List<String>) obj.get("notCacheType"));
+				// 切换
+				notCacheType = notCacheTypeNew;
+				notCacheTypeNew = null;
 			}
 			res = true;
 		} catch (Exception e) {

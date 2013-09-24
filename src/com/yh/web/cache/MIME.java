@@ -19,10 +19,10 @@ public class MIME {
 	/**
 	 * 所有的MIME信息配置文件
 	 */
-	private static HashMap<String, String> mimeMaps = new HashMap<String, String>();
+	private static HashMap<String, String> mimeMaps;
 
-	public final static String defaultType = "html";
-	public final static String noneType = "none";
+	public final static String DEFAULT_TYPE = "html";
+	public final static String NONE_TYPE = "none";
 
 	/**
 	 * 初始化MIME信息，从配置文件中读取
@@ -50,11 +50,17 @@ public class MIME {
 		boolean res = false;
 		try {
 			String lines[] = txt.split("\r\n");
+			HashMap<String, String> mimeMapsNew = new HashMap<String, String>(lines.length);
 			for (String line : lines) {
 				String[] infos = line.split("\t");
 				if (infos.length == 2) {
-					mimeMaps.put(infos[0], infos[1]);
+					mimeMapsNew.put(infos[0], infos[1]);
 				}
+			}
+			if(mimeMapsNew.size() > 0){
+				// 切换
+				mimeMaps = mimeMapsNew;
+				mimeMapsNew = null;
 			}
 			res = true;
 		} catch (Exception e) {
