@@ -62,7 +62,7 @@ public class IOUtil {
 	 * @param fileName
 	 * @param bytes
 	 */
-	public static void writeInternalFile(Activity act, String fileName,
+	public static void writeInternalFile(Context act, String fileName,
 			byte[] bytes) {
 		try {
 			FileOutputStream outputStream = act.openFileOutput(fileName,
@@ -82,13 +82,11 @@ public class IOUtil {
 	 * @return
 	 */
 	public static InputStream readInternalFile(Activity act, String fileName) {
-		if (new File(fileName).exists()) {
-			try {
-				FileInputStream os = act.openFileInput(fileName);
-				return os;
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+		try {
+			FileInputStream os = act.openFileInput(fileName);
+			return os;
+		} catch (FileNotFoundException e) {
+			Log.e("readInternalFile", e.getMessage());
 		}
 		return null;
 	}
@@ -197,14 +195,27 @@ public class IOUtil {
 	}
 
 	/**
-	 * 从流中读取文本
+	 * 以默认utf-8编码读取数据
 	 * 
 	 * @param in
 	 * @return
 	 * @throws IOException
 	 */
 	public static String readStream(InputStream in) throws IOException {
-		InputStreamReader reader = new InputStreamReader(in, "utf-8");
+		return readStream(in, "utf-8");
+	}
+
+	/**
+	 * 从流中读取文本
+	 * 
+	 * @param in
+	 * @param charSet
+	 * @return
+	 * @throws IOException
+	 */
+	public static String readStream(InputStream in, String charSet)
+			throws IOException {
+		InputStreamReader reader = new InputStreamReader(in, charSet);
 		StringBuffer sb = new StringBuffer();
 		int len = -1;
 		char[] buf = new char[2048];

@@ -2,6 +2,7 @@ package com.yh.web.cache;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.Map;
 
 import org.yaml.snakeyaml.Yaml;
 
+import android.app.Activity;
 import android.content.res.AssetManager;
 import android.util.Log;
 
@@ -21,8 +23,8 @@ import android.util.Log;
  */
 public class CacheFilter {
 
-	public final static String filterName = "filter.yaml";
-	public final static String configName = "config.yaml";
+	public final static String FILTER_NAME = "filter.yaml";
+	public final static String CONFIG_NAME = "config.yaml";
 
 	// 最大允许的URL长度
 	public static int maxUrlLength = 200;
@@ -35,26 +37,38 @@ public class CacheFilter {
 	// 不缓存的类型
 	public static HashSet<String> notCacheType;
 
-	@SuppressWarnings("unchecked")
 	/**
 	 * 初始化过滤规则
 	 */
-	public static void initFilter(AssetManager assets) {
-		if (disCacheUrlList == null) {
-			disCacheUrlList = new ArrayList<String>();
+	public static void initFilter(Activity act) {
+
+		try {
+			// 先从外部读文件，如果没有，读取asset的配置
+			InputStream in = IOUtil.readInternalFile(act, FILTER_NAME);
+			if(in == null){
+				in = act.getAssets().open(FILTER_NAME);
+				Log.i("initFilter", "init from asset");
+			} else{
+				Log.i("initFilter", "init from internal file");
+			}
+			String yamltxt = IOUtil.readStream(in).trim();
+			initFilter(yamltxt);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-		if (cacheUrlReplaceList == null) {
-			cacheUrlReplaceList = new ArrayList<HashMap<String, Object>>();
-		}
-		if (cacheTypeUrlMap == null) {
-			cacheTypeUrlMap = new LinkedHashMap<String, String>();
-		}
-		if (notCacheType == null) {
-			notCacheType = new HashSet<String>();
-		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static boolean initFilter(String yamltxt) {
+		disCacheUrlList = new ArrayList<String>();
+		cacheUrlReplaceList = new ArrayList<HashMap<String, Object>>();
+		cacheTypeUrlMap = new LinkedHashMap<String, String>();
+		notCacheType = new HashSet<String>();
+		boolean res = false;
 		Yaml yaml = new Yaml();
 		try {
-			String yamltxt = IOUtil.readStream(assets.open(filterName)).trim();
 			Log.d("initFilter", yamltxt);
 			LinkedHashMap<String, Object> obj = (LinkedHashMap<String, Object>) yaml
 					.load(yamltxt);
@@ -75,11 +89,11 @@ public class CacheFilter {
 			if (obj.get("notCacheType") instanceof List) {
 				notCacheType.addAll((List<String>) obj.get("notCacheType"));
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+			res = true;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return res;
 	}
 
 	/**
@@ -88,7 +102,7 @@ public class CacheFilter {
 	public static void initConfig(AssetManager assets) {
 		Yaml yaml = new Yaml();
 		try {
-			String yamltxt = IOUtil.readStream(assets.open(configName)).trim();
+			String yamltxt = IOUtil.readStream(assets.open(CONFIG_NAME)).trim();
 			@SuppressWarnings("unchecked")
 			LinkedHashMap<String, Object> obj = (LinkedHashMap<String, Object>) yaml
 					.load(yamltxt);

@@ -25,11 +25,12 @@ import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
 import com.yh.web.cache.CachePolicy;
+import com.yh.web.cache.DeleteTask;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.MIME;
 import com.yh.web.cache.NetMonitor;
-import com.yh.web.cache.ScheduleTask;
 import com.yh.web.cache.StatMonitor;
+import com.yh.web.cache.UpdateTask;
 
 public class MainActivity extends BaseActivity {
 
@@ -57,11 +58,11 @@ public class MainActivity extends BaseActivity {
 		setWebView(web);
 		
 		// 初始化MIME
-		MIME.initMIME(this.getAssets());
+		MIME.initMIME(this);
 		// 初始化过滤器
-		CacheFilter.initFilter(this.getAssets());
+		CacheFilter.initFilter(this);
 		// 初始化缓存策略
-		CachePolicy.initPolicy(this.getAssets());
+		CachePolicy.initPolicy(this);
 		// 初始化AsyncHttpClient
 		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
 		// 初始化缓存
@@ -71,7 +72,9 @@ public class MainActivity extends BaseActivity {
 		// 开始CPU监控
 		StatMonitor.startJudge();
 		// 开始执行删除过期任务
-		ScheduleTask.initShedule(this);
+		DeleteTask.initShedule(this);
+		// 开始执行更新配置任务
+		UpdateTask.initShedule(this);
 	}
 
 	/**

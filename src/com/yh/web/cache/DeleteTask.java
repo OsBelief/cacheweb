@@ -17,7 +17,7 @@ import com.yh.web.cache.db.CacheOrm;
  * 
  *         执行定时删除过期数据等
  */
-public class ScheduleTask {
+public class DeleteTask {
 
 	private static CacheOrm orm = null;
 	private static int everyDelCount = 20;
@@ -50,10 +50,10 @@ public class ScheduleTask {
 		orm = new CacheOrm(context);
 
 		if (everyDelCount >= 1) {
-			ScheduleTask.everyDelCount = everyDelCount;
+			DeleteTask.everyDelCount = everyDelCount;
 		}
 		if (sleepTime >= 1000) {
-			ScheduleTask.sleepTime = sleepTime;
+			DeleteTask.sleepTime = sleepTime;
 		}
 		// 开始任务
 		startDeleteTask();
@@ -79,9 +79,9 @@ public class ScheduleTask {
 					if (!NetMonitor.isNetBuzy() && !StatMonitor.isCPUBuzy()) {
 						start = System.currentTimeMillis();
 						try {
-							List<CacheObject> objs = ScheduleTask
+							List<CacheObject> objs = DeleteTask
 									.getExpireCache(everyDelCount);
-							ScheduleTask.deleteExpireCache(objs);
+							DeleteTask.deleteExpireCache(objs);
 						} catch (Exception e) {
 							Log.e("DeleteTask", e.getMessage());
 						}
@@ -98,11 +98,11 @@ public class ScheduleTask {
 
 						start = System.currentTimeMillis();
 						try {
-							List<File> files = ScheduleTask
+							List<File> files = DeleteTask
 									.scanEmptyFolders(CacheObject.rootPath);
 							Log.i("DeleteFolder",
 									"result "
-											+ ScheduleTask.deleteFolders(files));
+											+ DeleteTask.deleteFolders(files));
 						} catch (Exception e) {
 							Log.e("DeleteTask", e.getMessage());
 						}
@@ -112,7 +112,7 @@ public class ScheduleTask {
 					}
 
 					try {
-						Thread.sleep(ScheduleTask.sleepTime);
+						Thread.sleep(DeleteTask.sleepTime);
 					} catch (InterruptedException e) {
 						e.printStackTrace();
 					}

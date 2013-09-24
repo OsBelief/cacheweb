@@ -4,7 +4,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 
-import android.content.res.AssetManager;
+import android.app.Activity;
+import android.util.Log;
 
 /**
  * @author gudh
@@ -13,7 +14,7 @@ import android.content.res.AssetManager;
  */
 public class MIME {
 
-	private static String mimesFileName = "mimes.txt";
+	public final static String MIME_NAME = "mimes.txt";
 
 	/**
 	 * 所有的MIME信息配置文件
@@ -28,24 +29,38 @@ public class MIME {
 	 * 
 	 * @param act
 	 */
-	public static void initMIME(AssetManager assets) {
+	public static void initMIME(Activity act) {
 		try {
-			InputStream in = assets.open(mimesFileName);
-			String txt;
-			String lines[];
-			if (in != null) {
-				txt = IOUtil.readStream(in);
-				lines = txt.split("\r\n");
-				for (String line : lines) {
-					String[] infos = line.split("\t");
-					if (infos.length == 2) {
-						mimeMaps.put(infos[0], infos[1]);
-					}
-				}
+			// 先从外部读文件，如果没有，读取asset的配置
+			InputStream in = IOUtil.readInternalFile(act, MIME_NAME);
+			if (in == null) {
+				in = act.getAssets().open(MIME_NAME);
+				Log.i("initMIME", "init from asset");
+			} else{
+				Log.i("initMIME", "init from internal file");
 			}
+			String txt = IOUtil.readStream(in).trim();
+			initMIME(txt);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	public static boolean initMIME(String txt) {
+		boolean res = false;
+		try {
+			String lines[] = txt.split("\r\n");
+			for (String line : lines) {
+				String[] infos = line.split("\t");
+				if (infos.length == 2) {
+					mimeMaps.put(infos[0], infos[1]);
+				}
+			}
+			res = true;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return res;
 	}
 
 	/**

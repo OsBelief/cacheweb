@@ -1,7 +1,7 @@
 package com.yh.web.cache;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.yaml.snakeyaml.Yaml;
 
-import android.content.res.AssetManager;
+import android.app.Activity;
 import android.util.Log;
 import android.util.SparseArray;
 
@@ -20,18 +20,18 @@ import android.util.SparseArray;
  */
 public class CachePolicy {
 
-	private static String policyFileName = "policy.yaml";
+	public final static String POLICY_NAME = "policy.yaml";
 
 	public final static int defaultPolicy = 0;
 
 	// 存储所有的缓存匹配规则
-	private static List<CacheMatch> cacheMatchs = new ArrayList<CacheMatch>();
+	private static List<CacheMatch> cacheMatchs;
 
 	// 缓存策略的ID集
-	private static List<Integer> cacheIds = new ArrayList<Integer>();
+	private static List<Integer> cacheIds;
 
 	// 存储所有缓存策略
-	private static SparseArray<CachePolicy> cachePolicys = new SparseArray<CachePolicy>();
+	private static SparseArray<CachePolicy> cachePolicys;
 
 	private int id;
 	private String[] policy;
@@ -44,12 +44,32 @@ public class CachePolicy {
 		this.id = id;
 	}
 
+	public static void initPolicy(Activity act) {
+		try {
+			// 先从外部读文件，如果没有，读取asset的配置
+			InputStream in = IOUtil.readInternalFile(act, POLICY_NAME);
+			if (in == null) {
+				in = act.getAssets().open(POLICY_NAME);
+				Log.i("initPolicy", "init from asset");
+			} else{
+				Log.i("initPolicy", "init from internal file");
+			}
+			String yamltxt = IOUtil.readStream(in).trim();
+			initPolicy(yamltxt);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+
 	@SuppressWarnings("unchecked")
-	public static void initPolicy(AssetManager assets) {
+	public static boolean initPolicy(String yamltxt) {
+		cacheMatchs = new ArrayList<CacheMatch>();
+		cacheIds = new ArrayList<Integer>();
+		cachePolicys = new SparseArray<CachePolicy>();
+
+		boolean res = false;
 		Yaml yaml = new Yaml();
 		try {
-			String yamltxt = IOUtil.readStream(assets.open(policyFileName))
-					.trim();
 			Log.d("initPolicy", yamltxt);
 
 			HashMap<String, Object> obj = (HashMap<String, Object>) yaml
@@ -94,11 +114,11 @@ public class CachePolicy {
 					}
 				}
 			}
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
+			res = true;
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		return res;
 	}
 
 	/**
