@@ -36,6 +36,8 @@ public class CacheFilter {
 	public static LinkedHashMap<String, String> cacheTypeUrlMap;
 	// 不缓存的类型
 	public static HashSet<String> notCacheType;
+	// 对指定host的不缓存
+	public static List<HashMap<String, Object>> hostDisCacheTypeList;
 
 	/**
 	 * 初始化过滤规则
@@ -45,10 +47,10 @@ public class CacheFilter {
 		try {
 			// 先从外部读文件，如果没有，读取asset的配置
 			InputStream in = IOUtil.readInternalFile(act, FILTER_NAME);
-			if(in == null){
+			if (in == null) {
 				in = act.getAssets().open(FILTER_NAME);
 				Log.i("initFilter", "init from asset");
-			} else{
+			} else {
 				Log.i("initFilter", "init from internal file");
 			}
 			String yamltxt = IOUtil.readStream(in).trim();
@@ -66,6 +68,8 @@ public class CacheFilter {
 		ArrayList<HashMap<String, Object>> cacheUrlReplaceListNew = new ArrayList<HashMap<String, Object>>();
 		LinkedHashMap<String, String> cacheTypeUrlMapNew = new LinkedHashMap<String, String>();
 		HashSet<String> notCacheTypeNew = new HashSet<String>();
+		List<HashMap<String, Object>> hostDisCacheTypeNew = new ArrayList<HashMap<String, Object>>();
+
 		boolean res = false;
 		Yaml yaml = new Yaml();
 		try {
@@ -76,14 +80,16 @@ public class CacheFilter {
 				maxUrlLength = (Integer) obj.get("maxUrlLength");
 			}
 			if (obj.get("disCacheUrl") instanceof List) {
-				disCacheUrlListNew.addAll((List<String>) obj.get("disCacheUrl"));
+				disCacheUrlListNew
+						.addAll((List<String>) obj.get("disCacheUrl"));
 				// 切换
 				disCacheUrlList = disCacheUrlListNew;
 				disCacheUrlListNew = null;
 			}
 			if (obj.get("cacheUrlReplace") instanceof List) {
-				cacheUrlReplaceListNew.addAll((List<HashMap<String, Object>>) obj
-						.get("cacheUrlReplace"));
+				cacheUrlReplaceListNew
+						.addAll((List<HashMap<String, Object>>) obj
+								.get("cacheUrlReplace"));
 				// 切换
 				cacheUrlReplaceList = cacheUrlReplaceListNew;
 				cacheUrlReplaceListNew = null;
@@ -100,6 +106,13 @@ public class CacheFilter {
 				// 切换
 				notCacheType = notCacheTypeNew;
 				notCacheTypeNew = null;
+			}
+			if (obj.get("hostDisCacheType") instanceof List) {
+				hostDisCacheTypeNew.addAll((List<HashMap<String, Object>>) obj
+						.get("hostDisCacheType"));
+				// 切换
+				hostDisCacheTypeList = hostDisCacheTypeNew;
+				hostDisCacheTypeNew = null;
 			}
 			res = true;
 		} catch (Exception e) {
@@ -125,5 +138,27 @@ public class CacheFilter {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+
+	/**
+	 * 判断是否能通过HOST的过滤
+	 * @param obj
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static boolean passHostFilter(CacheObject obj) {
+		boolean res = true;
+		out: for (HashMap<String, Object> hostDisCacheType : hostDisCacheTypeList) {
+			if (obj.getHost().equals(hostDisCacheType.get("host"))) {
+				for (String type : (ArrayList<String>) hostDisCacheType
+						.get("types")) {
+					if (obj.getType().equals(type)) {
+						res = false;
+						break out;
+					}
+				}
+			}
+		}
+		return res;
 	}
 }

@@ -109,11 +109,9 @@ public class StatMonitor {
 		if (cpuBuzy) {
 			Log.w("StatInfo",
 					new StringBuffer().append("CPU Buzy | ").append(cpu)
-							.append("  ").append(cpuLast[0]).append("/")
-							.append(cpuLast[1]).append("  ")
-							.append(statInfo[0]).append("/")
-							.append(statInfo[1]).append(" ")
-							.append((now - lastTime)).toString());
+							.append(" ").append(statInfo[0] - cpuLast[0])
+							.append(" ").append(statInfo[1] - cpuLast[1])
+							.append(" ").append(now - lastTime).toString());
 		} else {
 			Log.d("StatInfo", new StringBuffer().append("CPU Not Buzy | ")
 					.append(cpu).append(" ").append(statInfo[0] - cpuLast[0])

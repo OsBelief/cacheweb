@@ -18,8 +18,9 @@ disCacheUrl:
   - .*/cnadsmart/.*
   # 易查统计
   - ^http://tbook.yicha.cn/tb/tj.gif.*
-  # 评论系统
+  # 评论登录系统
   - ^http://comment.yicha.cn/.*
+  - ^http://passport.yicha.cn.*
   - ^http://i.yicha.cn/ti/newrec.html$
 
 # URL地址替换
@@ -56,4 +57,11 @@ notCacheType:
   - doc
   - xls
   - mp3
+
+# 对指定Host的指定类型不缓存
+hostDisCacheType:
+  - host : fuli.yicha.cn
+    types :
+      - html
+
 

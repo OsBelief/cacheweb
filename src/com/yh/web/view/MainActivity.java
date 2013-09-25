@@ -27,6 +27,7 @@ import com.yh.web.cache.CacheObject;
 import com.yh.web.cache.CachePolicy;
 import com.yh.web.cache.DeleteTask;
 import com.yh.web.cache.HttpUtil;
+import com.yh.web.cache.IOUtil;
 import com.yh.web.cache.MIME;
 import com.yh.web.cache.NetMonitor;
 import com.yh.web.cache.StatMonitor;
@@ -39,6 +40,18 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
+		// 第一次启动时将所有配置文件删除
+		if(IOUtil.readBooleanKeyValue(this, "FirstLaunch", true)){
+			this.deleteFile(CacheFilter.CONFIG_NAME);
+			this.deleteFile(CacheFilter.FILTER_NAME);
+			this.deleteFile(CachePolicy.POLICY_NAME);
+			this.deleteFile(MIME.MIME_NAME);
+			IOUtil.writeBooleanKeyValue(this, "FirstLaunch", false);
+			Log.i("OnCreate", "application is first launch, delete the config file");
+		} else{
+			Log.i("OnCreate", "application is not first launch");
+		}
+		
 		// 添加事件，点击GO的时候自动调用GoBtn方法跳到指定URL
 		EditText uText = (EditText) findViewById(R.id.uText);
 		// 安装回车自动加载

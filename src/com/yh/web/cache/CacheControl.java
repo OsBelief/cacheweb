@@ -44,17 +44,18 @@ public class CacheControl {
 			// 如果转换的URL为null，则表示不需要缓存
 			return null;
 		}
+
+		boolean fromCache = true;
 		// 查询数据库是否有缓存
 		CacheObject obj = orm.queryByUrl(url);
 		if (obj == null) {
 			obj = new CacheObject(url);
-			Log.i("getResource",
-					"New Fetch | " + obj.getType() + " " + obj.getMime()
-							+ " | " + url);
-		} else {
-			Log.i("getResource",
-					"From Cache | " + obj.getType() + " " + obj.getMime()
-							+ " | " + url);
+			fromCache = false;
+		}
+		if (!CacheFilter.passHostFilter(obj)) {
+			Log.i("getResource", "DisCache host type url | " + urlb);
+			// 如果转换的URL为null，则表示不需要缓存
+			return null;
 		}
 
 		WebResourceResponse res = null;
@@ -78,6 +79,15 @@ public class CacheControl {
 
 		}
 
+		if (fromCache) {
+			Log.i("getResource",
+					"From Cache | " + obj.getType() + " " + obj.getMime()
+							+ " | " + url);
+		} else {
+			Log.i("getResource",
+					"New Fetch | " + obj.getType() + " " + obj.getMime()
+							+ " | " + url);
+		}
 		return res;
 	}
 

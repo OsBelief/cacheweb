@@ -31,8 +31,9 @@ public class IOUtil {
 	/**
 	 * 写KeyValue数据库
 	 * 
-	 * @param fileName
-	 * @param os
+	 * @param act
+	 * @param key
+	 * @param value
 	 */
 	public static void writeKeyValue(Activity act, String key, String value) {
 		SharedPreferences sharedPref = act.getPreferences(Context.MODE_PRIVATE);
@@ -53,6 +54,35 @@ public class IOUtil {
 			String defaultValue) {
 		SharedPreferences sharedPref = act.getPreferences(Context.MODE_PRIVATE);
 		return sharedPref.getString(id, defaultValue);
+	}
+
+	/**
+	 * 写boolean值到KeyValue数据库
+	 * 
+	 * @param act
+	 * @param key
+	 * @param value
+	 */
+	public static void writeBooleanKeyValue(Activity act, String key,
+			boolean value) {
+		SharedPreferences sharedPref = act.getPreferences(Context.MODE_PRIVATE);
+		SharedPreferences.Editor editor = sharedPref.edit();
+		editor.putBoolean(key, value);
+		editor.commit();
+	}
+
+	/**
+	 * 从KeyValue数据库读boolean值
+	 * 
+	 * @param act
+	 * @param id
+	 * @param defaultValue
+	 * @return
+	 */
+	public static boolean readBooleanKeyValue(Activity act, String id,
+			boolean defaultValue) {
+		SharedPreferences sharedPref = act.getPreferences(Context.MODE_PRIVATE);
+		return sharedPref.getBoolean(id, defaultValue);
 	}
 
 	/**
@@ -90,7 +120,7 @@ public class IOUtil {
 		}
 		return null;
 	}
-
+	
 	/**
 	 * 写入外部文件
 	 * 
