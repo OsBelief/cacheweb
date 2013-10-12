@@ -1,11 +1,14 @@
 package com.yh.web.view;
 
 import android.annotation.SuppressLint;
+import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
 import android.content.ClipData;
 import android.content.ClipboardManager;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -104,7 +107,15 @@ public class MainActivity extends BaseActivity {
 		set.setJavaScriptEnabled(true);// 启用JS
 
 		set.setDomStorageEnabled(true);// 启用localStorage
-		set.setAppCacheEnabled(true);// 启用缓存
+		String path = this.getApplicationContext().getDir("databases", Context.MODE_PRIVATE).getPath();
+		Log.d("SetPath", "databases " + path);
+		set.setDatabasePath(path); // 设置路径
+		
+		set.setAppCacheEnabled(true);// 启用缓存       
+        path = this.getApplicationContext().getDir("cache", Context.MODE_PRIVATE).getPath();
+        Log.d("SetPath", "cache " + path);
+        set.setAppCachePath(path);
+        
 		// set.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
 		// 先用缓存，缓存没有请求网络
 
@@ -114,6 +125,7 @@ public class MainActivity extends BaseActivity {
 
 		// 监听长按事件
 		web.setOnLongClickListener(new OnLongClickListener() {
+			@TargetApi(Build.VERSION_CODES.HONEYCOMB)
 			@Override
 			public boolean onLongClick(View view) {
 				HitTestResult result = ((WebView) view).getHitTestResult();
