@@ -237,6 +237,7 @@ public class UpdateTask {
 		String result = null;
 		try {
 			HttpGet request = new HttpGet(url);
+			request.addHeader("User-Agent", request.getHeaders("User-Agent") + " - YichaWeb");
 			HttpResponse response = getClient.execute(request);
 			// 判断请求是否成功
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
