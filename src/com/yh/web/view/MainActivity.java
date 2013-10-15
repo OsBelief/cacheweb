@@ -1,5 +1,7 @@
 package com.yh.web.view;
 
+import java.io.IOException;
+
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -44,17 +46,18 @@ public class MainActivity extends BaseActivity {
 		setContentView(R.layout.activity_main);
 
 		// 第一次启动时将所有配置文件删除
-		if(IOUtil.readBooleanKeyValue(this, "FirstLaunch", true)){
+		if (IOUtil.readBooleanKeyValue(this, "FirstLaunch", true)) {
 			this.deleteFile(CacheFilter.CONFIG_NAME);
 			this.deleteFile(CacheFilter.FILTER_NAME);
 			this.deleteFile(CachePolicy.POLICY_NAME);
 			this.deleteFile(MIME.MIME_NAME);
 			IOUtil.writeBooleanKeyValue(this, "FirstLaunch", false);
-			Log.i("OnCreate", "application is first launch, delete the config file");
-		} else{
+			Log.i("OnCreate",
+					"application is first launch, delete the config file");
+		} else {
 			Log.i("OnCreate", "application is not first launch");
 		}
-		
+
 		// 添加事件，点击GO的时候自动调用GoBtn方法跳到指定URL
 		EditText uText = (EditText) findViewById(R.id.uText);
 		// 安装回车自动加载
@@ -72,7 +75,7 @@ public class MainActivity extends BaseActivity {
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
 		setWebView(web);
-		
+
 		// 初始化MIME
 		MIME.initMIME(this);
 		// 初始化过滤器
@@ -107,15 +110,17 @@ public class MainActivity extends BaseActivity {
 		set.setJavaScriptEnabled(true);// 启用JS
 
 		set.setDomStorageEnabled(true);// 启用localStorage
-		String path = this.getApplicationContext().getDir("databases", Context.MODE_PRIVATE).getPath();
+		String path = this.getApplicationContext()
+				.getDir("databases", Context.MODE_PRIVATE).getPath();
 		Log.d("SetPath", "databases " + path);
 		set.setDatabasePath(path); // 设置路径
-		
-		set.setAppCacheEnabled(true);// 启用缓存       
-        path = this.getApplicationContext().getDir("cache", Context.MODE_PRIVATE).getPath();
-        Log.d("SetPath", "cache " + path);
-        set.setAppCachePath(path);
-        
+
+		set.setAppCacheEnabled(true);// 启用缓存
+		path = this.getApplicationContext()
+				.getDir("cache", Context.MODE_PRIVATE).getPath();
+		Log.d("SetPath", "cache " + path);
+		set.setAppCachePath(path);
+
 		// set.setCacheMode(WebSettings.LOAD_CACHE_ELSE_NETWORK); //
 		// 先用缓存，缓存没有请求网络
 
@@ -160,6 +165,16 @@ public class MainActivity extends BaseActivity {
 	public boolean onOptionsItemSelected(MenuItem item) {
 		// Handle item selection
 		switch (item.getItemId()) {
+		case R.id.action_mainpage:
+			WebView web = (WebView) findViewById(R.id.webView1);
+			try {
+				String s = IOUtil.readStream(this.getAssets().open("main.htm"));
+				System.out.println(s);
+				web.loadDataWithBaseURL(null, s, "text/html", "utf-8", null);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return true;
 		case R.id.action_download:
 			// 下载URL的数据
 			String url = ((EditText) findViewById(R.id.uText)).getText()
