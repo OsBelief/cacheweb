@@ -1,6 +1,8 @@
 package com.yh.web.view;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -17,6 +19,7 @@ import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
 import android.webkit.WebSettings;
@@ -75,6 +78,11 @@ public class MainActivity extends BaseActivity {
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
 		setWebView(web);
+		// 获取焦点隐藏地址栏
+		ArrayList<View> views = new ArrayList<View>();
+		views.add(uText);
+		views.add(findViewById(R.id.goBtn));
+		web.setOnFocusChangeListener(new MyFoucusChange(views));
 
 		// 初始化MIME
 		MIME.initMIME(this);
@@ -168,8 +176,12 @@ public class MainActivity extends BaseActivity {
 		case R.id.action_mainpage:
 			WebView web = (WebView) findViewById(R.id.webView1);
 			try {
-				String s = IOUtil.readStream(this.getAssets().open("main.htm"));
-				System.out.println(s);
+				String s = IOUtil.readStream(IOUtil.readInternalFile(this,
+						"main.htm"));
+				if (s == null) {
+					s = IOUtil.readStream(this.getAssets().open("main.htm"));
+				}
+				Log.d("MainPage", s);
 				web.loadDataWithBaseURL(null, s, "text/html", "utf-8", null);
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -185,7 +197,13 @@ public class MainActivity extends BaseActivity {
 
 			return true;
 		case R.id.action_settings:
-			Log.d("debug", "setClick");
+			if (findViewById(R.id.uText).getVisibility() == View.GONE) {
+				findViewById(R.id.uText).setVisibility(View.VISIBLE);
+				findViewById(R.id.goBtn).setVisibility(View.VISIBLE);
+			} else {
+				findViewById(R.id.uText).setVisibility(View.GONE);
+				findViewById(R.id.goBtn).setVisibility(View.GONE);
+			}
 			return true;
 		case R.id.action_eixt:
 			exit();
@@ -257,5 +275,22 @@ public class MainActivity extends BaseActivity {
 			}
 		}
 		return super.onKeyDown(keyCode, event);
+	}
+
+	class MyFoucusChange implements OnFocusChangeListener {
+		List<View> views = new ArrayList<View>();
+
+		public MyFoucusChange(List<View> views) {
+			this.views = views;
+		}
+
+		@Override
+		public void onFocusChange(View v, boolean hasFocus) {
+			if (hasFocus) {// 已经获得焦点
+				for (View view : views) {
+					view.setVisibility(View.GONE);
+				}
+			}
+		}
 	}
 }

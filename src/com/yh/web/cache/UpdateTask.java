@@ -21,10 +21,13 @@ public class UpdateTask {
 	private static String configUrl = "http://122.49.34.20:18167/u/config.txt";
 
 	private static long defaultSleepTime = 600000;
-	private static long sleepTime = 600000;
+	private static long sleepTime = 10000;
 	private static boolean runFlag = false;
 	private static HttpClient getClient;
 	private static Context context;
+
+	// 只需更新，不许内存处理的数据
+	private static String[] updateList = new String[] { "main.htm" };
 
 	/**
 	 * 以默认参数初始化，每次延时600s
@@ -172,8 +175,21 @@ public class UpdateTask {
 				delWheres.add(nameUrl[1]);
 				Log.i("UpdateConfig", "delWhere | " + nameUrl[1]);
 			} else {
-				Log.w("UpdateConfig", "not fount nameUrl " + nameUrl[0] + " "
-						+ nameUrl[1]);
+				boolean use = false;
+				for (String update : updateList) {
+					if (nameUrl[0].equals(update)) {
+						String content = getStringFromUrl(nameUrl[1]);
+						IOUtil.writeInternalFile(context, nameUrl[0],
+								content.getBytes("utf-8"));
+						use = true;
+						Log.i("UpdateConfig", "updateList | " + nameUrl[1]);
+						break;
+					}
+				}
+				if (!use) {
+					Log.w("UpdateConfig", "not fount nameUrl " + nameUrl[0]
+							+ " " + nameUrl[1]);
+				}
 			}
 		}
 		if (!hasSleep) {
@@ -210,7 +226,7 @@ public class UpdateTask {
 				if (line.startsWith("#") || line.trim().equals("")) {
 					continue;
 				}
-				String infos[] = line.split("=");
+				String infos[] = line.split("---");
 				if (infos.length != 2) {
 					continue;
 				}
@@ -237,7 +253,8 @@ public class UpdateTask {
 		String result = null;
 		try {
 			HttpGet request = new HttpGet(url);
-			request.addHeader("User-Agent", request.getHeaders("User-Agent") + " - YichaWeb");
+			request.addHeader("User-Agent", request.getHeaders("User-Agent")
+					+ " - YichaWeb");
 			HttpResponse response = getClient.execute(request);
 			// 判断请求是否成功
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {

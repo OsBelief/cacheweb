@@ -232,6 +232,9 @@ public class IOUtil {
 	 * @throws IOException
 	 */
 	public static String readStream(InputStream in) throws IOException {
+		if(in == null){
+			return null;
+		}
 		return readStream(in, "utf-8");
 	}
 
