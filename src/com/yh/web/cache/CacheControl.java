@@ -58,6 +58,13 @@ public class CacheControl {
 			return null;
 		}
 
+		if (CacheFilter.notCacheType.contains(obj.getType())) {
+			// 不缓存处理
+			Log.i("getResource", "DisCache type url | " + urlb);
+			// 如果转换的URL为null，则表示不需要缓存
+			return null;
+		}
+
 		WebResourceResponse res = null;
 		if (obj.getMime().startsWith("image")) {
 			// 图片处理
@@ -71,9 +78,6 @@ public class CacheControl {
 		} else if (obj.getMime().equals("text/css")) {
 			// CSS 处理
 			res = getDefaultInfo(context, obj, null);
-		} else if (CacheFilter.notCacheType.contains(obj.getType())) {
-			// 不缓存处理
-
 		} else if (obj.getMime().equals("none")) {
 			// 没找到MIME
 

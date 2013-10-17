@@ -187,3 +187,6 @@ xpm	image/x-xpixmap
 xwd	image/x-xwindowdump
 z	application/x-compress
 zip	application/zip
+
+bqsg	text/html
+djsg	text/html

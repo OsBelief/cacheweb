@@ -37,6 +37,9 @@ cacheUrlReplace:
 
 # URL的类型
 cacheTypeUrl:
+    bqsg : ^http://misc.baqisanguo.rekoo.net/$
+    djsg : ^http://wyxdjsg.kaikaihd.com/html5/thk/top_xl.htm$
+
     html : .*\.(html|HTML|htm|HTM)(\?[^/]*)?$
     
     js : .*\.(js|JS)(\?[^/]*)?$
@@ -50,9 +53,12 @@ cacheTypeUrl:
     doc : .*\.(doc|DOC)(\?[^/]*)?$
     xls : .*\.(xls|XLS)(\?[^/]*)?$
     mp3 : .*\.(mp3|MP3)(\?[^/]*)?$
+    
+
 
 # 不缓存的类型
 notCacheType:
+  - html
   - pdf
   - doc
   - xls
