@@ -13,7 +13,9 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
 import android.content.Context;
+import android.os.Looper;
 import android.util.Log;
+import android.widget.Toast;
 
 public class UpdateTask {
 
@@ -30,14 +32,21 @@ public class UpdateTask {
 	private static String[] updateList = new String[] { "main.htm" };
 
 	/**
+	 * 初始化基本数据
+	 */
+	public static void initBasic(Context context){
+		getClient = new DefaultHttpClient();
+		UpdateTask.context = context;
+	}
+	
+	/**
 	 * 以默认参数初始化，每次延时600s
 	 * 
 	 * @param context
 	 */
 	public static void initShedule(Context context) {
+		initBasic(context);
 		// 开始任务
-		getClient = new DefaultHttpClient();
-		UpdateTask.context = context;
 		startUpdateTask();
 	}
 
@@ -50,8 +59,7 @@ public class UpdateTask {
 	 *            单位ms，每次删除延时，至少1000ms
 	 */
 	public static void initShedule(Context context, long sleepTime) {
-		getClient = new DefaultHttpClient();
-		UpdateTask.context = context;
+		initBasic(context);
 		if (sleepTime >= 1000) {
 			UpdateTask.sleepTime = sleepTime;
 		}
@@ -107,12 +115,46 @@ public class UpdateTask {
 	}
 
 	/**
+	 * 启动一个线程更新配置
+	 * 
+	 * @return
+	 */
+	public static void updateOneTime() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				Looper.prepare();
+				if (!NetMonitor.isNetBuzy() && !StatMonitor.isCPUBuzy()) {
+					long start = System.currentTimeMillis();
+					try {
+						UpdateTask.updateConfig();
+						Toast.makeText(UpdateTask.context, "更新成功", Toast.LENGTH_SHORT).show();
+					} catch (Exception e) {
+						e.printStackTrace();
+						Log.e("UpdateTask", e.getMessage());
+						Toast.makeText(UpdateTask.context, "更新失败" + e.getMessage(),
+								Toast.LENGTH_SHORT).show();
+					}
+					long end = System.currentTimeMillis();
+					Log.i("UpdateTask", "update use time : " + (end - start));
+				} else {
+					Log.d("UpdateTask",
+							"Net or CPU is buzy, pass update config");
+					Toast.makeText(UpdateTask.context, "当前系统繁忙，请稍候更新", Toast.LENGTH_SHORT)
+							.show();
+				}
+				Looper.loop();
+			}
+		}).start();
+	}
+
+	/**
 	 * 执行更新配置操作
 	 * 
 	 * @throws IOException
 	 * @throws ClientProtocolException
 	 */
-	private static boolean updateConfig() throws ClientProtocolException,
+	public static boolean updateConfig() throws ClientProtocolException,
 			IOException {
 		boolean res = false;
 		List<String[]> needUpdate = getNeedUpdate();
@@ -268,7 +310,8 @@ public class UpdateTask {
 						+ response.getStatusLine().getReasonPhrase());
 			}
 		} catch (Exception e) {
-			Log.v("UpdateConfig", e.getMessage());
+			Log.v("UpdateConfig",
+					e.getMessage() == null ? "get url fail" : e.getMessage());
 			e.printStackTrace();
 		}
 		return result;

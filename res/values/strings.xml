@@ -4,6 +4,7 @@
     <string name="app_name">加速浏览器</string>
     <string name="action_mainpage">首页</string>
     <string name="action_download">下载</string>
+    <string name="action_updateconfig">更新配置</string>
     <string name="action_settings">显示/隐藏</string>
     <string name="action_exit">退出</string>
     <string name="hello_world">Hello world!</string>

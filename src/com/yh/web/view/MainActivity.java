@@ -78,11 +78,12 @@ public class MainActivity extends BaseActivity {
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
 		setWebView(web);
-		// 获取焦点隐藏地址栏
-		ArrayList<View> views = new ArrayList<View>();
-		views.add(uText);
-		views.add(findViewById(R.id.goBtn));
-		web.setOnFocusChangeListener(new MyFoucusChange(views));
+
+		// // 获取焦点隐藏地址栏
+		// ArrayList<View> views = new ArrayList<View>();
+		// views.add(uText);
+		// views.add(findViewById(R.id.goBtn));
+		// web.setOnFocusChangeListener(new MyFoucusChange(views));
 
 		// 初始化MIME
 		MIME.initMIME(this);
@@ -100,8 +101,10 @@ public class MainActivity extends BaseActivity {
 		StatMonitor.startJudge();
 		// 开始执行删除过期任务
 		DeleteTask.initShedule(this);
+		
+		UpdateTask.initBasic(this);
 		// 开始执行更新配置任务
-		UpdateTask.initShedule(this);
+		// UpdateTask.initShedule(this);
 	}
 
 	/**
@@ -186,6 +189,9 @@ public class MainActivity extends BaseActivity {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
+			return true;
+		case R.id.action_updateconfig:
+			UpdateTask.updateOneTime();
 			return true;
 		case R.id.action_download:
 			// 下载URL的数据
