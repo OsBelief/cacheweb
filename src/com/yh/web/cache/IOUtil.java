@@ -133,6 +133,10 @@ public class IOUtil {
 			File parent = file.getParentFile();
 			if (!parent.exists()) {
 				parent.mkdirs();
+				do{
+					Thread.sleep(2);
+				}
+				while(!parent.exists());
 			}
 			FileOutputStream outputStream = new FileOutputStream(file);
 			outputStream.write(bytes);

@@ -58,7 +58,6 @@ cacheTypeUrl:
 
 # 不缓存的类型
 notCacheType:
-  - html
   - pdf
   - doc
   - xls
