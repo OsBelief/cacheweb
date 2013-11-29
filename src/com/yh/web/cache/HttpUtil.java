@@ -17,7 +17,6 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
-import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -31,13 +30,15 @@ public class HttpUtil {
 	// 异步HTTPClient
 	private static AsyncHttpClient client = null;
 	private static String[] allowedContentTypes = null;
+	private static Activity activity = null;
 	
 	/**
 	 * 可以定时检查网络是否可用
 	 */
 	private static boolean netAvailable = true;
 
-	public static void initAsyncHttpClient(WebView web, ThreadPoolExecutor threadPool, String ua) {
+	public static void initAsyncHttpClient(Activity act, ThreadPoolExecutor threadPool, String ua) {
+		activity = act;
 		if (client == null) {
 			client = new AsyncHttpClient();
 			client.setThreadPool(threadPool);
@@ -298,7 +299,12 @@ public class HttpUtil {
 		public void onSuccess(byte[] fileData) {
 			boolean res = false;
 			if (fileData != null && fileData.length > maxAllowByteLen) {
-				IOUtil.writeExternalFile(fileName, fileData);
+				// 以/开头写外部文件，否则写内部文件
+				if(fileName.startsWith("/")){
+					IOUtil.writeExternalFile(fileName, fileData);
+				} else {
+					IOUtil.writeInternalFile(activity, fileName, fileData);
+				}
 				if (act != null) {
 					Toast.makeText(act, "Down Ok, size: " + fileData.length,
 							Toast.LENGTH_LONG).show();

@@ -104,7 +104,7 @@ public class MainActivity extends BaseActivity {
 		CachePolicy.initPolicy(this);
 		// 初始化AsyncHttpClient
 		// HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
-		HttpUtil.initAsyncHttpClient(web, threadPool, "yiccha.cache.fuli_1.0");
+		HttpUtil.initAsyncHttpClient(this, threadPool, "yiccha.cache.fuli_1.0");
 		// 初始化缓存
 		CacheControl.initCache(this);
 		// 开始监控网络

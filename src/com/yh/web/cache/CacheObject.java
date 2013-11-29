@@ -12,6 +12,8 @@ public class CacheObject {
 	public final static String rootPath = Environment
 			.getExternalStorageDirectory().getPath() + "/yichaweb/cache/";
 
+	public final static boolean useExtern = false;
+	
 	private String uid;
 	private String url;
 	private String host;
@@ -65,11 +67,39 @@ public class CacheObject {
 	 * @return
 	 */
 	public static String getCacheFileName(String id, String host, String mime) {
+		// 判断使用内部还是外部存储缓存
+		if(useExtern){
+			return getCacheExternFileName(id, host, mime);
+		} else{
+			return getCacheInnerFileName(id, host, mime);
+		}
+	}
+
+	/**
+	 * 获取外部文件名
+	 * 
+	 * @param id
+	 * @param host
+	 * @param mime
+	 * @return
+	 */
+	public static String getCacheExternFileName(String id, String host, String mime) {
 		String fileName = new StringBuffer().append(id.substring(0, 2))
 				.append("/").append(id.substring(10)).toString();
 		fileName = new StringBuffer().append(rootPath).append(host).append("/")
 				.append(mime).append("/").append(fileName).toString();
 		return fileName;
+	}
+	
+	/**
+	 * 获取内部文件名
+	 * @param id
+	 * @param host
+	 * @param mime
+	 * @return
+	 */
+	public static String getCacheInnerFileName(String id, String host, String mime) {
+		return id;
 	}
 
 	public String getUid() {

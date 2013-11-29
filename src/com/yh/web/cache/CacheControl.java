@@ -129,7 +129,7 @@ public class CacheControl {
 			// 来自缓存
 			if (!obj.isExpire(System.currentTimeMillis())) {
 				// 缓存未过期
-				InputStream is = IOUtil.readExternalFile(obj.getFileName());
+				InputStream is = IOUtil.getFileInputStream((Activity)context, obj.getFileName());
 				if (is != null) {
 					// 缓存文件仍然存在
 					res = IOUtil.generateResource(obj.getMime(), encoding, is);

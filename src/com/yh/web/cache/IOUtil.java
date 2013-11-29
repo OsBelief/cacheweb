@@ -265,6 +265,20 @@ public class IOUtil {
 	}
 
 	/**
+	 * 读取文件流，自动判断是内外文件
+	 * 
+	 * @param activity
+	 * @param fileName
+	 * @return
+	 */
+	public static InputStream getFileInputStream(Activity activity, String fileName){
+		if(fileName.startsWith("/")){
+			return IOUtil.readExternalFile(fileName);
+		}
+		return IOUtil.readInternalFile(activity, fileName);
+	}
+	
+	/**
 	 * 产生WebResourceResponse
 	 * 
 	 * @param mime
