@@ -38,54 +38,6 @@ cacheUrlReplace:
 
 # URL的类型
 cacheTypeUrl:
-    # 福利不缓存
-    nfl : ^.*/cmsface/.*$
-    nfl : ^http://fuli.yicha.cn/fuli/catchthief/getBaseMoney.*$
-    nfl : ^http://fuli.yicha.cn/fuli/playCatchThief.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/conversion/cInforList.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/conversion/conversion.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getGiftList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getGift.*$
-    nfl : ^http://fuli.yicha.cn/fuli/dcg/guessDcgPos.*$
-    nfl : ^http://fuli.yicha.cn/fuli/playFruitRush.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/fruitRush/getBaseMoney.*$
-    nfl : ^http://fuli.yicha.cn/fuli/onbet.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getbetList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getHorseHistory.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getRaceState.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getOnlineNum.*$
-    nfl : ^http://fuli.yicha.cn/fuli/login.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getShuilv.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/createRoom.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/joinRoom.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/joinGame.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/roomList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/online.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/creathouse.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/createRoom.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/joinRoom.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/joinGame.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/roomList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/creathouse.*$
-    nfl : ^http://fuli.yicha.cn/fuli/sge/creathouse.*$
-    nfl : ^http://fuli.yicha.cn/fuli/sge/getMoneyList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/longLoopShitou.*$
-    nfl : ^http://fuli.yicha.cn/fuli/createShitouRoom.*$
-    nfl : ^http://fuli.yicha.cn/fuli/joinShitouRoom.*$
-    nfl : ^http://fuli.yicha.cn/fuli/prepareShitou.*$
-    nfl : ^http://fuli.yicha.cn/fuli/shitou/roomList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/shitou/randomJoin.*$
-    nfl : ^http://fuli.yicha.cn/fuli/shitou/getShuilv.*$
-    nfl : ^http://fuli.yicha.cn/fuli/{op}/{roomId}/shitouredirect.*$
-    nfl : ^http://fuli.yicha.cn/fuli/addlistener.*$
-    nfl : ^http://fuli.yicha.cn/fuli/signIn/signIn.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/qiandao.*$
-    nfl : ^http://fuli.yicha.cn/fuli/zatanguan.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getCurrentScore.*$
-    nfl : ^http://fuli.yicha.cn/fuli/beginXunbao.*$
-    nfl : ^http://fuli.yicha.cn/fuli/stopXunbao.*$
-    nfl : ^http://fuli.yicha.cn/fuli/zjb/guessZjbPos.*$
-
     html : .*\.(html|HTML|htm|HTM)(\?[^/]*)?$
     
     js : .*\.(js|JS)(\?[^/]*)?$
@@ -103,6 +55,7 @@ cacheTypeUrl:
 # 不缓存的类型
 notCacheType:
   - nfl
+  - html
   - pdf
   - doc
   - xls
