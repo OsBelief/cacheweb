@@ -1,15 +1,1053 @@
+
+
+
+<!DOCTYPE HTML>
 <html>
-	<head>
-		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-		<title>
-		缓存浏览器首页
-		</title>
-	</head>
-	<body>
-		<br/>
-		<ul>
-			<li><a href="http://misc.baqisanguo.rekoo.net/">霸气三国</a></li>
-			<li><a href="http://wyxdjsg.kaikaihd.com/html5/thk/top_xl.htm">点将三国</a></li>
-		</ul>
-	</body>
+  <head>
+    <title>易查福利中心</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="viewport" content="width=device-width,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no"/>
+	<meta name="format-detection" content="telephone=no"/>
+	<link href="css/fili_main.css?t=20130909" rel="stylesheet" type="text/css">
+	<script src="http://res.yicha.cn/static/??zepto-min.js,js/yc-min.js"></script>
+	<script src="gameview/common/js/msgshow.js"></script>
+	<script src="gameview/common/js/timer.js"></script>
+	<script src="gameview/common/js/tongji.js"></script>
+	<script src="gameview/index/js/buttonbindPage.js"></script>
+	<script src="gameview/index/js/index.js"></script>
+	
+	<script>
+		var YCnickName = "灰灰白白";
+		var YCnickNames = "MEQ1RkQ1MENGMEQ2M0Q4ODgzNkM5RkQ5NTI4QUJGNDQ=";
+	</script>
+  </head>
+  <body>
+<!--首页头部-->
+<div class="header">
+    <div id="yichaIndexButton" class="header-home" onclick=""><img src="images/home.png" ></div>
+   
+   		<div class="header-logo2" style="text-align: left;margin-left: 80px;">易查福利</div>
+   		<div class="header-find2">
+   		<form name="peoplecenterform" action="http://passport.yicha.cn/user/userinfo" method="post">
+   			<input type="hidden" name="op" value="show_one">
+   			<input type="hidden" name="gotoURL" value="">
+   		</form>
+   		<span id="peoplebutton" class="min-gq2" onclick style="right:80px;">个人中心</span>
+   		<span id="loginoutbutton" class="min-gq2" onclick>退出</span>
+   		</div>
+   
+   
+    <script>
+    	$("#yichaIndexButton").click(function(){
+    		setTimeout(function(){
+    			self.location='http://yicha.mobi';
+    		},400);
+    		tongJI("易查首页按钮","at=fuli_yichaindex");
+    		
+    	});
+    	$("#loginbutton").click(function(){
+			var url=$(this).attr("gourl");
+			var gourl = url+"&gotoURL="+encodeURIComponent(self.location);
+			setTimeout(function(){
+    			self.location = gourl;
+    		},400);
+    		tongJI("福利登陆按钮","page=fuli_login&at=loginbutton");
+		});
+		$("#peoplebutton").click(function(){
+			peoplecenterform.gotoURL.value=self.location;
+			setTimeout(function(){
+    			peoplecenterform.submit();
+    		},400);
+    		tongJI("福利个人中心","page=fuli_peoplecenter&at=peoplecenter");
+		});
+		$("#loginoutbutton").click(function(){
+			var url = "http://passport.yicha.cn/user/loginout?gotoURL="+encodeURIComponent(self.location);
+			setTimeout(function(){
+    			self.location=url;
+    		},400);
+    		tongJI("福利登出","page=fuli_loginout&at=loginout");
+		});
+    </script>
+</div>
+	
+		
+
+
+ <script>
+ 	var YCgetMsgCount="http://passport.yicha.cn/user/message_count";
+ 	var YCgetMsg="http://passport.yicha.cn/user/getMessage";
+ 	var YCgetMsgNew="http://passport.yicha.cn/user/getNotices";
+ 	var YCgetMoneyPhMsg="http://passport.yicha.cn/user/getGold";
+ </script>
+
+  <!--个人中心信息-->
+ <div class="lanmu-bt">
+   <div class="lanmu-bt-1">
+   <span id="nickname" class="center1"></span>
+   <span class="center2"><img align="absmiddle" src="images/jinbi.png" /></span><span id="nickcode" class="center3"></span><span class="center4"></span>
+   <span class="center2"><img align="absmiddle" src="images/lipin/zuanshi.png" /></span><span id="nickdiamond" class="center3"></span><span class="center4"><img style="width: 16px;height: 16px; margin-bottom: 4px;margin-left: 3px;" id="zuanshiImg" align="absmiddle" src="images/add12.png" /></span>
+   <!-- <span class="center5"><img align="absmiddle"  src="images/baoshi.png" /></span><span class="center3">0</span><span class="center4">颗</span> -->
+   </div>
+   <div class="lanmu-bt-2">
+   <span id="msgXinFeng" class="center6"><img src="images/mail.png" /></span>
+   <div id="msgWarning" class="msgWarning" style="display: none;"></div>
+   </div>
+   <div id="payWindowCommon" style="position: relative;display: none;" >
+	 	<div style="position: absolute;z-index: 100;" class="horizontal_center">
+			<div style="position: relative;">
+				<iframe id="pay_iframe_common" style="border-radius: 6px;" linksrc="http://passport.yicha.cn/user/pay/payframe?callbackUrl=" width="265" height="284" border="0" frameborder="no"></iframe>			 		
+		 		<div style="position: absolute;top: 6px;left: 229px;width: 26px;height: 26px;">
+			 		<img id="buy_close_common" src="images/delete.png" style="display: block;width: 100%;">
+			 	</div>
+			</div>
+	 	</div>
+	 	 <script type="text/javascript">
+		 	$("#buy_close_common").click(function(){
+		 		$("#payWindowCommon").hide();
+		 		tongJI("充值关闭按钮","page=payclose&at=payclose");
+		 	});
+		 	$("#zuanshiImg").click(function(){
+				$("#payWindowCommon").show();
+				tongJI("钻石添加按钮","page=addzuanshi&at=addzuanshi");
+	 		});
+		 	(function(){
+		 		var pay_iframe = $("#pay_iframe_common");
+				var src = pay_iframe.attr("linksrc");
+				var linkurl = (self.location+"").replace("http://","");
+				linkurl=encodeURIComponent(linkurl);
+				src+=linkurl;
+				pay_iframe.attr("src",src);
+		 	})();
+		 </script>
+	 </div>
+ </div>
+ <script>
+ 	var YCmoney = 0;
+ 	var YC_diamond=-1;
+ 	(function(){
+ 		var msgWarningInterv = null;
+ 		var stepWarningFlag = false;
+ 		var msgCheckInterv = null;
+ 		function beginWarning(){
+ 			stepWarningFlag = true;
+ 			stepWarning(true);
+ 		}
+ 		function stopWarning(){
+ 			stepWarningFlag = false;
+ 		}
+ 		function stepWarning(isShow){
+ 			if(msgWarningInterv!=null){
+ 				clearTimeout(msgWarningInterv);
+ 				msgWarningInterv = null;
+ 			}
+ 			if(stepWarningFlag){
+ 				if(isShow){
+	 				$("#msgWarning").show();
+	 				msgWarningInterv = setTimeout(function(){
+	 					stepWarning(!isShow);
+	 				}, 2000);
+	 			}else{
+	 				$("#msgWarning").hide();
+	 				msgWarningInterv = setTimeout(function(){
+	 					stepWarning(!isShow);
+	 				}, 1000);
+	 			}
+ 			}else{
+ 				$("#msgWarning").hide();
+ 			}
+ 		}
+ 		function checkMsg(){
+ 			if(YCnickNames==null||YCnickNames=="")return;
+ 			var checkUrl = YCgetMsgCount+"?username="+YCnickNames+"&varname=newMsgObj&t="+new Date().getTime();
+ 			yc.jsonp(checkUrl,function(){
+				var nickName = YCnickName;
+				var money = newMsgObj.gold||0;
+				var diamond = newMsgObj.diamond||0;
+				YC_diamond = parseInt(diamond);
+				YCmoney = parseInt(money);
+				//alert("n:"+nickName+" money:"+money);
+				var newMsg = newMsgObj.newmsg;
+				$("#nickname").html(nickName);
+				$("#nickcode").html(money);
+				$("#nickdiamond").html(diamond);
+				if(newMsgObj.status==9){
+					self.location="index";
+				}
+				if(newMsg&&!stepWarningFlag){
+					beginWarning();
+					/*if(msgCheckInterv!=null){
+						clearInterval(msgCheckInterv);
+					}*/
+				}
+			},true);
+ 		}
+ 		msgCheckInterv = setInterval(function(){checkMsg();}, 2000);
+ 		checkMsg();
+ 		$("#msgXinFeng").click(function(){
+ 			stopWarning();
+ 			setTimeout(function(){
+    			self.location="msgspace";
+    		},400);
+    		tongJI("福利消息中心","at=msgspace");
+ 		});
+ 	})()
+ </script>
+
+   	
+<!--轮转图-->
+
+<div style="clear: both;"></div>
+<div id="onlinegame_swipPhoto"></div>
+<script src="http://res.yicha.cn/static/??js/agame/model/swipphoto/swipe-min.js,js/agame/model/swipphoto/swipphoto-min.js,js/agame/model/swipphoto/swipe-min.js"></script>
+<script>
+	yc.jsonp('http://60.28.215.124/cmsface/rotation_image?id=fuli_shouye_1&varName=IMGdata',function(){
+					var imgdata = IMGdata;
+					IMGdata = null;
+					var imgs = imgdata.items;
+					var imgstrs = [];
+					for(var i in imgs){
+						var imgObj = imgs[i];
+						imgstrs.push('<img style="width:100%" src="'+imgObj.imageUrl+'" onclick="" class="linkimg" linkurl="'+imgObj.toUrl+'" tongji="page=fuli_index_photo_'+i+'&at=fuli_index_swipe_'+i+'" tgzh="福利首页轮转图片'+i+'点击">');
+					}
+					var swipPhoto = new SwipPhoto(imgstrs,"home-pic");
+					swipPhoto.addSwipPhotoTo($("#onlinegame_swipPhoto"));
+				},true);
+	$(".linkimg").live("click",function(){
+		var url=$(this).attr("linkurl");
+		if(url==null||url=="")return;
+		setTimeout(function(){
+    		self.location = url;
+   		},400);
+   		var tongji = $(this).attr("tongji");
+   		var zh = $(this).attr("tgzh");
+   		tongJI(zh,tongji);
+	});
+</script>
+<div style="position: relative;">
+ 	<div id="dialog_yanzheng" class="pageframe" style="display:none;top:-20px;" >
+	 <div class="zuihou-ts">
+	  <div id="dialog_yz_title" class="zuihou-ts-bt">立即验证</div>
+	  <div id="dialogcontent" class="zuihou-13">福利中心送福利，现在验证手机即可获得20钻石及2000金币的大礼包</div>
+	  <div class="zuihou-cz" ><span id="dialogYZSure" class="address1" >立即验证</span><span id="dialogYZCansel" class="address2" >稍后验证</span></div>
+	 </div>
+	</div>
+ </div>
+<!--系统消息-->
+	
+
+
+ <script>
+ 	var YCgetMsgCount="http://passport.yicha.cn/user/message_count";
+ 	var YCgetMsg="http://passport.yicha.cn/user/getMessage";
+ 	var YCgetMsgNew="http://passport.yicha.cn/user/getNotices";
+ 	var YCgetMoneyPhMsg="http://passport.yicha.cn/user/getGold";
+ </script>
+
+<!--系统消息-->
+  <div class="lanmu-bt">
+  <span class="cloth_img"><img  src="images/news.png" /></span>
+  <span class="center1">系统消息</span>
+  </div> 
+  <div style="overflow: hidden;height: 108px;">
+    <div id="msg_show" class="msg_show">
+	  	<!--<div>
+	  		<div style="border-bottom:1px dashed #fbe2cf;"></div>
+		    <div class="new_line2">
+		    	<span class="new_time">@time</span><span class="new_user">@content金币</span>
+		    </div>
+	   	</div>
+	   	<div>
+	    	<div style="border-bottom:1px dashed #fbe2cf;"></div>
+	    	<div class="new_line2">
+		    	<span class="new_time">11:25</span>
+		        <span class="new_user">用户一</span>
+		        <span class="new_win">赢得了</span>
+		        <span class="new_money">360金币</span>
+		    </div>
+		</div>
+  	--></div>
+ </div>
+ <script>
+ 	(function(){
+ 		var getMsgUrl = YCgetMsg+"?pageSize=2&currentPage=0&varname=msgObj&indextype=1&t="+new Date().getTime();
+		var currentNewestId=0;
+		var currentDiamondMsgId=0;
+		var htmlModel = '<div><div style="border-bottom:1px dashed #fbe2cf;"></div><div class="new_line"><span class="new_time">@time</span><span class="new_user">@content</span></div></div>';
+		$("#msg_show").html("");
+		yc.jsonp(getMsgUrl,function(){
+			var initMsgObj = msgObj;
+			var msgs = initMsgObj.data;
+			for(var i in msgs){
+				var msg = msgs[i];
+				var time = parseTime(msg.createTime);
+				var content = msg.content;
+				if(i==0){
+					currentNewestId=msg.id;
+				}
+				var appendHtml=htmlModel.replace("@time",time).replace("@content",content);
+				$("#msg_show").prepend(appendHtml);
+			}
+		},true)
+		var msgShow = new MsgShow("msg_show");
+		var html = '<div style="border-bottom:1px dashed #fbe2cf;"></div><div class="new_line2"><span class="new_time">11:25</span><span class="new_user">用户一</span><span class="new_win">赢得了</span><span class="new_money">360金币</span></div>';
+		getXTmsg(2000);
+		/*new Timer(function(){
+			var getMsgUrl = YCgetMsg+"?pageSize=1&currentPage=0&varname=msgObj&indextype=1&t="+new Date().getTime();
+			yc.jsonp(getMsgUrl,function(){
+				var initMsgObj = msgObj;
+				var msgs = initMsgObj.data;
+				for(var i in msgs){
+					var msg = msgs[i];
+					var time = parseTime(msg.createTime);
+					var content = msg.content;
+					if(i==0){
+						if(currentNewestId!=msg.id){
+							currentNewestId=msg.id;
+							var appendHtml=htmlModel.replace("@time",time).replace("@content",content);
+							msgShow.addHtml(appendHtml);
+						}
+					}
+				}
+			},true)
+			//msgShow.addHtml(html);
+		},5000).start();*/
+		
+		function getXTmsg(time){
+			setTimeout(function(){
+				var getMsgUrl = YCgetMsgNew+"?varname=msgObj&t="+new Date().getTime();
+				yc.jsonp(getMsgUrl,function(){
+					var initMsgObj = msgObj;
+					var msgs = initMsgObj.data;
+					for(var i in msgs){
+						var msg = msgs[i];
+						var time = parseTime(msg.createTime);
+						var content = msg.content;
+						if(i==0){
+							if(msg.id==-1){
+								if(currentDiamondMsgId<msg.createTime2){
+									currentDiamondMsgId=msg.createTime2;
+									var appendHtml=htmlModel.replace("@time",time).replace("@content",content);
+									msgShow.addHtml(appendHtml);
+									getXTmsg(2000);
+								}else{
+									getXTmsg(4000);
+								}
+							}else{
+								if(currentNewestId<msg.id){
+									currentNewestId=msg.id;
+									var appendHtml=htmlModel.replace("@time",time).replace("@content",content);
+									msgShow.addHtml(appendHtml);
+									getXTmsg(2000);
+								}else{
+									getXTmsg(4000);
+								}
+							}
+							return;
+						}
+					}
+					getXTmsg(4000);
+				},true,function(){
+					getXTmsg(5000);
+				});
+			},time);
+		}
+		
+		function parseTime(time){
+			var timereturn = time.split(" ")[1].substr(0, 5);
+			return timereturn;
+		}
+	})();
+ </script>
+
+<!--活动参与--> 
+    
+<!-- 游戏列表 -->
+
+<div class="title_height"></div>   
+<div class="lanmu-bt">
+    <span class="cloth_img"><img  src="images/activity.png" /></span>
+    <span class="center1">活动参与</span>
+    
+	    <span class="jian_box" ><img id="qiandaoImg" src="" /></span>
+	    <script type="text/javascript">
+	    	(function(){
+	    		function getDate(){
+	    			var date = new Date();
+	    			return date.getFullYear()+"_"+(date.getMonth()+1)+"_"+date.getDate();
+	    		}
+	    		var qiandaoDate = window.localStorage.getItem("qiandao^"+YCnickNames+"^date");
+	    		var nowDate = getDate();
+	    		var qiandaoFlag = true;	//是否可以签到
+	    		if(qiandaoDate==null||nowDate!=qiandaoDate){
+	    			$("#qiandaoImg").attr("src","images/qiandao.png");
+	    		}else{
+	    			qiandaoFlag = false;
+	    			$("#qiandaoImg").attr("src","images/yiqian.png");
+	    		}
+	    		var qiandaoAgainFlag = false;	//重复签到的标志锁
+	    		$("#qiandaoImg").click(function(){
+	    			if(typeof newMsgObj !="undefined"){
+	    				var isYanZheng=(newMsgObj.send_flag==1);
+	    				if(!isYanZheng){
+	    					alert("通过短信验证的用户才可享受签到送金币的福利");
+	    					return ;
+	    				}
+	    			}else{
+	    				alert("签到按钮还没准备好，请稍后再试.");
+	    				return;
+	    			}
+	    			if(qiandaoAgainFlag){
+	    				return;
+	    			}
+					if(!qiandaoFlag){
+						alert("今天已经签过了");
+						return;
+					}
+	    			var qiandaoUrl = "qiandao?t="+new Date().getTime();
+	    			qiandaoAgainFlag = true;//防止重复请求
+	    			setTimeout(function(){
+	    				qiandaoAgainFlag = false;
+	    			},1000);
+	    			$.getJSON(qiandaoUrl,function(result){
+	    				qiandaoAgainFlag=false;
+	    				if(typeof result=="undefined"||result==null||result.status==0){
+	    					alert("签到失败");
+	    					return;
+	    				}
+	    				if(result.status==1){
+	    					$("#qiandaoImg").attr("src","images/yiqian.png");
+	    					if(result.prompt){
+	    						alert(result.prompt);
+	    					}
+	    					window.localStorage.setItem("qiandao^"+YCnickNames+"^date",nowDate);
+	    					qiandaoFlag = false;
+	    				}else if(result.status==2){
+	    					$("#qiandaoImg").attr("src","images/yiqian.png");
+	    					window.localStorage.setItem("qiandao^"+YCnickNames+"^date",nowDate);
+	    					qiandaoFlag = false;
+	    					alert("今天已经签过了哦");
+	    				}else{
+	    					alert("pc上禁止签到");
+	    				}
+	    			});
+	    			
+	    			tongJI("福利签到","page=fuli_qiandao&at=qiandao");
+	    		});
+	    	})();
+	    </script>
+	
+</div>
+<!--2013-08-19暂时把箭头石头布功能暂停-->
+<div class="act_box">
+	<span class="act_img"><img  src="images/shitou/stone_game2.png" /></span>
+    <span class="act_text"><span class="act_name">2钻猜拳场</span><br /><span class="act_jia">[<span class="act_number" id="online_num_1102"></span>人参加]</span></span>
+    <span id="shitou_act_2" class="act-button shitou_act" game="猜拳钻石场" baseScore="2" onclick>马上参加</span>
+</div> 
+<div class="act_box">
+	<span class="act_img"><img  src="images/shitou/stone_game5.png" /></span>
+    <span class="act_text"><span class="act_name">5钻猜拳场</span><br /><span class="act_jia">[<span class="act_number" id="online_num_1105"></span>人参加]</span></span>
+    <span id="shitou_act_5" class="act-button shitou_act" game="猜拳钻石场" baseScore="5" onclick>马上参加</span>
+</div> 
+<div class="act_box">
+	<span class="act_img"><img  src="images/shitou/stone_game10.png" /></span>
+    <span class="act_text"><span class="act_name">10钻猜拳场</span><br /><span class="act_jia">[<span class="act_number" id="online_num_1110"></span>人参加]</span></span>
+    <span id="shitou_act_10" class="act-button shitou_act" game="猜拳钻石场" baseScore="10" onclick>马上参加</span>
+</div> 
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/dachuangguan.png" /></span>
+    <span class="act_text"><span class="act_name">大闯关</span><br /><span class="act_jia">[<span class="act_number" id="online_num_8"></span>人参加]</span></span>
+    <span class="act-button dcgbutton" game="大闯关" onclick>马上参加</span>
+</div>
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/zhuaxiaotou.png" /></span>
+    <span class="act_text"><span class="act_name">抓小偷</span><br /><span class="act_jia">[<span class="act_number" id="online_num_9"></span>人参加]</span></span>
+    <span class="act-button zhuaxiaotou_button" game="抓小偷" onclick>马上参加</span>
+</div>
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/xunbao.png" /></span>
+    <span class="act_text"><span class="act_name">寻宝</span><br /><span class="act_jia">[<span class="act_number" id="online_num_10"></span>人参加]</span></span>
+    <span class="act-button xunbao_button" game="寻宝" onclick>马上参加</span>
+</div>
+<div class="act_line"></div>
+<div class="act_box" style="height:90px;">
+	<span class="act_img"><img  src="images/tan_game.png" /></span>
+    <span class="act_text"><span class="act_name">打贪官</span><br /><span id="tanguan_name" class="act_name" style="font-size: 12px;"></span><br /><span class="act_jia">[<span class="act_number" id="online_num_7"></span>人参加]</span></span>
+    <span id="tanguan_button" class="act-button" game="打贪官" onclick>马上参加</span>
+	<script>
+    	$.getJSON("getCurrentScore?t="+new Date().getTime(),function(result){
+    		$("#tanguan_name").html("【奖池"+result.currentScore+"金币】");
+    	})
+    </script>
+</div> 
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/money_game.png" /></span>
+    <span class="act_text"><span class="act_name">找金币</span><br /><span class="act_jia">[<span class="act_number" id="online_num_5"></span>人参加]</span></span>
+    <span class="act-button zjbbutton" game="找金币" onclick>马上参加</span>
+</div>
+
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/fruit_game.png" /></span>
+    <span class="act_text"><span class="act_name">水果火拼</span><br /><span class="act_jia">[<span class="act_number" id="online_num_6"></span>人参加]</span></span>
+    <span id="fruit_button" class="act-button" game="水果火拼" onclick>马上参加</span>
+</div>
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/racehorse.png" /></span>
+    <span class="act_text"><span id="horse_race_state" class="act_name">赛马</span><br /><span class="act_jia">[<span class="act_number" id="online_num_4"></span>人参加]</span></span>
+    <span id="horse_race" class="act-button" game="赛马" onclick>马上参加</span>
+    <script>
+    	$.getJSON("getRaceState",function(result){
+    		$("#horse_race_state").html("赛马("+result.state+")");
+    	})
+    </script>
+</div>
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/stone_game.png" /></span>
+    <span class="act_text"><span class="act_name">石头剪刀布</span><br /><span class="act_jia">[<span class="act_number" id="online_num_1"></span>人参加]</span></span>
+    <span class="act-button stonebutton" game="石头剪子布" onclick>马上参加</span>
+</div> 
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/eggshow.png" /></span>
+    <span class="act_text"><span class="act_name">砸金蛋</span><br /><span class="act_jia">[<span class="act_number" id="online_num_3"></span>人参加]</span></span>
+    <span class="act-button eggbutton" game="砸金蛋" onclick>马上参加</span>
+</div>
+<div class="act_line"></div>
+<div class="act_box">
+	<span class="act_img"><img  src="images/zhuanpan.png" /></span>
+    <span class="act_text"><span class="act_name">幸运大转盘</span><br /><span class="act_jia">[<span class="act_number" id="online_num_2"></span>人参加]</span></span>
+    <span id="luck_pan" class="act-button joinbutton" game="幸运大转盘" onclick>马上参加</span>
+</div>
+<script>
+	(function(){
+		$(".joinbutton").click(function(){
+			var game = $(this).attr("game");
+			setTimeout(function(){
+    			self.location="houselist?gameId=2&game="+encodeURIComponent(game);
+    		},400);
+    		var id = $(this).attr("id");
+    		tongJI("福利"+game,"at="+id);
+		});
+		$(".shitou_act").click(function(){
+			var game = $(this).attr("game");
+			var baseScore = $(this).attr("baseScore");
+			setTimeout(function(){
+    			self.location="houselist?gameId=11&game="+encodeURIComponent(game)+"&baseScore="+baseScore;
+    		},400);
+			tongJI("福利猜拳钻石版","at=joindiamond"+baseScore);
+		});
+		$(".eggbutton").click(function(){
+			setTimeout(function(){
+    			self.location="eggHouse?type=0&gameId=3";
+    		},400);
+			tongJI("福利砸金蛋","at=joinegg");
+		});
+		
+		$(".zjbbutton").click(function(){
+			setTimeout(function(){
+    			self.location="zjbHouse?gameId=5";
+    		},400);
+			tongJI("福利找金币","at=joinzjb");
+		});
+		
+		$(".dcgbutton").click(function(){
+			setTimeout(function(){
+    			self.location="dcgHouse?gameId=8";
+    		},400);
+			tongJI("福利大闯关","at=joindcg");
+		});
+		
+		$(".stonebutton").click(function(){
+			setTimeout(function(){
+    			self.location="stoneHouse?type=0&gameId=1";
+    		},400);
+			tongJI("福利石头简单不","at=joinstone");
+		});
+		$("#horse_race").click(function(){
+			setTimeout(function(){
+    			self.location="playHorseRace";
+    		},400);
+			tongJI("福利赛马","at=joinhorse");
+		});
+		$("#tanguan_button").click(function(){
+			setTimeout(function(){
+    			self.location="tanguanHouse";
+    		},400);
+			tongJI("福利打贪官","at=jointan");
+		});
+		$("#fruit_button").click(function(){
+			setTimeout(function(){
+    			self.location="joinFruitRush";
+    		},400);
+			tongJI("福利水果","at=joinFruitRush");
+		});
+		$(".zhuaxiaotou_button").click(function(){
+			setTimeout(function(){
+    			self.location="joinCatchThief";
+    		},400);
+			tongJI("福利抓小偷","at=joinZhuaxiaotou");
+		});
+		$(".xunbao_button").click(function(){
+			setTimeout(function(){
+    			self.location="xunbao";
+    		},400);
+			tongJI("福利寻宝","at=joinXunbao");
+		});
+	})();
+	
+</script>
+   
+<!--用户反馈区-->
+
+<!--用户反馈区-->
+<div class="title_height horizontal_center" style="position: relative;">
+	 <div id="dialog" class="pageframe" style="display:none;top: 150px;" >
+		 <div class="zuihou-ts">
+		  <div id="dialogtitle" class="zuihou-ts-bt"></div>
+		  <div id="dialogcontent" class="zuihou-13"></div>
+		  <div class="zuihou-cz" ><span id="dialogSure" class="address1">确定</span><span id="dialogCansel" class="address2" >取消</span></div>
+		 </div>
+		</div>
+</div>   
+<div id="gift_div" class="lanmu-bt horizontal_center" style="position: relative;">
+    <div class="cloth_img"><img  src="images/prize.png" /></div>
+    <div class="center1">用户回馈区</div>
+    <div class="" style="box-flex: 1; -moz-box-flex: 1; -webkit-box-flex: 1;"><a style="text-decoration: underline;color: #A86842;float:right;margin-right: 4px;" href="liPin?at=giftmore">查看更多奖品>></a></div>
+</div>
+	<div id="gistList" style="padding: 0 0 10px 0;">
+		
+	</div>
+<script>
+	(function(){
+		String.prototype.replaceAll  = function(s1,s2){   
+			return this.replace(new RegExp(s1,"gm"),s2);   
+		}
+		function parseDateArgs(endTime){
+			var tempDate = endTime.split(" ");
+			var yMD = tempDate[0].split("-");
+			var hms = tempDate[1].split(":");
+			var returnArg = [];
+			returnArg.push(yMD[0]);
+			returnArg.push(yMD[1]);
+			returnArg.push(yMD[2]);
+			returnArg.push(hms[0]);
+			returnArg.push(hms[1]);
+			returnArg.push(hms[2]);
+			return returnArg;
+		}
+		function parseDateByTime(time){
+			if(typeof time =="undefined"){
+				return null;
+			}
+			var dateArg = parseDateArgs(time);
+			var now = new Date();
+			var returnTime=new Date(now.getFullYear(),now.getMonth(),now.getDate(),dateArg[3],dateArg[4],dateArg[5]);
+			return returnTime;
+		}
+		function parseStrByDate(date){
+			return date.getFullYear()+"-"+(date.getMonth()+1)+"-"+date.getDate()+" "+date.getHours()+":"+date.getMinutes()+":"+date.getSeconds();
+		}
+		function checkStartTime(startTime){//判断是否开始兑奖 
+			var dateArg = parseDateArgs(startTime);
+			var startDate= new Date(dateArg[0],dateArg[1]-1,dateArg[2],dateArg[3],dateArg[4],dateArg[5]);
+			var now = new Date();
+			if(startDate.getTime()>now.getTime()){
+				return false;
+			}else{
+				return true;
+			}
+		}
+		var giftHtmlModel='<div id="giftmodel_@index" class="prize_box" onclick><span class="brooch"><img  src="images/brooch.png" /></span><span class="clock"><img  src="images/clock.png" /></span><span class=" jiang_time2"><font id="giftfont_@index">奖品兑换倒计时：</font><span class="jiang_red" id="daojishi_day_@index"></span><span class="jiang_brown">天</span><span class="jiang_red" id="daojishi_hours_@index"></span><span class="jiang_brown">时</span><span class="jiang_red" id="daojishi_min_@index"></span><span class="jiang_brown">分</span><span class="jiang_red" id="daojishi_sec_@index"></span><span class="jiang_brown">秒</span></span><br /><span class="jiang_black">奖品：<span class="jiang_red">@giftname</span></span><br /><span class="jiang_black">库存：<span class="jiang_red" id="shengyu_gift">@maxNumber</span></span><span class="jiang_black2">已兑换：<span class="jiang_red" >@currentNumber</span></span><br><span class="jiang_black">兑换需要：<span class="jiang_red" >@money</span></span><div class="horizontal_center"><div id="getGiftButton_@index" class="change_btn getGiftButton" onclick giftid="@giftId" moneytype="@moneytype">立即兑换</div></div><div>';
+		$("#gistList").html("");
+		
+		function daojishi(time,index,callback){
+			var dateArg=parseDateArgs(time);
+			var urodz= new Date(dateArg[0],dateArg[1]-1,dateArg[2],dateArg[3],dateArg[4],dateArg[5]);
+			var now = new Date();   
+			var timecha = urodz.getTime() - now.getTime();
+			if(timecha<0){
+				if(callback){
+					callback();
+				}
+				$("#daojishi_day_"+index).html("0");
+				$("#daojishi_hours_"+index).html("00");
+				$("#daojishi_min_"+index).html("00");
+				$("#daojishi_sec_"+index).html("00");
+				return;
+			}
+			var day = Math.floor(timecha / (1000 * 60 * 60 * 24));
+			var hours = Math.floor(timecha/(1000*60*60)-day*24)
+			var min = Math.floor(timecha/(1000*60)-day*24*60-hours*60);
+			var sec = Math.floor(timecha/1000 - day*24*60*60-hours*3600-min*60);
+			var showTime = day + "天" + hours+"小时" + min+"分"+sec+"秒";
+			$("#daojishi_day_"+index).html(day);
+			$("#daojishi_hours_"+index).html(hours);
+			$("#daojishi_min_"+index).html(min);
+			$("#daojishi_sec_"+index).html(sec);
+		}
+		function getGift(){
+			var moneyGiftCount=0;
+			var diamondGiftCount=0;
+			$.getJSON("getGiftList?t="+new Date().getTime(),function(result){
+				if(result==null||result.length==0){
+					$("#gift_div").hide();
+					return;
+				}
+				$("#gistList").html("");
+				for(var i in result){
+					var oneGiftObj = result[i];
+					var payType = oneGiftObj.payType;
+					if(typeof payType!="undefined"){
+						if(payType==0){
+							if(moneyGiftCount>0){
+								continue;
+							}
+							moneyGiftCount++;
+						}else{
+							if(diamondGiftCount>0){
+								continue;
+							}
+							diamondGiftCount++;
+						}
+					}
+					var giftId = oneGiftObj.id;
+					var currentNumber = oneGiftObj.currentNumber;
+					var maxNumber = oneGiftObj.maxNumber;
+					var baseNum = oneGiftObj.baseNum;
+					var startTime = oneGiftObj.startTime;
+					var endTime = oneGiftObj.endTime;
+					var giftname = oneGiftObj.prizeName;
+					var moneytype = (payType?"钻石":"金币");
+					var money = (oneGiftObj.price||1000000)+moneytype;
+					var giftHtml = giftHtmlModel.replace("@giftname",giftname)
+												.replace("@currentNumber",currentNumber+baseNum)
+												.replace("@maxNumber",maxNumber-currentNumber)
+												.replaceAll("@index",i).replace("@giftId",giftId).replace("@money",money).replace("@moneytype",moneytype);
+					$("#gistList").append(giftHtml);
+					
+					//周期临时判断
+					var isCycle = oneGiftObj.isCycle;
+					if(typeof isCycle != "undefined" && isCycle==1){
+						var startViewTime = oneGiftObj.startViewTime;
+						var endViewTime = oneGiftObj.endViewTime;
+						if(endViewTime==""||endTime==""){
+							endTime = startTime;
+							startTime = startViewTime;
+						}else{
+							//判断当前时间在周期时间的位置 定位startTime和endTime
+							var now = new Date();
+							//第一阶段时间 接口中 startview endview  前台 是 startViewDate startDate
+							//第二阶段时间 接口中 start end 前台 是 endDate  endViewDate
+							var startViewDate = parseDateByTime(startViewTime);
+							var startDate = parseDateByTime(endViewTime);
+							var endDate = parseDateByTime(startTime);
+							var endViewDate = parseDateByTime(endTime);
+							if(endDate==null||endViewDate==null){//没有第二阶段时间
+								if(now.getTime()>startDate.getTime()){
+									startViewDate.setDate(startViewDate.getDate()+1);
+									startDate.setDate(startDate.getDate()+1);
+								}
+								endTime=parseStrByDate(startDate);
+								startTime = parseStrByDate(startViewDate);
+							}else{
+								if(now.getTime()>startDate.getTime()){
+									if(now.getTime()>endViewDate.getTime()){
+										startViewDate.setDate(startViewDate.getDate()+1);
+										startDate.setDate(startDate.getDate()+1);
+										endTime=parseStrByDate(startDate);
+										startTime = parseStrByDate(startViewDate);
+									}else{
+										endTime=parseStrByDate(endViewDate);
+										startTime = parseStrByDate(endDate);
+									}
+								}else{
+									endTime=parseStrByDate(startDate);
+									startTime = parseStrByDate(startViewDate);
+								}
+							}
+						}
+					}
+					
+					if(checkStartTime(startTime)){
+						$("#giftfont_"+i).html("奖品兑换结束倒计时");
+						daojishi(endTime,i,function(){
+								$("#getGiftButton_"+i).hide();
+							});
+						new Timer(function(args){
+							var _this = this;
+							var endTimeTemp = args[0];
+							var index = args[1];
+							daojishi(endTimeTemp,index,function(){
+								_this.stop();
+								$("#getGiftButton_"+index).hide();
+							});
+						},1000,[endTime,i]).start();
+					}else{
+						$("#giftfont_"+i).html("奖品开始兑换倒计时");
+						$("#getGiftButton_"+i).hide();
+						daojishi(startTime,i);
+						new Timer(function(args){
+							var _this = this;
+							var startTimeTemp = args[0];
+							var index = args[1];
+							var endTimeTemp = args[2];
+							//alert(startTimeTemp)
+							daojishi(startTimeTemp,index,function(){
+								_this.stop();
+								$("#getGiftButton_"+index).show();
+								daojishi(endTime);
+								new Timer(function(args){
+									var _this = this;
+									var endTimeTemp = args[0];
+									var index = args[1];
+									daojishi(endTimeTemp,index,function(){
+										_this.stop();
+										$("#getGiftButton_"+index).hide();
+									});
+								},1000,[endTimeTemp,index]).start();
+							});
+						},1000,[startTime,i,endTime]).start();
+					}
+				}
+			});
+		}
+		getGift();
+		function showDialog(title,content,showCansel,excute,args){
+			$("#dialogtitle").html(title);
+			$("#dialogcontent").html(content);
+			if(showCansel){
+				$("#dialogCansel").show();
+			}else{
+				$("#dialogCansel").hide();
+			}
+			if(typeof excute!="undefined"){
+				$("#dialog").attr("excute",excute);
+				$("#dialog").attr("args",args);
+			}else{
+				$("#dialog").attr("excute","");
+				$("#dialog").attr("args","");
+			}
+			$("#dialog").show();
+		}
+		$(".getGiftButton").live("click",function(){
+			var giftId = $(this).attr("giftId");
+			var moneytype = $(this).attr("moneytype");
+			showDialog("兑奖","您将花费一定"+moneytype+"兑奖，是否确认",true,"duijiang",giftId+"__"+this.id);
+		});
+		$("#dialogSure").click(function(){
+			$("#dialog").hide();
+			var excute = $("#dialog").attr("excute");
+			if(excute!=null&&excute!=""){
+				if(excute=="duijiang"){
+					var arg = $("#dialog").attr("args");
+					var args = arg.split("__");
+					var giftId = args[0];
+					var tongjiId = args[1];
+					var getGiftUrl = "getGift?giftId="+giftId+"&t="+new Date().getTime();
+					$.getJSON(getGiftUrl,function(result){
+						if(result==null){
+							showDialog("网络繁忙","网络繁忙请稍后再试");
+							return;
+						}
+						if(result.success){
+							showDialog("兑奖结果","兑奖成功，请点击小信封查看");
+						}else{
+							showDialog("兑奖结果","兑奖失败，"+result.prompt);
+						}
+					});
+					tongJI("奖品兑换","page=getGiftButton&at="+tongjiId);
+				}
+			}
+			$("#dialog").attr("excute","");
+			$("#dialog").attr("args","");
+		});
+		$("#dialogCansel").click(function(){
+			$("#dialog").hide();
+			$("#dialog").attr("excute","");
+			$("#dialog").attr("args","");
+		});
+	})();
+</script>
+<!--金币排行-->
+
+
+<div id="moneyPaihang" style="display: none;">
+	<div class="lanmu-bt8 horizontal_center">
+		<div id="week_ph_button" onclick style="width: 50%;" class="horizontal_center">
+			<span class="cloth_img1"><img  src="images/paihang.png" /></span>
+	   		<span class="center1">每周赚金榜</span>
+		</div>
+	    <div id="ph_button" onclick style="width: 50%;" class="horizontal_center ph_unselect">
+	    	<span class="cloth_img1"><img  src="images/paihang.png" /></span>
+	    	<span class="center1">金币排行榜</span>
+	    </div>
+	    <!-- <span id="paihang_more" class="pai_more" onclick="">更多>></span> -->
+	</div>
+	<div class="clear"></div>
+	
+	<div id="moneyPaiHangWeek_page">
+		<div id="moneyPaiHangWeek">
+		
+		</div>
+		<div class="app-list-more"><div id="ph_week_more" class="top-sou" onclick="">点击查看更多</div></div>
+	</div>
+	<div id="moneyPaiHangDiv_page"  style="display:none;">
+		<div id="moneyPaiHangDiv">
+		
+		</div>
+		<div class="app-list-more"><div id="ph_more" class="top-sou" onclick="">点击查看更多</div></div>
+	</div>
+	<div style="height:15px;"></div>
+	<script>
+		new ButtonBindPage(["week_ph_button","ph_button"],["moneyPaiHangWeek_page","moneyPaiHangDiv_page"],function(buttonids,currentButton){
+				for(var i in buttonids){
+					if(buttonids[i]==currentButton){
+						$("#"+currentButton).removeClass("ph_unselect");
+					}else{
+						$("#"+buttonids[i]).addClass("ph_unselect");
+					}
+				}
+			});
+		
+		var loginUrl="passport.yicha.cn";
+		var now=new Date();
+		var start=new Date();
+		var n=now.getDay();
+		if(n==1||n==0){
+			n+=7;
+		}
+		start.setDate(now.getDate()-n+1);
+		var dateStr = start.getFullYear()+"-"+(start.getMonth()+1)+"-"+start.getDate();
+		var moneyPHWeekurl="http://"+loginUrl+"/user/getWeekGold?varname=MoneyList1&strdate="+dateStr+"&pageSize=10&currentPage=1&t="+new Date().getTime();
+		yc.jsonp(moneyPHWeekurl,function(){
+			var showListObj = MoneyList1.data;
+			for(var i in showListObj){
+				var showObj = showListObj[i];
+				var index = parseInt(i)+1;
+				if(index<10){
+					index = "0"+index;
+				}
+				var nickName = showObj.nickName;
+				if(nickName==""){
+					nickName = showObj.userName;
+				}
+				var gold = showObj.gold;
+				var appendHtml = '<div class="paihang_text"><table id="" border="0" cellpadding="0" width="100%"><tr><td width="9%"><span class="pai_num">'+index+'</span></td><td width="40%"><span class="pai_name">'+nickName+'</span></td><td width="51%"><span class="pai_money center3"><img align="absmiddle" src="images/jinbi.png" />'+gold+'</span><span class="center4">枚</span></td></tr></table></div>';
+				$("#moneyPaiHangWeek").append(appendHtml);
+			}
+			
+		},true);
+		var moneyPHurl="http://"+loginUrl+"/user/getGold?varname=MoneyList&pageSize=10&t="+new Date().getTime();
+		yc.jsonp(moneyPHurl,function(){
+			var showListObj = MoneyList.data;
+			if(showListObj.length>0){
+				$("#moneyPaihang").show();
+			}
+			for(var i in showListObj){
+				var showObj = showListObj[i];
+				var index = parseInt(i)+1;
+				if(index<10){
+					index = "0"+index;
+				}
+				var nickName = showObj.nickName;
+				if(nickName==""){
+					nickName = showObj.userName;
+				}
+				var gold = showObj.gold;
+				var appendHtml = '<div class="paihang_text"><table id="" border="0" cellpadding="0" width="100%"><tr><td width="9%"><span class="pai_num">'+index+'</span></td><td width="40%"><span class="pai_name">'+nickName+'</span></td><td width="51%"><span class="pai_money center3"><img align="absmiddle" src="images/jinbi.png" />'+gold+'</span><span class="center4">枚</span></td></tr></table></div>';
+				$("#moneyPaiHangDiv").append(appendHtml);
+			}
+			
+		},true);
+		$("#ph_week_more").click(function(){
+			setTimeout(function(){
+				self.location='moneyPH?ph=week'
+			},400);
+			tongJI("福利金币周榜","at=weekpaihangmore");
+		});
+		$("#ph_more").click(function(){
+			setTimeout(function(){
+				self.location='moneyPH'
+			},400);
+			tongJI("福利金币排行榜","at=paihangmore");
+		});
+	</script>
+</div>
+
+<div class="horizontal_center"><p class="tel">客服QQ：<span>1677404532</span></p></div>
+<script type="text/javascript">
+	$("#testbutton").click(function(){
+		$.getJSON("createShitouRoom",function(result){
+			//alert(JSON.stringify(result))
+			if(result.success){
+				var roomId = result.roomId;
+				url = "shitou?op=join&roomId="+roomId;
+				self.location = url;
+			}else{
+				alert("创建房间失败，请返回重新操作")
+			}
+		});
+	});
+</script>
+<div style="height:15px;"></div>
+
+<div id="bangzhu" class="bangzhu" onclick style="display:none;"><div class="help"></div><div class="help1"><img style="width:100%;display:block;" src="images/fulihelp.png"></div></div>
+  
+  	<script>
+  		(function(){
+  			var isShowHelp = window.localStorage.getItem("bangzhu^"+YCnickNames)||"";
+   			var todayDate = new Date();
+   			var nowdate = todayDate.getDate()+"";
+   			if(isShowHelp==""||isShowHelp!=nowdate){
+   				var checkUrl = YCgetMsgCount+"?username="+YCnickNames+"&varname=YZflagObj&t="+new Date().getTime();
+	 			yc.jsonp(checkUrl,function(){
+					var flag = YZflagObj.send_flag;
+					window.localStorage.setItem("bangzhu^"+YCnickNames,nowdate);
+					if(flag==0){
+						$("#bangzhu").show();
+		   				var showYZdialog = true;
+		   				$("#bangzhu").click(function(){
+		   					$("#bangzhu").hide();
+		   					if(showYZdialog){
+		   						showYZdialog=false;
+		   						$("#dialog_yanzheng").show();
+		   					}
+		   				});
+		   				setTimeout(function(){
+		   					$("#bangzhu").hide();
+		   					if(showYZdialog){
+		   						showYZdialog=false;
+		   						$("#dialog_yanzheng").show();
+		   					}
+		   				},5000);
+		   				$("#dialogYZSure").click(function(){
+							peoplecenterform.gotoURL.value=self.location;
+							setTimeout(function(){
+				    			peoplecenterform.submit();
+				    		},400);
+				    		tongJI("福利个人中心","page=fuli_peoplecenter&at=peoplecenter");
+						});
+						$("#dialogYZCansel").click(function(){
+							$("#dialog_yanzheng").hide();
+						});
+					}else{
+						//已经验证
+					}
+				},true);
+   			}
+  		})();
+   	</script>
+ 
+ <!--用以记录ua-->
+
+<script src="gameview/index/js/cookie.js"></script>
+<script src="gameview/index/js/uaTool.js"></script>
+<script src="http://res.yicha.cn/cgi-bin/uid.sh"></script>
+  </body>
 </html>

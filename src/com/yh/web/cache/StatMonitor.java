@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 import android.util.Log;
 
 /**
@@ -32,7 +35,7 @@ public class StatMonitor {
 	private static long lastTime = 0;
 
 	private static float cpuMax = 0.6f; // 最大CPU使用率
-	private static long judgeSleep = 3000; // 3秒一次CPU监控
+	private static long judgeSleep = 30000; // 30秒一次CPU监控
 
 	/**
 	 * 设置监控的参数，为-1则使用默认
@@ -61,24 +64,22 @@ public class StatMonitor {
 	/**
 	 * 初始化网络监控
 	 */
-	public static void startJudge() {
+	public static void startJudge(ScheduledExecutorService monitorThreadPool) {
 		// 启动线程定时监控
 		isJudge = true;
-		new Thread(new Runnable() {
+		monitorThreadPool.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
-				while (isJudge) {
-					try {
-						StatMonitor.judgeStatBuzy();
-
-						// 延时
-						Thread.sleep(StatMonitor.judgeSleep);
-					} catch (Exception e) {
-						Log.e("StatInfo", e.getMessage());
+				try {
+					StatMonitor.judgeStatBuzy();
+					if (isJudge) {
+						// 结束
 					}
+				} catch (Exception e) {
+					Log.e("StatInfo", e.getMessage());
 				}
 			}
-		}).start();
+		}, 3000, judgeSleep, TimeUnit.MILLISECONDS);
 	}
 
 	/**

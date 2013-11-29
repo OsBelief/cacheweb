@@ -1,8 +1,12 @@
 package com.yh.web.view;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -43,6 +47,9 @@ import com.yh.web.cache.UpdateTask;
 
 public class MainActivity extends BaseActivity {
 
+	private ThreadPoolExecutor threadPool;
+	private ScheduledExecutorService monitorThreadPool;
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -84,7 +91,11 @@ public class MainActivity extends BaseActivity {
 		// views.add(uText);
 		// views.add(findViewById(R.id.goBtn));
 		// web.setOnFocusChangeListener(new MyFoucusChange(views));
-
+		
+		// 通用线程池
+		threadPool = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+		monitorThreadPool = Executors.newScheduledThreadPool(1);
+		
 		// 初始化MIME
 		MIME.initMIME(this);
 		// 初始化过滤器
@@ -92,19 +103,22 @@ public class MainActivity extends BaseActivity {
 		// 初始化缓存策略
 		CachePolicy.initPolicy(this);
 		// 初始化AsyncHttpClient
-		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
+		// HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
+		HttpUtil.initAsyncHttpClient(web, threadPool, "yiccha.cache.fuli_1.0");
 		// 初始化缓存
 		CacheControl.initCache(this);
 		// 开始监控网络
-		NetMonitor.startJudge();
+		NetMonitor.startJudge(monitorThreadPool);
 		// 开始CPU监控
-		StatMonitor.startJudge();
+		StatMonitor.startJudge(monitorThreadPool);
 		// 开始执行删除过期任务
-		DeleteTask.initShedule(this);
+		DeleteTask.initShedule(this, monitorThreadPool);
 		
 		UpdateTask.initBasic(this);
 		// 开始执行更新配置任务
 		// UpdateTask.initShedule(this);
+		
+		web.loadUrl(this.getString(R.string.defaultUrl));
 	}
 
 	/**
@@ -178,17 +192,7 @@ public class MainActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.action_mainpage:
 			WebView web = (WebView) findViewById(R.id.webView1);
-			try {
-				String s = IOUtil.readStream(IOUtil.readInternalFile(this,
-						"main.htm"));
-				if (s == null) {
-					s = IOUtil.readStream(this.getAssets().open("main.htm"));
-				}
-				Log.d("MainPage", s);
-				web.loadDataWithBaseURL(null, s, "text/html", "utf-8", null);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			web.loadUrl(this.getString(R.string.defaultUrl));
 			return true;
 		case R.id.action_updateconfig:
 			UpdateTask.updateOneTime();

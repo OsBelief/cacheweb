@@ -2,12 +2,16 @@ package com.yh.web.cache;
 
 import java.io.InputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
+import cn.yicha.cache.fuli.R;
+
 import com.yh.web.cache.db.CacheOrm;
+import com.yh.web.view.MainActivity;
 
 /**
  * @author gudh 缓存控制策略
@@ -15,7 +19,9 @@ import com.yh.web.cache.db.CacheOrm;
 public class CacheControl {
 
 	public static CacheOrm orm = null;
-
+	
+	public static String defaultUrl;
+	
 	/**
 	 * 初始化缓存ORM
 	 * 
@@ -23,6 +29,7 @@ public class CacheControl {
 	 */
 	public static void initCache(Context context) {
 		orm = new CacheOrm(context);
+		defaultUrl = ((MainActivity)context).getString(R.string.defaultUrl);
 	}
 
 	/**
@@ -36,6 +43,14 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
+		if (defaultUrl.equals("url")) {
+			InputStream is = IOUtil.readInternalFile((Activity) context,
+					"main.htm");
+			WebResourceResponse res = IOUtil.generateResource(
+					MIME.getMimeFromType("htm"), null, is);
+			return res;
+		}
+		
 		// 获取转换的URL
 		String urlb = url;
 		url = HttpUtil.getToUrl(url);

@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.webkit.WebView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -29,15 +31,16 @@ public class HttpUtil {
 	// 异步HTTPClient
 	private static AsyncHttpClient client = null;
 	private static String[] allowedContentTypes = null;
-
+	
 	/**
 	 * 可以定时检查网络是否可用
 	 */
 	private static boolean netAvailable = true;
 
-	public static void initAsyncHttpClient(String ua) {
+	public static void initAsyncHttpClient(WebView web, ThreadPoolExecutor threadPool, String ua) {
 		if (client == null) {
 			client = new AsyncHttpClient();
+			client.setThreadPool(threadPool);
 		}
 		if (allowedContentTypes == null) {
 			allowedContentTypes = new String[] { ".*" };
@@ -45,6 +48,14 @@ public class HttpUtil {
 		client.setUserAgent(ua);
 	}
 
+	/**
+	 * 设置cookie
+	 * @param cookie
+	 */
+	public static void setCookie(String cookie) {
+		client.addHeader("Cookie", cookie);
+	}
+	
 	/**
 	 * 判断是否有可用的网络
 	 * 

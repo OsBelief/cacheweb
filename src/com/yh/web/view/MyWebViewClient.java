@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -26,6 +27,8 @@ public class MyWebViewClient extends WebViewClient {
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private Activity act;
+	
+	private static final String COOKIE_URL = "http://passport.yicha.cn/user/login.do?op=login";
 
 	// 记录302跳转情况
 	private String pendingUrl;
@@ -43,7 +46,7 @@ public class MyWebViewClient extends WebViewClient {
 			url = reload;
 		}
 		view.loadUrl(url);
-		return true;
+		return false;
 	}
 
 	@Override
@@ -66,6 +69,11 @@ public class MyWebViewClient extends WebViewClient {
 					+ "->" + url);
 			((EditText) act.findViewById(R.id.uText)).setText(url);
 			pendingUrl = null;
+		}
+		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
+		Log.i("Cookie", cookie);
+		if(cookie != null && !cookie.trim().equals("")){
+			HttpUtil.setCookie(cookie);
 		}
 	}
 

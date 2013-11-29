@@ -4,7 +4,7 @@ cacheMatch:
   - mime : image/.*
     id : 3
   - type : (css|js)
-    id : 1
+    id : 3
 
 
 ########################################
@@ -48,6 +48,11 @@ cachePolicy:
     policy : [ day, time ]
     day : 0
     time : 43200
+
+  # 缓存时间为1年
+  - id : 7
+    policy : []
+    time : 30412800000
 
   # 缓存时间为0
   - id : 50
