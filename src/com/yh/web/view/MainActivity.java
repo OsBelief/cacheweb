@@ -28,7 +28,7 @@ import android.webkit.WebView.HitTestResult;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.yh.web.R;
+import cn.yicha.cache.fuli.R;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;

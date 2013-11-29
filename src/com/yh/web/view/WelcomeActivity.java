@@ -1,6 +1,6 @@
 package com.yh.web.view;
 
-import com.yh.web.R;
+import cn.yicha.cache.fuli.R;
 
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,11 +10,17 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.Menu;
 
+/**
+ * 启动时Activity
+ * 
+ * @author gudh
+ * @data 2013-11-29
+ */
 public class WelcomeActivity extends BaseActivity {
 	private static final int GO_HOME = 1000;
 	private static final int GO_GUIDE = 1001;
 	
-	// 延迟3秒
+	// 延迟1秒
 	private static final long DELAY_MILLIS = 1000;
 
 	public static final String FIRSTSTART_PREF = "first_start";
@@ -29,10 +35,10 @@ public class WelcomeActivity extends BaseActivity {
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
 			case GO_HOME:
-				goHome();
+				goActivity(MainActivity.class);
 				break;
 			case GO_GUIDE:
-				goGuide();
+				goActivity(GuideActivity.class);
 				break;
 			}
 			super.handleMessage(msg);
@@ -54,7 +60,7 @@ public class WelcomeActivity extends BaseActivity {
 		boolean isFirstIn = preferences.getBoolean(FIRSTSTART_KEY, true);
 
 		if (!isFirstIn) {
-			// 使用Handler的postDelayed方法，3秒后执行跳转到MainActivity
+			// 使用Handler的postDelayed方法，1秒后执行跳转到MainActivity
 			mHandler.sendEmptyMessageDelayed(GO_HOME, DELAY_MILLIS);
 		} else {
 			mHandler.sendEmptyMessageDelayed(GO_GUIDE, DELAY_MILLIS);
@@ -68,16 +74,9 @@ public class WelcomeActivity extends BaseActivity {
 		return true;
 	}
 
-	private void goHome() {
-		Intent intent = new Intent(WelcomeActivity.this, MainActivity.class);
+	private void goActivity(Class<?> cls) {
+		Intent intent = new Intent(WelcomeActivity.this, cls);
 		WelcomeActivity.this.startActivity(intent);
 		WelcomeActivity.this.finish();
 	}
-
-	private void goGuide() {
-		Intent intent = new Intent(WelcomeActivity.this, GuideActivity.class);
-		WelcomeActivity.this.startActivity(intent);
-		WelcomeActivity.this.finish();
-	}
-
 }

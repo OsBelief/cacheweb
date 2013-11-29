@@ -14,7 +14,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 
-import com.yh.web.R;
+import cn.yicha.cache.fuli.R;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.HttpUtil;
 

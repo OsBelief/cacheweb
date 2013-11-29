@@ -1,6 +1,6 @@
 package com.yh.web.view;
 
-import com.yh.web.R;
+import cn.yicha.cache.fuli.R;
 
 import android.app.Activity;
 import android.webkit.WebChromeClient;

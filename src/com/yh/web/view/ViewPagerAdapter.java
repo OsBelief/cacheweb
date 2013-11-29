@@ -2,7 +2,7 @@ package com.yh.web.view;
 
 import java.util.List;
 
-import com.yh.web.R;
+import cn.yicha.cache.fuli.R;
 
 import android.app.Activity;
 import android.content.Context;
@@ -16,6 +16,12 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
+/**
+ * 翻页适配器
+ * 
+ * @author gudh
+ * @data 2013-11-29
+ */
 public class ViewPagerAdapter extends PagerAdapter {
 
 	// 界面列表
@@ -27,33 +33,14 @@ public class ViewPagerAdapter extends PagerAdapter {
 		this.activity = activity;
 	}
 
-	// 销毁arg1位置的界面
-	@Override
-	public void destroyItem(View arg0, int arg1, Object arg2) {
-		((ViewPager) arg0).removeView(views.get(arg1));
-	}
-
-	@Override
-	public void finishUpdate(View arg0) {
-	}
-
-	// 获得当前界面数
-	@Override
-	public int getCount() {
-		if (views != null) {
-			return views.size();
-		}
-		return 0;
-	}
-
 	// 初始化arg1位置的界面
 	@Override
 	public Object instantiateItem(View arg0, int arg1) {
 		((ViewPager) arg0).addView(views.get(arg1), 0);
 		if (arg1 == views.size() - 1) {
-			ImageView mStartWeiboImageButton = (ImageView) arg0
+			ImageView mStartButton = (ImageView) arg0
 					.findViewById(R.id.iv_start);
-			mStartWeiboImageButton.setOnClickListener(new OnClickListener() {
+			mStartButton.setOnClickListener(new OnClickListener() {
 				@Override
 				public void onClick(View v) {
 					// 设置已经引导
@@ -66,7 +53,6 @@ public class ViewPagerAdapter extends PagerAdapter {
 	}
 
 	private void goHome() {
-		// 跳转
 		Intent intent = new Intent(activity, MainActivity.class);
 		activity.startActivity(intent);
 		activity.finish();
@@ -83,12 +69,33 @@ public class ViewPagerAdapter extends PagerAdapter {
 		editor.commit();
 	}
 
-	// 判断是否由对象生成界面
+	// 销毁arg1位置的界面
+	@Override
+	public void destroyItem(View arg0, int arg1, Object arg2) {
+		((ViewPager) arg0).removeView(views.get(arg1));
+	}
+
+	// 获得当前界面数
+	@Override
+	public int getCount() {
+		if (views != null) {
+			return views.size();
+		}
+		return 0;
+	}
+	
+	/**
+	 * 判断是否由对象生成界面
+	 */
 	@Override
 	public boolean isViewFromObject(View arg0, Object arg1) {
 		return (arg0 == arg1);
 	}
 
+	@Override
+	public void finishUpdate(View arg0) {
+	}
+	
 	@Override
 	public void restoreState(Parcelable arg0, ClassLoader arg1) {
 	}

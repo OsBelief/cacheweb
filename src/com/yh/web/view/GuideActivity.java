@@ -3,7 +3,7 @@ package com.yh.web.view;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.yh.web.R;
+import cn.yicha.cache.fuli.R;
 
 import android.os.Bundle;
 import android.support.v4.view.ViewPager;
@@ -13,6 +13,12 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+/**
+ * 提示页
+ * 
+ * @author gudh
+ * @data 2013-11-29
+ */
 public class GuideActivity extends BaseActivity implements OnPageChangeListener {
 
 	private ViewPager vp;
