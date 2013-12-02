@@ -1,11 +1,18 @@
 package com.yh.web.view;
 
+import java.lang.reflect.Field;
+
+import com.yh.web.cache.NetMonitor;
+
 import cn.yicha.cache.fuli.R;
 
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.view.Menu;
@@ -53,7 +60,21 @@ public class WelcomeActivity extends BaseActivity {
 		init();
 	}
 
-	private void init() {
+	/**
+	 * 判断网络是否可用，并进入主界面
+	 */
+	public void init(){
+		if(NetMonitor.isNetworkAvailable(this)){
+			initEntry();
+		}else{
+			showNetUnavailable();
+		}
+	}
+	
+	/**
+	 * 进入
+	 */
+	private void initEntry() {
 		// 判断是否是第一次运行
 		SharedPreferences preferences = getSharedPreferences(
 				FIRSTSTART_PREF, MODE_PRIVATE);
@@ -65,6 +86,39 @@ public class WelcomeActivity extends BaseActivity {
 		} else {
 			mHandler.sendEmptyMessageDelayed(GO_GUIDE, DELAY_MILLIS);
 		}
+	}
+	
+	/**
+	 * 显示网络不可用
+	 */
+	private void showNetUnavailable() {
+		AlertDialog.Builder builder = new Builder(this);
+		builder.setMessage("当前网络不可用，易查福利需要在有网络的情况下访问，请检查网络重试或退出。")
+				.setTitle("网络连接提示")
+				.setPositiveButton("重试", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						try {
+							Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
+		                    field.setAccessible(true);   
+		                    field.set(dialog, false);
+						} catch (NoSuchFieldException e) {
+							e.printStackTrace();
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (IllegalAccessException e) {
+							e.printStackTrace();
+						}   
+						init();
+						
+					}
+				})
+				.setNegativeButton("退出", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						BaseActivity.exit();
+					}
+				}).setCancelable(false).create().show();
 	}
 
 	@Override
