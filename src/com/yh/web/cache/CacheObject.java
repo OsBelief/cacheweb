@@ -12,7 +12,7 @@ public class CacheObject {
 	public final static String rootPath = Environment
 			.getExternalStorageDirectory().getPath() + "/yichaweb/cache/";
 
-	public final static boolean useExtern = false;
+	public final static boolean useExtern = true;
 	
 	private String uid;
 	private String url;

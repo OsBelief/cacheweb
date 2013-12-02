@@ -21,6 +21,7 @@ disCacheUrl:
   # 评论登录系统
   - ^http://comment.yicha.cn/.*
   - ^http://i.yicha.cn/ti/newrec.html$
+  - ^http://res.yicha.cn/res/fuli/user/avatar/.*$
 
 # URL地址替换
 cacheUrlReplace:
