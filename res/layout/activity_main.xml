@@ -41,8 +41,9 @@
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="fill_parent"
-        android:layout_height="5dp"
+        android:layout_height="3dp"
         android:layout_alignParentLeft="true"
+        android:progressDrawable="@drawable/progress"
         android:layout_below="@+id/goBtn" />
 
 </RelativeLayout>

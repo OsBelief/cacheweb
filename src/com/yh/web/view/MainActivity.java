@@ -16,6 +16,8 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.telephony.TelephonyManager;
@@ -27,13 +29,14 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.widget.EditText;
 import android.widget.Toast;
-
 import cn.yicha.cache.fuli.R;
+
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
@@ -196,7 +199,7 @@ public class MainActivity extends BaseActivity {
 		// web 获得焦点
 		web.requestFocus();
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -323,5 +326,23 @@ public class MainActivity extends BaseActivity {
 				}
 			}
 		}
+	}
+	
+
+	// 文件上传支持
+	public ValueCallback<Uri> mUploadMessage;
+	public final static int FILECHOOSER_RESULTCODE = 1;
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode,
+	        Intent intent) {
+	    if (requestCode == FILECHOOSER_RESULTCODE) {
+	        if (null == mUploadMessage)
+	            return;
+	        Uri result = intent == null || resultCode != RESULT_OK ? null
+	                : intent.getData();
+	        mUploadMessage.onReceiveValue(result);
+	        mUploadMessage = null;
+	    }
 	}
 }
