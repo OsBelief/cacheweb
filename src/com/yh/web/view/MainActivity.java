@@ -18,6 +18,7 @@ import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.os.Build;
 import android.os.Bundle;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -49,6 +50,8 @@ public class MainActivity extends BaseActivity {
 
 	private ThreadPoolExecutor threadPool;
 	private ScheduledExecutorService monitorThreadPool;
+	
+	private static final String baseUA = "yicha.cache.fuli_1.0";
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -82,9 +85,11 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 
+		// 获取UA
+		String ua = getUserAgent(baseUA);
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
-		setWebView(web);
+		setWebView(web, ua);
 
 		// // 获取焦点隐藏地址栏
 		// ArrayList<View> views = new ArrayList<View>();
@@ -104,7 +109,7 @@ public class MainActivity extends BaseActivity {
 		CachePolicy.initPolicy(this);
 		// 初始化AsyncHttpClient
 		// HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
-		HttpUtil.initAsyncHttpClient(this, threadPool, "yiccha.cache.fuli_1.0");
+		HttpUtil.initAsyncHttpClient(this, threadPool, ua + "_hc");
 		// 初始化缓存
 		CacheControl.initCache(this);
 		// 开始监控网络
@@ -122,17 +127,33 @@ public class MainActivity extends BaseActivity {
 	}
 
 	/**
+	 * 获取UA
+	 * @param baseUa
+	 */
+	public String getUserAgent(String baseUa){
+		TelephonyManager tm = (TelephonyManager) this.getBaseContext()
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		String ua = new StringBuffer().append(baseUa).append(",")
+				.append(android.os.Build.MODEL).append(",")
+				.append(android.os.Build.VERSION.SDK_INT).append(",")
+				.append(android.os.Build.VERSION.RELEASE).append(",")
+				.append(tm.getDeviceId()).toString().replaceAll(" +", "_");
+		return ua;
+	}
+	
+	/**
 	 * 设置Web信息
 	 * 
 	 * @param web
 	 */
 	@SuppressLint("SetJavaScriptEnabled")
-	public void setWebView(WebView web) {
+	public void setWebView(WebView web, String ua) {
 		web.setWebViewClient(new MyWebViewClient(this));
 		web.setWebChromeClient(new MyWebChromeClient(this));
 
 		WebSettings set = web.getSettings();
 		set.setJavaScriptEnabled(true);// 启用JS
+		set.setUserAgentString(ua);
 
 		set.setDomStorageEnabled(true);// 启用localStorage
 		String path = this.getApplicationContext()
