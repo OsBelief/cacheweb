@@ -1,5 +1,9 @@
 package com.yh.web.cache.db;
 
+import java.io.FileOutputStream;
+import java.io.InputStream;
+
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
@@ -8,10 +12,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "cacheinfo.db";
 	private static final int DATABASE_VERSION = 1;
+	
+	private static Context context; 
+	
+	private static final String INIT_DB_NAME = "cache/databases/cacheinfo.db";
+	@SuppressLint("SdCardPath")
+	private static final String INNER_DB_NAME = "/data/data/cn.yicha.cache.fuli/databases/cacheinfo.db";
+	private static boolean debug = false;
 
 	public DBHelper(Context context) {
 		// CursorFactory设置为null,使用默认值
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		DBHelper.context = context;
 	}
 
 	/**
@@ -19,10 +31,32 @@ public class DBHelper extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		db.execSQL("CREATE TABLE IF NOT EXISTS [cacheinfo] ("
-				+ "[uid] [CHAR(32)],   [url] TEXT,   [host] [VARCHAR(100)],   [type] [VARCHAR(10)],"
-				+ "[mime] [VARCHAR(20)],   [fileName] [VARCHAR(200)],   [createTime] INT64, "
-				+ "[cachePolicy] [int(8)],   [useCount] INT DEFAULT 0) ");
+		if (debug) {
+			db.execSQL("CREATE TABLE IF NOT EXISTS [cacheinfo] ("
+					+ "[uid] [CHAR(32)],   [url] TEXT,   [host] [VARCHAR(100)],   [type] [VARCHAR(10)],"
+					+ "[mime] [VARCHAR(20)],   [fileName] [VARCHAR(200)],   [createTime] INT64, "
+					+ "[cachePolicy] [int(8)],   [useCount] INT DEFAULT 0) ");
+		} else {
+			try {
+				InputStream is = context.getAssets().open(INIT_DB_NAME);
+				FileOutputStream fos = new FileOutputStream(INNER_DB_NAME);
+				byte[] buffer = new byte[2048];
+				int count = 0;
+				while ((count = is.read(buffer)) > 0) {
+					fos.write(buffer, 0, count);
+				}
+				fos.close();
+				is.close();
+			} catch (Exception e) {
+				e.printStackTrace();
+				
+				// 原始没有则重新创建表
+				db.execSQL("CREATE TABLE IF NOT EXISTS [cacheinfo] ("
+						+ "[uid] [CHAR(32)],   [url] TEXT,   [host] [VARCHAR(100)],   [type] [VARCHAR(10)],"
+						+ "[mime] [VARCHAR(20)],   [fileName] [VARCHAR(200)],   [createTime] INT64, "
+						+ "[cachePolicy] [int(8)],   [useCount] INT DEFAULT 0) ");
+			}
+		}
 	}
 
 	/**

@@ -71,7 +71,6 @@ public class MyWebViewClient extends WebViewClient {
 			pendingUrl = null;
 		}
 		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
-		Log.i("Cookie", cookie);
 		if(cookie != null && !cookie.trim().equals("")){
 			HttpUtil.setCookie(cookie);
 		}

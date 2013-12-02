@@ -13,6 +13,7 @@ public class CacheObject {
 			.getExternalStorageDirectory().getPath() + "/yichaweb/cache/";
 
 	public final static boolean useExtern = true;
+	public final static boolean multiPath = false;
 	
 	private String uid;
 	private String url;
@@ -83,11 +84,19 @@ public class CacheObject {
 	 * @param mime
 	 * @return
 	 */
-	public static String getCacheExternFileName(String id, String host, String mime) {
+	public static String getCacheExternFileName(String id, String host,
+			String mime) {
 		String fileName = new StringBuffer().append(id.substring(0, 2))
 				.append("/").append(id.substring(10)).toString();
-		fileName = new StringBuffer().append(rootPath).append(host).append("/")
-				.append(mime).append("/").append(fileName).toString();
+		if (multiPath) {
+			fileName = new StringBuffer().append(rootPath).append(host)
+					.append("/").append(mime).append("/").append(fileName)
+					.toString();
+		} else {
+			fileName = new StringBuffer().append(rootPath).append(fileName)
+					.toString();
+
+		}
 		return fileName;
 	}
 	

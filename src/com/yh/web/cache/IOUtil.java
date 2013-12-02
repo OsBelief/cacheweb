@@ -274,6 +274,9 @@ public class IOUtil {
 	public static InputStream getFileInputStream(Activity activity, String fileName){
 		if(fileName.startsWith("/")){
 			return IOUtil.readExternalFile(fileName);
+		} else if(fileName.contains("/")){
+			System.out.println("Come from inner:" + fileName);
+			return IOUtil.readInternalFile(activity, "cache/" + fileName);
 		}
 		return IOUtil.readInternalFile(activity, fileName);
 	}

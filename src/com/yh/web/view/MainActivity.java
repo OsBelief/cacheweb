@@ -93,7 +93,7 @@ public class MainActivity extends BaseActivity {
 		// web.setOnFocusChangeListener(new MyFoucusChange(views));
 		
 		// 通用线程池
-		threadPool = new ThreadPoolExecutor(1, 1, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+		threadPool = new ThreadPoolExecutor(1, 2, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
 		monitorThreadPool = Executors.newScheduledThreadPool(1);
 		
 		// 初始化MIME
