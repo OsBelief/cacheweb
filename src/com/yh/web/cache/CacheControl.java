@@ -8,9 +8,9 @@ import android.content.Context;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
-
 import cn.yicha.cache.fuli.R;
 
+import com.cache.resource.CacheResource;
 import com.yh.web.cache.db.CacheOrm;
 import com.yh.web.view.MainActivity;
 
@@ -130,6 +130,7 @@ public class CacheControl {
 			Log.i("getResource",
 					"New Fetch | " + obj.getType() + " " + obj.getMime()
 							+ " | " + url);
+			CacheResource.urlSet.add(url);
 		}
 		return res;
 	}

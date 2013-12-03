@@ -37,6 +37,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import cn.yicha.cache.fuli.R;
 
+import com.cache.resource.CacheResource;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
@@ -257,6 +258,7 @@ public class MainActivity extends BaseActivity {
 		builder.setPositiveButton("确认", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
+				CacheResource.writeStaticUrl(CacheResource.urlSet);
 				dialog.dismiss();
 				exit();
 			}
