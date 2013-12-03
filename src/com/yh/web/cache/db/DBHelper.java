@@ -1,5 +1,6 @@
 package com.yh.web.cache.db;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 
@@ -12,13 +13,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "cacheinfo.db";
 	private static final int DATABASE_VERSION = 1;
-	
-	private static Context context; 
-	
-	private static final String INIT_DB_NAME = "cache/databases/cacheinfo.db";
+
+	private static Context context;
+
+	private static final String INIT_DB_NAME = "cfile/cacheinfo.db";
 	@SuppressLint("SdCardPath")
 	private static final String INNER_DB_NAME = "/data/data/cn.yicha.cache.fuli/databases/cacheinfo.db";
-	private static boolean debug = false;
 
 	public DBHelper(Context context) {
 		// CursorFactory设置为null,使用默认值
@@ -31,12 +31,24 @@ public class DBHelper extends SQLiteOpenHelper {
 	 */
 	@Override
 	public void onCreate(SQLiteDatabase db) {
-		if (debug) {
-			db.execSQL("CREATE TABLE IF NOT EXISTS [cacheinfo] ("
-					+ "[uid] [CHAR(32)],   [url] TEXT,   [host] [VARCHAR(100)],   [type] [VARCHAR(10)],"
-					+ "[mime] [VARCHAR(20)],   [fileName] [VARCHAR(200)],   [createTime] INT64, "
-					+ "[cachePolicy] [int(8)],   [useCount] INT DEFAULT 0) ");
-		} else {
+		db.execSQL("CREATE TABLE IF NOT EXISTS [cacheinfo] ("
+				+ "[uid] [CHAR(32)],   [url] TEXT,   [host] [VARCHAR(100)],   [type] [VARCHAR(10)],"
+				+ "[mime] [VARCHAR(20)],   [fileName] [VARCHAR(200)],   [createTime] INT64, "
+				+ "[cachePolicy] [int(8)],   [useCount] INT DEFAULT 0) ");
+	}
+
+	/**
+	 * 数据库版本更改时的事件
+	 */
+	@Override
+	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+		// 如果DATABASE_VERSION值被改为2,系统发现现有数据库版本不同,即会调用onUpgrade
+		// db.execSQL("ALTER TABLE person ADD COLUMN other STRING");
+	}
+
+	public SQLiteDatabase getDB() {
+		if (!new File(INNER_DB_NAME).exists()) {
+			this.getReadableDatabase();
 			try {
 				InputStream is = context.getAssets().open(INIT_DB_NAME);
 				FileOutputStream fos = new FileOutputStream(INNER_DB_NAME);
@@ -49,22 +61,13 @@ public class DBHelper extends SQLiteOpenHelper {
 				is.close();
 			} catch (Exception e) {
 				e.printStackTrace();
-				
-				// 原始没有则重新创建表
-				db.execSQL("CREATE TABLE IF NOT EXISTS [cacheinfo] ("
-						+ "[uid] [CHAR(32)],   [url] TEXT,   [host] [VARCHAR(100)],   [type] [VARCHAR(10)],"
-						+ "[mime] [VARCHAR(20)],   [fileName] [VARCHAR(200)],   [createTime] INT64, "
-						+ "[cachePolicy] [int(8)],   [useCount] INT DEFAULT 0) ");
 			}
 		}
-	}
-
-	/**
-	 * 数据库版本更改时的事件
-	 */
-	@Override
-	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		// 如果DATABASE_VERSION值被改为2,系统发现现有数据库版本不同,即会调用onUpgrade
-		// db.execSQL("ALTER TABLE person ADD COLUMN other STRING");
+		SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(INNER_DB_NAME,
+				null);
+		if (db == null) {
+			db = this.getWritableDatabase();
+		}
+		return db;
 	}
 }

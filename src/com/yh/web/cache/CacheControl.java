@@ -1,5 +1,6 @@
 package com.yh.web.cache;
 
+import java.io.IOException;
 import java.io.InputStream;
 
 import android.app.Activity;
@@ -43,14 +44,6 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
-		if (defaultUrl.equals("url")) {
-			InputStream is = IOUtil.readInternalFile((Activity) context,
-					"main.htm");
-			WebResourceResponse res = IOUtil.generateResource(
-					MIME.getMimeFromType("htm"), null, is);
-			return res;
-		}
-		
 		// 获取转换的URL
 		String urlb = url;
 		url = HttpUtil.getToUrl(url);
@@ -59,7 +52,21 @@ public class CacheControl {
 			// 如果转换的URL为null，则表示不需要缓存
 			return null;
 		}
-
+		
+		// 主页cookie为null则使用main.htm
+		if (defaultUrl.equals(url) && HttpUtil.getCookie() == null) {
+			WebResourceResponse res = null;
+			try {
+				InputStream is = context.getAssets().open("main.htm");
+				Log.i("getResource", "use main.htm, cookie is null");
+				res = IOUtil.generateResource(
+						MIME.getMimeFromType("htm"), null, is);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return res;
+		}
+		
 		boolean fromCache = true;
 		// 查询数据库是否有缓存
 		CacheObject obj = orm.queryByUrl(url);
@@ -80,6 +87,23 @@ public class CacheControl {
 			return null;
 		}
 
+		// html则判断cookie是否变化
+		if (obj.getType().equals("html")) {
+			if(HttpUtil.isCookieChanged()){
+				return null;
+			}
+			// 如果是主页延时5毫秒再判断一次
+			if(obj.getUrl().equals(defaultUrl)){
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+			}
+			if(HttpUtil.isCookieChanged()){
+				return null;
+			}
+		}
+		
 		WebResourceResponse res = null;
 		if (obj.getMime().startsWith("image")) {
 			// 图片处理

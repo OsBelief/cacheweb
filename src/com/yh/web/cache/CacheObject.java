@@ -86,16 +86,16 @@ public class CacheObject {
 	 */
 	public static String getCacheExternFileName(String id, String host,
 			String mime) {
-		String fileName = new StringBuffer().append(id.substring(0, 2))
-				.append("/").append(id.substring(10)).toString();
+		String fileName = id;
 		if (multiPath) {
 			fileName = new StringBuffer().append(rootPath).append(host)
-					.append("/").append(mime).append("/").append(fileName)
-					.toString();
+					.append("/").append(mime).append("/")
+					.append(id.substring(0, 2)).append("/")
+					.append(id.substring(10)).toString();
 		} else {
-			fileName = new StringBuffer().append(rootPath).append(fileName)
-					.toString();
-
+			fileName = new StringBuffer().append(rootPath).append("cfile/")
+					.append(id.substring(0, 1)).append("/")
+					.append(id.substring(10)).toString();
 		}
 		return fileName;
 	}

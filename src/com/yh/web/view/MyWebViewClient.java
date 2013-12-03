@@ -1,5 +1,6 @@
 package com.yh.web.view;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -9,7 +10,6 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.webkit.CookieManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -18,6 +18,7 @@ import android.widget.EditText;
 import cn.yicha.cache.fuli.R;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.HttpUtil;
+import com.yh.web.cache.IOUtil;
 
 /**
  * @author gudh 自定义浏览器WebViewClient
@@ -27,14 +28,19 @@ public class MyWebViewClient extends WebViewClient {
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private Activity act;
-	
-	private static final String COOKIE_URL = "http://passport.yicha.cn/user/login.do?op=login";
 
+	private String errorHtm;
+	
 	// 记录302跳转情况
 	private String pendingUrl;
 
 	public MyWebViewClient(Activity act) {
 		this.act = act;
+		try {
+			errorHtm = IOUtil.readStream(act.getAssets().open("error.htm"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -68,13 +74,24 @@ public class MyWebViewClient extends WebViewClient {
 			Log.d("Redirect(302)", "Detected HTTP redirect " + pendingUrl
 					+ "->" + url);
 			((EditText) act.findViewById(R.id.uText)).setText(url);
+			
+			// 返回首页时设置cookie
+			if(url.equals(act.getString(R.string.defaultUrl))){
+				HttpUtil.setCookie();
+			}
 			pendingUrl = null;
 		}
-		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
-		if(cookie != null && !cookie.trim().equals("")){
-			HttpUtil.setCookie(cookie);
-		}
 	}
+	
+	@Override 
+    public void onReceivedError(WebView view, int errorCode, 
+            String description, String failingUrl) { 
+        super.onReceivedError(view, errorCode, description, failingUrl);
+        
+		String htm = errorHtm.replace("#code#", String.valueOf(errorCode));
+		htm = htm.replace("#url#", failingUrl);
+		view.loadDataWithBaseURL(null, htm, "text/html", "utf-8", null);
+    }
 
 	/**
 	 * 通过Future在指定时间内获取数据
