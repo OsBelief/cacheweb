@@ -1,5 +1,6 @@
 package com.yh.web.view;
 
+import java.io.IOException;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -17,6 +18,7 @@ import android.widget.EditText;
 import cn.yicha.cache.fuli.R;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.HttpUtil;
+import com.yh.web.cache.IOUtil;
 
 /**
  * @author gudh 自定义浏览器WebViewClient
@@ -27,11 +29,18 @@ public class MyWebViewClient extends WebViewClient {
 
 	private Activity act;
 
+	private String errorHtm;
+	
 	// 记录302跳转情况
 	private String pendingUrl;
 
 	public MyWebViewClient(Activity act) {
 		this.act = act;
+		try {
+			errorHtm = IOUtil.readStream(act.getAssets().open("error.htm"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -73,6 +82,16 @@ public class MyWebViewClient extends WebViewClient {
 			pendingUrl = null;
 		}
 	}
+	
+	@Override 
+    public void onReceivedError(WebView view, int errorCode, 
+            String description, String failingUrl) { 
+        super.onReceivedError(view, errorCode, description, failingUrl);
+        
+		String htm = errorHtm.replace("#code#", String.valueOf(errorCode));
+		htm = htm.replace("#url#", failingUrl);
+		view.loadDataWithBaseURL(null, htm, "text/html", "utf-8", null);
+    }
 
 	/**
 	 * 通过Future在指定时间内获取数据
