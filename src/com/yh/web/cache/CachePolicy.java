@@ -269,6 +269,8 @@ public class CachePolicy {
 		if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
 			// 只有时间的话就不用Calendar对象了
 			timeBefore = now - cp.getTime();
+		} else if(cp.policy.length == 0){
+			return -1;
 		} else {
 			// 根据日历判断月星期日
 			long tempTimeBefore = 0;

@@ -12,6 +12,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.http.client.params.ClientPNames;
+
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
@@ -49,6 +51,9 @@ public class HttpUtil {
 			client = new AsyncHttpClient();
 			client.setThreadPool(threadPool);
 		}
+		// 设置302不跳转
+		client.getHttpClient().getParams().setParameter(ClientPNames.HANDLE_REDIRECTS, false);
+		
 		if (allowedContentTypes == null) {
 			allowedContentTypes = new String[] { ".*" };
 		}

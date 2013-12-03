@@ -88,8 +88,20 @@ public class CacheControl {
 		}
 
 		// html则判断cookie是否变化
-		if (obj.getType().equals("html") && HttpUtil.isCookieChanged()) {
-			return null;
+		if (obj.getType().equals("html")) {
+			if(HttpUtil.isCookieChanged()){
+				return null;
+			}
+			// 如果是主页延时5毫秒再判断一次
+			if(obj.getUrl().equals(defaultUrl)){
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+			}
+			if(HttpUtil.isCookieChanged()){
+				return null;
+			}
 		}
 		
 		WebResourceResponse res = null;
