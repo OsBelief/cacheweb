@@ -275,7 +275,12 @@ public class IOUtil {
 		if(fileName.startsWith("/")){
 			return IOUtil.readExternalFile(fileName);
 		} else if(fileName.contains("/")){
-			InputStream is = IOUtil.readInternalFile(activity, fileName); 
+			InputStream is = null;
+			try {
+				is = activity.getAssets().open(fileName);
+			} catch (IOException e) {
+				e.printStackTrace();
+			} 
 			Log.i("getInputStream", "Come from inner:" + fileName + " InputStream:" + is);
 			return is;
 		}
