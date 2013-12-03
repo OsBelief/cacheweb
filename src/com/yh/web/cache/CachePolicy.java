@@ -223,6 +223,8 @@ public class CachePolicy {
 		// 如果只有时间的话就不用Calendar了
 		if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
 			return (nowTime - createTime > cp.time);
+		} else if(cp.policy.length == 0){
+			return false;
 		}
 
 		Calendar createCal = Calendar.getInstance();
@@ -336,14 +338,18 @@ public class CachePolicy {
 			id = (Integer) value;
 		} else if (field.equals("policy")) {
 			policy = ((ArrayList<String>) value).toArray(new String[] {});
+		} else if (field.equals("time")) {
+			if(value instanceof Integer){
+				this.time = ((Integer)value).longValue() * 1000; 
+			} else if(value instanceof Long){
+				this.time = (Long)value * 1000; 
+			}
 		} else if (field.equals("month")) {
 			month = (Integer) value;
 		} else if (field.equals("week")) {
 			this.week = (Integer) value;
 		} else if (field.equals("day")) {
 			this.day = (Integer) value;
-		} else if (field.equals("time")) {
-			this.time = (long) ((Integer) value) * 1000;
 		}
 	}
 

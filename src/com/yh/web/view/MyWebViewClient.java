@@ -9,7 +9,6 @@ import java.util.concurrent.TimeUnit;
 import android.app.Activity;
 import android.graphics.Bitmap;
 import android.util.Log;
-import android.webkit.CookieManager;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -27,8 +26,6 @@ public class MyWebViewClient extends WebViewClient {
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
 	private Activity act;
-	
-	private static final String COOKIE_URL = "http://passport.yicha.cn/user/login.do?op=login";
 
 	// 记录302跳转情况
 	private String pendingUrl;
@@ -68,11 +65,12 @@ public class MyWebViewClient extends WebViewClient {
 			Log.d("Redirect(302)", "Detected HTTP redirect " + pendingUrl
 					+ "->" + url);
 			((EditText) act.findViewById(R.id.uText)).setText(url);
+			
+			// 返回首页时设置cookie
+			if(url.equals(act.getString(R.string.defaultUrl))){
+				HttpUtil.setCookie();
+			}
 			pendingUrl = null;
-		}
-		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
-		if(cookie != null && !cookie.trim().equals("")){
-			HttpUtil.setCookie(cookie);
 		}
 	}
 

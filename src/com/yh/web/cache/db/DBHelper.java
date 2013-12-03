@@ -15,7 +15,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	
 	private static Context context; 
 	
-	private static final String INIT_DB_NAME = "cache/databases/cacheinfo.db";
+	private static final String INIT_DB_NAME = "cfile/cacheinfo.db";
 	@SuppressLint("SdCardPath")
 	private static final String INNER_DB_NAME = "/data/data/cn.yicha.cache.fuli/databases/cacheinfo.db";
 	private static boolean debug = false;

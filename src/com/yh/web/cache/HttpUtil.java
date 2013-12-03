@@ -17,6 +17,7 @@ import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -31,6 +32,11 @@ public class HttpUtil {
 	private static AsyncHttpClient client = null;
 	private static String[] allowedContentTypes = null;
 	private static Activity activity = null;
+	
+	private static final String COOKIE_KEY = "cookie";
+	private static String cookie = null;
+	private static boolean cookieChanged = false;
+	private static final String COOKIE_URL = "http://passport.yicha.cn/user/login.do?op=login";
 	
 	/**
 	 * 可以定时检查网络是否可用
@@ -47,14 +53,37 @@ public class HttpUtil {
 			allowedContentTypes = new String[] { ".*" };
 		}
 		client.setUserAgent(ua);
+		// 设置cookie，初始化设置changed为false
+		cookie = IOUtil.readKeyValue(act, COOKIE_KEY, null);
+		cookieChanged = false;
+	}
+
+	public static boolean isCookieChanged() {
+		return cookieChanged;
+	}
+
+	public static void setCookieChanged(boolean cookieChanged) {
+		HttpUtil.cookieChanged = cookieChanged;
 	}
 
 	/**
 	 * 设置cookie
 	 * @param cookie
 	 */
-	public static void setCookie(String cookie) {
-		client.addHeader("Cookie", cookie);
+	public static void setCookie() {
+		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
+		if(cookie != null && !cookie.trim().equals("")){
+			HttpUtil.cookie = cookie;
+			// 存入key-value
+			IOUtil.writeKeyValue(activity, COOKIE_KEY, cookie);
+			client.addHeader("Cookie", cookie);
+			cookieChanged = true;
+			Log.i("SetCookie", cookie);
+		}
+	}
+	
+	public static String getCookie(){
+		return HttpUtil.cookie;
 	}
 	
 	/**
@@ -291,6 +320,7 @@ public class HttpUtil {
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				Log.e("updateDB", obj.getUrl() + "\t" + e.getMessage());
 			}
 		}
