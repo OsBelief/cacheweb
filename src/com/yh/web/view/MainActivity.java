@@ -20,6 +20,8 @@ import android.content.Intent;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -37,6 +39,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import cn.yicha.cache.fuli.R;
 
+import com.yh.util.ScreenShot;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
@@ -55,6 +58,20 @@ public class MainActivity extends BaseActivity {
 	private ScheduledExecutorService monitorThreadPool;
 	
 	private static final String baseUA = "yicha.cache.fuli_1.0";
+	public static final int SHOT = 1010;
+	
+	@SuppressLint("HandlerLeak")
+	public Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOT:
+				ScreenShot.shotOneBitmap();
+				break;
+			}
+			super.handleMessage(msg);
+		}
+	};
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -220,6 +237,11 @@ public class MainActivity extends BaseActivity {
 			return true;
 		case R.id.action_updateconfig:
 			UpdateTask.updateOneTime();
+//			if(ScreenShot.startOrEndShot(this, monitorThreadPool)){
+//				Toast.makeText(this, "开始截图", Toast.LENGTH_SHORT).show();
+//			}else{
+//				Toast.makeText(this, "停止截图", Toast.LENGTH_SHORT).show();
+//			}
 			return true;
 		case R.id.action_download:
 			// 下载URL的数据
