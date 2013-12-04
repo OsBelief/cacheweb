@@ -1,7 +1,10 @@
 package com.yh.web.view;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
+import com.yh.web.cache.CacheObject;
+import com.yh.web.cache.IOUtil;
 import com.yh.web.cache.NetMonitor;
 
 import cn.yicha.cache.fuli.R;
@@ -15,6 +18,7 @@ import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.util.Log;
 import android.view.Menu;
 
 /**
@@ -26,6 +30,7 @@ import android.view.Menu;
 public class WelcomeActivity extends BaseActivity {
 	private static final int GO_HOME = 1000;
 	private static final int GO_GUIDE = 1001;
+	private static final int GO_COPY = 1002;
 	
 	// 延迟1秒
 	private static final long DELAY_MILLIS = 1000;
@@ -41,6 +46,9 @@ public class WelcomeActivity extends BaseActivity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
+			case GO_COPY:
+				copyInitFile();
+				break;
 			case GO_HOME:
 				goActivity(MainActivity.class);
 				break;
@@ -84,8 +92,39 @@ public class WelcomeActivity extends BaseActivity {
 			// 使用Handler的postDelayed方法，1秒后执行跳转到MainActivity
 			mHandler.sendEmptyMessageDelayed(GO_HOME, DELAY_MILLIS);
 		} else {
-			mHandler.sendEmptyMessageDelayed(GO_GUIDE, DELAY_MILLIS);
+			// 开始拷贝
+			copyInitFile();
 		}
+	}
+	
+	/**
+	 * 拷贝初始化文件到sd卡
+	 */
+	private void copyInitFile() {
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					char[] xx = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
+							'9', 'a', 'b', 'c', 'd', 'e', 'f' };
+					for (char x : xx) {
+						String base = "cfile/" + x;
+						String[] cfiles = WelcomeActivity.this.getAssets().list(base);
+						base = base + "/";
+						for (String file : cfiles) {
+							String tofile = CacheObject.rootPath + base + file;
+							Log.d("InitFile", "copy to " + tofile);
+							IOUtil.writeExternalFile(tofile, WelcomeActivity.this.getAssets()
+									.open(base + file));
+						}
+					}
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				// 进入引导页
+				WelcomeActivity.this.mHandler.sendEmptyMessageDelayed(GO_GUIDE, 0);
+			}
+		}).start();
 	}
 	
 	/**
