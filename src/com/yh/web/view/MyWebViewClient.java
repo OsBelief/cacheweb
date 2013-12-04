@@ -1,6 +1,8 @@
 package com.yh.web.view;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -52,7 +54,32 @@ public class MyWebViewClient extends WebViewClient {
 			url = reload;
 		}
 		view.loadUrl(url);
+		checkFuliLoopLinks(view, url);
 		return false;
+	}
+	
+	private List<String> lastUrls = new ArrayList<String>(4);
+	/**
+	 * 检测福利循环链接
+	 * @param view
+	 * @param url
+	 */
+	public void checkFuliLoopLinks(WebView view, String url){
+		if(lastUrls.size() < 2){
+			lastUrls.add(url);
+		} else {
+			// 判断当前URL和最近第二个都是福利并且相同，前一个是password域名下的，则跳到默认主页
+			if(url.contains("fuli.yicha.cn") && lastUrls.get(lastUrls.size() - 2).endsWith(url)){
+				if(lastUrls.get(lastUrls.size() - 1).contains("passport.yicha.cn")){
+					Log.i("302Back", "Go Back -3, Now:" + url);
+					//view.goBackOrForward(-3);
+					url = act.getString(R.string.defaultUrl);
+					view.loadUrl(url);
+				}
+			}
+			lastUrls.add(url);
+			lastUrls.remove(0);
+		}
 	}
 
 	@Override
