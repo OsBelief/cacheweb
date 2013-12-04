@@ -174,9 +174,10 @@ public class CachePolicy {
 		boolean expire = false;
 		try {
 			CachePolicy cp = cachePolicys.get(cachePolicy);
-			Log.d("Expire", cachePolicy + " " + createTime + " " + nowTime
-					+ " " + (nowTime - createTime) + " " + cp.time + " "
-					+ cp.id);
+			Log.d("Expire", new StringBuffer().append(cachePolicy).append(" ")
+					.append(cp.time).append(" ").append(createTime).append(" ")
+					.append(nowTime).append(" ").append((nowTime - createTime))
+					.toString());
 
 			// 获取是否过期
 			expire = judgeExpire(createTime, nowTime, cp);

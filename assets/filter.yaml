@@ -21,6 +21,54 @@ disCacheUrl:
   # 评论登录系统
   - ^http://comment.yicha.cn/.*
   - ^http://i.yicha.cn/ti/newrec.html$
+  # 福利不缓存
+  - ^.*125.39.27.122.*$
+  - ^.*/cmsface/.*$
+  - ^http://fuli.yicha.cn/fuli/catchthief/getBaseMoney.*$
+  - ^http://fuli.yicha.cn/fuli/playCatchThief.do.*$
+  - ^http://fuli.yicha.cn/fuli/conversion/cInforList.do.*$
+  - ^http://fuli.yicha.cn/fuli/conversion/conversion.do.*$
+  - ^http://fuli.yicha.cn/fuli/getGiftList.*$
+  - ^http://fuli.yicha.cn/fuli/getGift.*$
+  - ^http://fuli.yicha.cn/fuli/dcg/guessDcgPos.*$
+  - ^http://fuli.yicha.cn/fuli/playFruitRush.do.*$
+  - ^http://fuli.yicha.cn/fuli/fruitRush/getBaseMoney.*$
+  - ^http://fuli.yicha.cn/fuli/onbet.*$
+  - ^http://fuli.yicha.cn/fuli/getbetList.*$
+  - ^http://fuli.yicha.cn/fuli/getHorseHistory.*$
+  - ^http://fuli.yicha.cn/fuli/getRaceState.*$
+  - ^http://fuli.yicha.cn/fuli/getOnlineNum.*$
+  - ^http://fuli.yicha.cn/fuli/login.*$
+  - ^http://fuli.yicha.cn/fuli/getShuilv.*$
+  - ^http://fuli.yicha.cn/fuli/lt/createRoom.do.*$
+  - ^http://fuli.yicha.cn/fuli/lt/joinRoom.do.*$
+  - ^http://fuli.yicha.cn/fuli/lt/joinGame.*$
+  - ^http://fuli.yicha.cn/fuli/lt/roomList.*$
+  - ^http://fuli.yicha.cn/fuli/lt/online.do.*$
+  - ^http://fuli.yicha.cn/fuli/lt/creathouse.*$
+  - ^http://fuli.yicha.cn/fuli/rps/createRoom.do.*$
+  - ^http://fuli.yicha.cn/fuli/rps/joinRoom.do.*$
+  - ^http://fuli.yicha.cn/fuli/rps/joinGame.do.*$
+  - ^http://fuli.yicha.cn/fuli/rps/roomList.*$
+  - ^http://fuli.yicha.cn/fuli/rps/creathouse.*$
+  - ^http://fuli.yicha.cn/fuli/sge/creathouse.*$
+  - ^http://fuli.yicha.cn/fuli/sge/getMoneyList.*$
+  - ^http://fuli.yicha.cn/fuli/longLoopShitou.*$
+  - ^http://fuli.yicha.cn/fuli/createShitouRoom.*$
+  - ^http://fuli.yicha.cn/fuli/joinShitouRoom.*$
+  - ^http://fuli.yicha.cn/fuli/prepareShitou.*$
+  - ^http://fuli.yicha.cn/fuli/shitou/roomList.*$
+  - ^http://fuli.yicha.cn/fuli/shitou/randomJoin.*$
+  - ^http://fuli.yicha.cn/fuli/shitou/getShuilv.*$
+  - ^http://fuli.yicha.cn/fuli/.{1,10}/\d{1,5}/shitouredirect.*$
+  - ^http://fuli.yicha.cn/fuli/addlistener.*$
+  - ^http://fuli.yicha.cn/fuli/signIn/signIn.do.*$
+  - ^http://fuli.yicha.cn/fuli/qiandao.*$
+  - ^http://fuli.yicha.cn/fuli/zatanguan.*$
+  - ^http://fuli.yicha.cn/fuli/getCurrentScore.*$
+  - ^http://fuli.yicha.cn/fuli/beginXunbao.*$
+  - ^http://fuli.yicha.cn/fuli/stopXunbao.*$
+  - ^http://fuli.yicha.cn/fuli/zjb/guessZjbPos.*$
 
 # URL地址替换
 cacheUrlReplace:
@@ -38,55 +86,6 @@ cacheUrlReplace:
 
 # URL的类型
 cacheTypeUrl:
-    # 福利不缓存
-    nfl : ^.*125.39.27.122.*$
-    nfl : ^.*/cmsface/.*$
-    nfl : ^http://fuli.yicha.cn/fuli/catchthief/getBaseMoney.*$
-    nfl : ^http://fuli.yicha.cn/fuli/playCatchThief.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/conversion/cInforList.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/conversion/conversion.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getGiftList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getGift.*$
-    nfl : ^http://fuli.yicha.cn/fuli/dcg/guessDcgPos.*$
-    nfl : ^http://fuli.yicha.cn/fuli/playFruitRush.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/fruitRush/getBaseMoney.*$
-    nfl : ^http://fuli.yicha.cn/fuli/onbet.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getbetList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getHorseHistory.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getRaceState.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getOnlineNum.*$
-    nfl : ^http://fuli.yicha.cn/fuli/login.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getShuilv.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/createRoom.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/joinRoom.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/joinGame.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/roomList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/online.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/lt/creathouse.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/createRoom.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/joinRoom.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/joinGame.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/roomList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/rps/creathouse.*$
-    nfl : ^http://fuli.yicha.cn/fuli/sge/creathouse.*$
-    nfl : ^http://fuli.yicha.cn/fuli/sge/getMoneyList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/longLoopShitou.*$
-    nfl : ^http://fuli.yicha.cn/fuli/createShitouRoom.*$
-    nfl : ^http://fuli.yicha.cn/fuli/joinShitouRoom.*$
-    nfl : ^http://fuli.yicha.cn/fuli/prepareShitou.*$
-    nfl : ^http://fuli.yicha.cn/fuli/shitou/roomList.*$
-    nfl : ^http://fuli.yicha.cn/fuli/shitou/randomJoin.*$
-    nfl : ^http://fuli.yicha.cn/fuli/shitou/getShuilv.*$
-    nfl : ^http://fuli.yicha.cn/fuli/{op}/{roomId}/shitouredirect.*$
-    nfl : ^http://fuli.yicha.cn/fuli/addlistener.*$
-    nfl : ^http://fuli.yicha.cn/fuli/signIn/signIn.do.*$
-    nfl : ^http://fuli.yicha.cn/fuli/qiandao.*$
-    nfl : ^http://fuli.yicha.cn/fuli/zatanguan.*$
-    nfl : ^http://fuli.yicha.cn/fuli/getCurrentScore.*$
-    nfl : ^http://fuli.yicha.cn/fuli/beginXunbao.*$
-    nfl : ^http://fuli.yicha.cn/fuli/stopXunbao.*$
-    nfl : ^http://fuli.yicha.cn/fuli/zjb/guessZjbPos.*$
-
     html : .*\.(html|HTML|htm|HTM)(\?[^/]*)?$
     
     js : .*\.(js|JS)(\?[^/]*)?$
