@@ -48,7 +48,9 @@ public class CacheControl {
 		String urlb = url;
 		url = HttpUtil.getToUrl(url);
 		if (url == null) {
-			Log.i("getResource", "DisCache url | " + urlb);
+			if(!urlb.contains("passport")){
+				Log.i("getResource", "DisCache url | " + urlb);
+			}
 			// 如果转换的URL为null，则表示不需要缓存
 			return null;
 		}
@@ -128,7 +130,7 @@ public class CacheControl {
 							+ " | " + url);
 		} else {
 			Log.i("getResource",
-					"New Fetch | " + obj.getType() + " " + obj.getMime()
+					"From Net | " + obj.getType() + " " + obj.getMime()
 							+ " | " + url);
 		}
 		return res;
@@ -171,7 +173,7 @@ public class CacheControl {
 				needUpdate = true;
 			}
 		} else {
-			Log.i("getDefaultInfo", "NeedUpdate | " + obj.getUrl());
+			Log.i("getDefaultInfo", "Need Down | " + obj.getUrl());
 			needUpdate = true;
 		}
 		if (needUpdate) {
