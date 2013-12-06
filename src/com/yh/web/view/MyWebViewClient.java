@@ -1,8 +1,6 @@
 package com.yh.web.view;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -53,35 +51,10 @@ public class MyWebViewClient extends WebViewClient {
 		if (reload != null) {
 			url = reload;
 		}
-		view.loadUrl(url);
-		checkFuliLoopLinks(view, url);
+		// return false 交给原生处理
 		return false;
 	}
 	
-	private List<String> lastUrls = new ArrayList<String>(4);
-	/**
-	 * 检测福利循环链接
-	 * @param view
-	 * @param url
-	 */
-	public void checkFuliLoopLinks(WebView view, String url){
-		if(lastUrls.size() < 2){
-			lastUrls.add(url);
-		} else {
-			// 判断当前URL和最近第二个都是福利并且相同，前一个是password域名下的，则跳到默认主页
-			if(url.contains("fuli.yicha.cn") && lastUrls.get(lastUrls.size() - 2).endsWith(url)){
-				if(lastUrls.get(lastUrls.size() - 1).contains("passport.yicha.cn")){
-					Log.i("302Back", "Go to main, Now:" + url);
-					//view.goBackOrForward(-3);
-					url = act.getString(R.string.defaultUrl);
-					view.loadUrl(url);
-				}
-			}
-			lastUrls.add(url);
-			lastUrls.remove(0);
-		}
-	}
-
 	@Override
 	public void onLoadResource(WebView view, String url) {
 		// Log.i("onLoadResource", url);
@@ -120,6 +93,8 @@ public class MyWebViewClient extends WebViewClient {
 		view.loadDataWithBaseURL(null, htm, "text/html", "utf-8", null);
     }
 
+	// 计算RES被访问多少次
+	private int i = 0;
 	/**
 	 * 通过Future在指定时间内获取数据
 	 */
@@ -135,6 +110,9 @@ public class MyWebViewClient extends WebViewClient {
 		try {
 			// 为1秒
 			res = future.get(1, TimeUnit.SECONDS);
+			if(res != null){
+				Log.i("ResCount", String.valueOf(i++));
+			}
 		} catch (Exception e) {
 			future.cancel(true);
 			res = null;
