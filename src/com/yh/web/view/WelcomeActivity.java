@@ -2,10 +2,23 @@ package com.yh.web.view;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import com.yh.web.cache.CacheControl;
+import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
+import com.yh.web.cache.CachePolicy;
+import com.yh.web.cache.DeleteTask;
+import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.IOUtil;
+import com.yh.web.cache.MIME;
 import com.yh.web.cache.NetMonitor;
+import com.yh.web.cache.StatMonitor;
+import com.yh.web.cache.UpdateTask;
 
 import cn.yicha.cache.fuli.R;
 
@@ -15,9 +28,11 @@ import android.os.Message;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 
@@ -31,6 +46,7 @@ public class WelcomeActivity extends BaseActivity {
 	private static final int GO_HOME = 1000;
 	private static final int GO_GUIDE = 1001;
 	private static final int GO_COPY = 1002;
+	private static final int INIT_DATA = 1003;
 	
 	// 延迟1秒
 	private static final long DELAY_MILLIS = 1000;
@@ -38,6 +54,9 @@ public class WelcomeActivity extends BaseActivity {
 	public static final String FIRSTSTART_PREF = "first_start";
 	public static final String FIRSTSTART_KEY = "is_first";
 
+	private static final String baseUA = "yicha.cache.fuli_1.0";
+	public static String UA = baseUA;
+	
 	/**
 	 * Handler:跳转到不同界面
 	 */
@@ -54,6 +73,9 @@ public class WelcomeActivity extends BaseActivity {
 				break;
 			case GO_GUIDE:
 				goActivity(GuideActivity.class);
+				break;
+			case INIT_DATA:
+				initDatas();
 				break;
 			}
 			super.handleMessage(msg);
@@ -95,6 +117,7 @@ public class WelcomeActivity extends BaseActivity {
 			// 开始拷贝
 			copyInitFile();
 		}
+		mHandler.sendEmptyMessageDelayed(INIT_DATA, 1);
 	}
 	
 	/**
@@ -125,6 +148,56 @@ public class WelcomeActivity extends BaseActivity {
 				WelcomeActivity.this.mHandler.sendEmptyMessageDelayed(GO_GUIDE, 0);
 			}
 		}).start();
+	}
+	
+	/**
+	 * 初始数据
+	 */
+	private void initDatas(){
+		UA = getUserAgent(baseUA);
+		
+		// 通用线程池
+		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(1, 2, 60,
+				TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+		ScheduledExecutorService monitorThreadPool = Executors
+				.newScheduledThreadPool(1);
+
+		// 初始化MIME
+		MIME.initMIME(this);
+		// 初始化过滤器
+		CacheFilter.initFilter(this);
+		// 初始化缓存策略
+		CachePolicy.initPolicy(this);
+		// 初始化AsyncHttpClient
+		// HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
+		HttpUtil.initAsyncHttpClient(this, threadPool, UA + "_hc");
+		// 初始化缓存
+		CacheControl.initCache(this);
+		// 开始监控网络
+		NetMonitor.startJudge(monitorThreadPool);
+		// 开始CPU监控
+		StatMonitor.startJudge(monitorThreadPool);
+		// 开始执行删除过期任务
+		DeleteTask.initShedule(this, monitorThreadPool);
+
+		UpdateTask.initBasic(this);
+		// 开始执行更新配置任务
+		// UpdateTask.initShedule(this);
+	}
+	
+	/**
+	 * 获取UA
+	 * @param baseUa
+	 */
+	public String getUserAgent(String baseUa){
+		TelephonyManager tm = (TelephonyManager) this.getBaseContext()
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		String ua = new StringBuffer().append(baseUa).append(",")
+				.append(android.os.Build.MODEL).append(",")
+				.append(android.os.Build.VERSION.SDK_INT).append(",")
+				.append(android.os.Build.VERSION.RELEASE).append(",")
+				.append(tm.getDeviceId()).toString().replaceAll(" +", "_");
+		return ua;
 	}
 	
 	/**

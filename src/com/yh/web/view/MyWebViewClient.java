@@ -27,14 +27,14 @@ public class MyWebViewClient extends WebViewClient {
 
 	private ExecutorService executor = Executors.newSingleThreadExecutor();
 
-	private Activity act;
+	private MainActivity act;
 
 	private String errorHtm;
 	
 	// 记录302跳转情况
 	private String pendingUrl;
 
-	public MyWebViewClient(Activity act) {
+	public MyWebViewClient(MainActivity act) {
 		this.act = act;
 		try {
 			errorHtm = IOUtil.readStream(act.getAssets().open("error.htm"));

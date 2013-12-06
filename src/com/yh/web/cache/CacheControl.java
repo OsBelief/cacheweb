@@ -12,7 +12,6 @@ import android.webkit.WebView;
 import cn.yicha.cache.fuli.R;
 
 import com.yh.web.cache.db.CacheOrm;
-import com.yh.web.view.MainActivity;
 
 /**
  * @author gudh 缓存控制策略
@@ -30,7 +29,7 @@ public class CacheControl {
 	 */
 	public static void initCache(Context context) {
 		orm = new CacheOrm(context);
-		defaultUrl = ((MainActivity)context).getString(R.string.defaultUrl);
+		defaultUrl = ((Activity)context).getString(R.string.defaultUrl);
 	}
 
 	/**

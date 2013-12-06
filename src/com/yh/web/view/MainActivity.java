@@ -2,11 +2,6 @@ package com.yh.web.view;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.SynchronousQueue;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -22,7 +17,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -40,25 +34,19 @@ import android.widget.Toast;
 import cn.yicha.cache.fuli.R;
 
 import com.yh.util.ScreenShot;
-import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
 import com.yh.web.cache.CachePolicy;
-import com.yh.web.cache.DeleteTask;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.IOUtil;
 import com.yh.web.cache.MIME;
-import com.yh.web.cache.NetMonitor;
-import com.yh.web.cache.StatMonitor;
 import com.yh.web.cache.UpdateTask;
 
 public class MainActivity extends BaseActivity {
-
-	private ThreadPoolExecutor threadPool;
-	private ScheduledExecutorService monitorThreadPool;
 	
-	private static final String baseUA = "yicha.cache.fuli_1.0";
 	public static final int SHOT = 1010;
+	
+	public static String nowUrl = "http://fuli.yicha.cn/fuli/index";
 	
 	@SuppressLint("HandlerLeak")
 	public Handler mHandler = new Handler() {
@@ -106,10 +94,10 @@ public class MainActivity extends BaseActivity {
 		});
 
 		// 获取UA
-		String ua = getUserAgent(baseUA);
+		
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
-		setWebView(web, ua);
+		setWebView(web, WelcomeActivity.UA);
 
 		// // 获取焦点隐藏地址栏
 		// ArrayList<View> views = new ArrayList<View>();
@@ -117,48 +105,7 @@ public class MainActivity extends BaseActivity {
 		// views.add(findViewById(R.id.goBtn));
 		// web.setOnFocusChangeListener(new MyFoucusChange(views));
 		
-		// 通用线程池
-		threadPool = new ThreadPoolExecutor(1, 2, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
-		monitorThreadPool = Executors.newScheduledThreadPool(1);
-		
-		// 初始化MIME
-		MIME.initMIME(this);
-		// 初始化过滤器
-		CacheFilter.initFilter(this);
-		// 初始化缓存策略
-		CachePolicy.initPolicy(this);
-		// 初始化AsyncHttpClient
-		// HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
-		HttpUtil.initAsyncHttpClient(this, threadPool, ua + "_hc");
-		// 初始化缓存
-		CacheControl.initCache(this);
-		// 开始监控网络
-		NetMonitor.startJudge(monitorThreadPool);
-		// 开始CPU监控
-		StatMonitor.startJudge(monitorThreadPool);
-		// 开始执行删除过期任务
-		DeleteTask.initShedule(this, monitorThreadPool);
-		
-		UpdateTask.initBasic(this);
-		// 开始执行更新配置任务
-		// UpdateTask.initShedule(this);
-		
-		web.loadUrl(this.getString(R.string.defaultUrl));
-	}
-
-	/**
-	 * 获取UA
-	 * @param baseUa
-	 */
-	public String getUserAgent(String baseUa){
-		TelephonyManager tm = (TelephonyManager) this.getBaseContext()
-				.getSystemService(Context.TELEPHONY_SERVICE);
-		String ua = new StringBuffer().append(baseUa).append(",")
-				.append(android.os.Build.MODEL).append(",")
-				.append(android.os.Build.VERSION.SDK_INT).append(",")
-				.append(android.os.Build.VERSION.RELEASE).append(",")
-				.append(tm.getDeviceId()).toString().replaceAll(" +", "_");
-		return ua;
+		web.loadUrl(nowUrl);
 	}
 	
 	/**
@@ -349,7 +296,6 @@ public class MainActivity extends BaseActivity {
 			}
 		}
 	}
-	
 
 	// 文件上传支持
 	public ValueCallback<Uri> mUploadMessage;
@@ -366,5 +312,27 @@ public class MainActivity extends BaseActivity {
 	        mUploadMessage.onReceiveValue(result);
 	        mUploadMessage = null;
 	    }
+	}
+
+	// 重启自身
+	public void startNew(String url) {
+		Intent intent = new Intent(this, MainActivity.class);
+		MainActivity.nowUrl = url;
+		this.startActivity(intent);
+		WebView web = (WebView) this.findViewById(R.id.webView1);
+		web.clearCache(false);
+		web.loadUrl("about:blank"); //web.clearView();
+		web.destroyDrawingCache();
+		web.destroy();
+		this.finish();
+		this.onDestroy();
+//		Intent intent = new Intent(this.getApplicationContext(),
+//				MainActivity.class);
+//		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+//		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		this.getApplicationContext().startActivity(intent);
+//		// for restarting the Activity
+//		android.os.Process.killProcess(android.os.Process.myPid());
+//		System.exit(0);
 	}
 }
