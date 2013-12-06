@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +25,7 @@ import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.BinaryHttpResponseHandler;
+import com.yh.web.view.MainActivity;
 
 /**
  * 
@@ -36,8 +38,8 @@ public class HttpUtil {
 	private static Activity activity = null;
 	
 	private static final String COOKIE_KEY = "cookie";
-	private static String cookie = null;
-	private static boolean cookieChanged = false;
+	private static String sCookie = null;
+	private static ConcurrentHashMap<String, Boolean> urlCookieChanged = new ConcurrentHashMap<String, Boolean>(20);
 	private static final String COOKIE_URL = "http://passport.yicha.cn/user/login.do?op=login";
 	
 	/**
@@ -59,36 +61,54 @@ public class HttpUtil {
 		}
 		client.setUserAgent(ua);
 		// 设置cookie，初始化设置changed为false
-		cookie = IOUtil.readKeyValue(act, COOKIE_KEY, null);
-		cookieChanged = false;
+		sCookie = IOUtil.readKeyValue(act, COOKIE_KEY, null);
+		// 默认首页不更新，其他均更新
+		setCookieChangedOut(MainActivity.DEFAULT_URL);
 	}
 
-	public static boolean isCookieChanged() {
-		return cookieChanged;
+	/**
+	 * 判断某URL的Cookie是否个改变，或在改变Cookie后是否访问
+	 * @param url
+	 * @return
+	 */
+	public static boolean isCookieChanged(String url) {
+		Boolean change = urlCookieChanged.get(url);
+		if(change == null){
+			change = true;
+		}
+		return change;
 	}
 
-	public static void setCookieChanged(boolean cookieChanged) {
-		HttpUtil.cookieChanged = cookieChanged;
+	/**
+	 * 设置当前URL已更新
+	 * @param url
+	 */
+	public static void setCookieChangedOut(String url) {
+		urlCookieChanged.put(url, false);
 	}
 
 	/**
 	 * 设置cookie
-	 * @param cookie
+	 * @param sCookie
 	 */
 	public static void setCookie() {
-		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
-		if(cookie != null && !cookie.trim().equals("")){
-			HttpUtil.cookie = cookie;
-			// 存入key-value
-			IOUtil.writeKeyValue(activity, COOKIE_KEY, cookie);
-			client.addHeader("Cookie", cookie);
-			cookieChanged = true;
-			Log.i("SetCookie", cookie);
+		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL)
+				.trim();
+		if (cookie == null || cookie.equals("null") || cookie.equals(sCookie)) {
+			return;
 		}
+		
+		// 存入key-value
+		IOUtil.writeKeyValue(activity, COOKIE_KEY, cookie);
+		client.addHeader("Cookie", cookie);
+		Log.i("SetCookie", cookie);
+		Log.i("SetCookie", sCookie);
+		sCookie = cookie;
+		urlCookieChanged.clear();
 	}
 	
 	public static String getCookie(){
-		return HttpUtil.cookie;
+		return HttpUtil.sCookie;
 	}
 	
 	/**

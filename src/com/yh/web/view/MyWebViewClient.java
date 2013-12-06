@@ -63,6 +63,10 @@ public class MyWebViewClient extends WebViewClient {
 			return true;
 		} else if(!view.getUrl().equals(defaultUrl) && url.equals(defaultUrl)){
 			// finish当前，返回
+			if(view.getUrl().startsWith("http://passport.yicha.cn")){
+				// 返回首页时设置cookie
+				HttpUtil.setCookie();
+			}
 			act.finish();
 			return true;
 		}
@@ -89,11 +93,6 @@ public class MyWebViewClient extends WebViewClient {
 			Log.d("Redirect(302)", "Detected HTTP redirect " + pendingUrl
 					+ "->" + url);
 			((EditText) act.findViewById(R.id.uText)).setText(url);
-			
-			// 返回首页时设置cookie
-			if(url.equals(act.getString(R.string.defaultUrl))){
-				HttpUtil.setCookie();
-			}
 			pendingUrl = null;
 		}
 	}

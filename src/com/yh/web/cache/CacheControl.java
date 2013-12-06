@@ -90,18 +90,12 @@ public class CacheControl {
 
 		// html则判断cookie是否变化
 		if (obj.getType().equals("html")) {
-			if(HttpUtil.isCookieChanged()){
-				return null;
-			}
-			// 如果是主页延时5毫秒再判断一次
-			if(obj.getUrl().equals(defaultUrl)){
-				try {
-					Thread.sleep(100);
-				} catch (InterruptedException e) {
-				}
-			}
-			if(HttpUtil.isCookieChanged()){
-				return null;
+			if(HttpUtil.isCookieChanged(obj.getUrl())){
+				// 设置缓存为false，重新下载
+				orm.delete(obj);
+				obj.setComeFromCache(false);
+				// 缓存已更新
+				HttpUtil.setCookieChangedOut(obj.getUrl());
 			}
 		}
 		

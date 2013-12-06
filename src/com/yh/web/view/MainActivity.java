@@ -42,8 +42,10 @@ public class MainActivity extends BaseActivity {
 	
 	public static final int SHOT = 1010;
 	public static final String DEFAULT_URL = "http://fuli.yicha.cn/fuli/index";
-	public static String nowUrl = "http://fuli.yicha.cn/fuli/index";
+	private static final String URL_KEY = "IURL";
 	
+	// 初始时的URL
+	private String tUrl;
 	private WebView web;
 	
 	@SuppressLint("HandlerLeak")
@@ -81,14 +83,17 @@ public class MainActivity extends BaseActivity {
 		// 设置WebClient
 		web = (WebView) findViewById(R.id.webView1);
 		setWebView(web, WelcomeActivity.UA);
-		web.loadUrl(nowUrl);
+		tUrl = getIntent().getStringExtra(URL_KEY);
+		if(tUrl == null){
+			tUrl = DEFAULT_URL;
+		}
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
-		if(HttpUtil.isCookieChanged()){
-			web.loadUrl(DEFAULT_URL);
+		if(web.getUrl() == null || HttpUtil.isCookieChanged(tUrl)){
+			web.loadUrl(tUrl);
 		}
 	}
 	
@@ -256,7 +261,7 @@ public class MainActivity extends BaseActivity {
 				web.goBack();
 				((EditText) findViewById(R.id.uText)).setText(web.getUrl());
 				return true;
-			} else if(web.getUrl().equals(getString(R.string.defaultUrl))){
+			} else if(DEFAULT_URL.equals(web.getUrl())){
 				showExitDialog();
 				return true;
 			} else{
@@ -303,7 +308,7 @@ public class MainActivity extends BaseActivity {
 	// 开启一个新的Activity来加载URL
 	public void startNew(String url) {
 		Intent intent = new Intent(this, MainActivity.class);
-		MainActivity.nowUrl = url;
+		intent.putExtra(URL_KEY, url);
 		this.startActivity(intent);
 		
 //		web.clearCache(false);
