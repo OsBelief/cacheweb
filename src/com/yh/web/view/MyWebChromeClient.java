@@ -1,20 +1,21 @@
 package com.yh.web.view;
 
-import com.yh.web.R;
-
-import android.app.Activity;
+import android.content.Intent;
+import android.net.Uri;
+import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.widget.ProgressBar;
+import cn.yicha.cache.fuli.R;
 
 /**
  * @author gudh 自定义浏览器WebChromeClient
  */
 public class MyWebChromeClient extends WebChromeClient {
 
-	private Activity act;
+	private MainActivity act;
 
-	public MyWebChromeClient(Activity act) {
+	public MyWebChromeClient(MainActivity act) {
 		this.act = act;
 	}
 
@@ -30,5 +31,24 @@ public class MyWebChromeClient extends WebChromeClient {
 				.findViewById(R.id.progressBar);
 		progressBar.setProgress(newProgress);
 	}
-
+	
+	// For Android < 3.0
+	public void openFileChooser(ValueCallback<Uri> uploadMsg) {
+		act.mUploadMessage = uploadMsg;
+		Intent i = new Intent(Intent.ACTION_GET_CONTENT);
+		i.addCategory(Intent.CATEGORY_OPENABLE);
+		i.setType("image/*");
+		act.startActivityForResult(Intent.createChooser(i, "File Chooser"),
+				MainActivity.FILECHOOSER_RESULTCODE);
+	}
+	
+	// For Android 3.0+
+	public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType) {
+		openFileChooser(uploadMsg);
+	}
+	
+	// android 4.1
+	public void openFileChooser(ValueCallback<Uri> uploadMsg, String acceptType, String capture){
+		openFileChooser(uploadMsg);
+	}
 }

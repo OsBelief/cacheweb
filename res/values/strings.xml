@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">加速浏览器</string>
+    <string name="app_name">易查福利</string>
     <string name="action_mainpage">首页</string>
     <string name="action_download">下载</string>
     <string name="action_updateconfig">更新配置</string>
@@ -10,6 +10,8 @@
     <string name="hello_world">Hello world!</string>
     <string name="goText">GO</string>
     <string name="urlHint">输入URL可访问</string>
-    <string name="defaultUrl">http://yicha.cn</string>
+    <string name="defaultUrl">http://fuli.yicha.cn/fuli/index</string>
+    <string name="title_activity_welcome">易查福利</string>
+    <string name="title_activity_guide">提示页</string>
 
 </resources>

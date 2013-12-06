@@ -174,9 +174,10 @@ public class CachePolicy {
 		boolean expire = false;
 		try {
 			CachePolicy cp = cachePolicys.get(cachePolicy);
-			Log.d("Expire", cachePolicy + " " + createTime + " " + nowTime
-					+ " " + (nowTime - createTime) + " " + cp.time + " "
-					+ cp.id);
+			Log.d("Expire", new StringBuffer().append(cachePolicy).append(" ")
+					.append(cp.time).append(" ").append(createTime).append(" ")
+					.append(nowTime).append(" ").append((nowTime - createTime))
+					.toString());
 
 			// 获取是否过期
 			expire = judgeExpire(createTime, nowTime, cp);
@@ -223,6 +224,8 @@ public class CachePolicy {
 		// 如果只有时间的话就不用Calendar了
 		if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
 			return (nowTime - createTime > cp.time);
+		} else if(cp.policy.length == 0){
+			return false;
 		}
 
 		Calendar createCal = Calendar.getInstance();
@@ -267,6 +270,8 @@ public class CachePolicy {
 		if (cp.policy.length == 1 && cp.policy[0].equals("time")) {
 			// 只有时间的话就不用Calendar对象了
 			timeBefore = now - cp.getTime();
+		} else if(cp.policy.length == 0){
+			return -1;
 		} else {
 			// 根据日历判断月星期日
 			long tempTimeBefore = 0;
@@ -336,14 +341,18 @@ public class CachePolicy {
 			id = (Integer) value;
 		} else if (field.equals("policy")) {
 			policy = ((ArrayList<String>) value).toArray(new String[] {});
+		} else if (field.equals("time")) {
+			if(value instanceof Integer){
+				this.time = ((Integer)value).longValue() * 1000; 
+			} else if(value instanceof Long){
+				this.time = (Long)value * 1000; 
+			}
 		} else if (field.equals("month")) {
 			month = (Integer) value;
 		} else if (field.equals("week")) {
 			this.week = (Integer) value;
 		} else if (field.equals("day")) {
 			this.day = (Integer) value;
-		} else if (field.equals("time")) {
-			this.time = (long) ((Integer) value) * 1000;
 		}
 	}
 

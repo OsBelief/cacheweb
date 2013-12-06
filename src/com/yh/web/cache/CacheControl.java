@@ -1,13 +1,18 @@
 package com.yh.web.cache;
 
+import java.io.IOException;
 import java.io.InputStream;
 
+import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
 
+import cn.yicha.cache.fuli.R;
+
 import com.yh.web.cache.db.CacheOrm;
+import com.yh.web.view.MainActivity;
 
 /**
  * @author gudh 缓存控制策略
@@ -15,7 +20,9 @@ import com.yh.web.cache.db.CacheOrm;
 public class CacheControl {
 
 	public static CacheOrm orm = null;
-
+	
+	public static String defaultUrl;
+	
 	/**
 	 * 初始化缓存ORM
 	 * 
@@ -23,6 +30,7 @@ public class CacheControl {
 	 */
 	public static void initCache(Context context) {
 		orm = new CacheOrm(context);
+		defaultUrl = ((MainActivity)context).getString(R.string.defaultUrl);
 	}
 
 	/**
@@ -40,11 +48,27 @@ public class CacheControl {
 		String urlb = url;
 		url = HttpUtil.getToUrl(url);
 		if (url == null) {
-			Log.i("getResource", "DisCache url | " + urlb);
+			if(!urlb.contains("passport")){
+				Log.i("getResource", "DisCache url | " + urlb);
+			}
 			// 如果转换的URL为null，则表示不需要缓存
 			return null;
 		}
-
+		
+		// 主页cookie为null则使用main.htm
+		if (defaultUrl.equals(url) && HttpUtil.getCookie() == null) {
+			WebResourceResponse res = null;
+			try {
+				InputStream is = context.getAssets().open("main.htm");
+				Log.i("getResource", "use main.htm, cookie is null");
+				res = IOUtil.generateResource(
+						MIME.getMimeFromType("htm"), null, is);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			return res;
+		}
+		
 		boolean fromCache = true;
 		// 查询数据库是否有缓存
 		CacheObject obj = orm.queryByUrl(url);
@@ -65,6 +89,23 @@ public class CacheControl {
 			return null;
 		}
 
+		// html则判断cookie是否变化
+		if (obj.getType().equals("html")) {
+			if(HttpUtil.isCookieChanged()){
+				return null;
+			}
+			// 如果是主页延时5毫秒再判断一次
+			if(obj.getUrl().equals(defaultUrl)){
+				try {
+					Thread.sleep(100);
+				} catch (InterruptedException e) {
+				}
+			}
+			if(HttpUtil.isCookieChanged()){
+				return null;
+			}
+		}
+		
 		WebResourceResponse res = null;
 		if (obj.getMime().startsWith("image")) {
 			// 图片处理
@@ -89,7 +130,7 @@ public class CacheControl {
 							+ " | " + url);
 		} else {
 			Log.i("getResource",
-					"New Fetch | " + obj.getType() + " " + obj.getMime()
+					"From Net | " + obj.getType() + " " + obj.getMime()
 							+ " | " + url);
 		}
 		return res;
@@ -114,7 +155,7 @@ public class CacheControl {
 			// 来自缓存
 			if (!obj.isExpire(System.currentTimeMillis())) {
 				// 缓存未过期
-				InputStream is = IOUtil.readExternalFile(obj.getFileName());
+				InputStream is = IOUtil.getFileInputStream((Activity)context, obj.getFileName());
 				if (is != null) {
 					// 缓存文件仍然存在
 					res = IOUtil.generateResource(obj.getMime(), encoding, is);
@@ -132,7 +173,7 @@ public class CacheControl {
 				needUpdate = true;
 			}
 		} else {
-			Log.i("getDefaultInfo", "NeedUpdate | " + obj.getUrl());
+			Log.i("getDefaultInfo", "Need Down | " + obj.getUrl());
 			needUpdate = true;
 		}
 		if (needUpdate) {

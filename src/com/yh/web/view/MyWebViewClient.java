@@ -1,5 +1,8 @@
 package com.yh.web.view;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,9 +17,10 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.EditText;
 
-import com.yh.web.R;
+import cn.yicha.cache.fuli.R;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.HttpUtil;
+import com.yh.web.cache.IOUtil;
 
 /**
  * @author gudh 自定义浏览器WebViewClient
@@ -27,11 +31,18 @@ public class MyWebViewClient extends WebViewClient {
 
 	private Activity act;
 
+	private String errorHtm;
+	
 	// 记录302跳转情况
 	private String pendingUrl;
 
 	public MyWebViewClient(Activity act) {
 		this.act = act;
+		try {
+			errorHtm = IOUtil.readStream(act.getAssets().open("error.htm"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	@Override
@@ -43,7 +54,32 @@ public class MyWebViewClient extends WebViewClient {
 			url = reload;
 		}
 		view.loadUrl(url);
-		return true;
+		checkFuliLoopLinks(view, url);
+		return false;
+	}
+	
+	private List<String> lastUrls = new ArrayList<String>(4);
+	/**
+	 * 检测福利循环链接
+	 * @param view
+	 * @param url
+	 */
+	public void checkFuliLoopLinks(WebView view, String url){
+		if(lastUrls.size() < 2){
+			lastUrls.add(url);
+		} else {
+			// 判断当前URL和最近第二个都是福利并且相同，前一个是password域名下的，则跳到默认主页
+			if(url.contains("fuli.yicha.cn") && lastUrls.get(lastUrls.size() - 2).endsWith(url)){
+				if(lastUrls.get(lastUrls.size() - 1).contains("passport.yicha.cn")){
+					Log.i("302Back", "Go to main, Now:" + url);
+					//view.goBackOrForward(-3);
+					url = act.getString(R.string.defaultUrl);
+					view.loadUrl(url);
+				}
+			}
+			lastUrls.add(url);
+			lastUrls.remove(0);
+		}
 	}
 
 	@Override
@@ -65,9 +101,24 @@ public class MyWebViewClient extends WebViewClient {
 			Log.d("Redirect(302)", "Detected HTTP redirect " + pendingUrl
 					+ "->" + url);
 			((EditText) act.findViewById(R.id.uText)).setText(url);
+			
+			// 返回首页时设置cookie
+			if(url.equals(act.getString(R.string.defaultUrl))){
+				HttpUtil.setCookie();
+			}
 			pendingUrl = null;
 		}
 	}
+	
+	@Override 
+    public void onReceivedError(WebView view, int errorCode, 
+            String description, String failingUrl) { 
+        super.onReceivedError(view, errorCode, description, failingUrl);
+        
+		String htm = errorHtm.replace("#code#", String.valueOf(errorCode));
+		htm = htm.replace("#url#", failingUrl);
+		view.loadDataWithBaseURL(null, htm, "text/html", "utf-8", null);
+    }
 
 	/**
 	 * 通过Future在指定时间内获取数据

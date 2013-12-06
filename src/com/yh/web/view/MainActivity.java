@@ -1,8 +1,12 @@
 package com.yh.web.view;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.SynchronousQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
@@ -12,8 +16,13 @@ import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -22,13 +31,15 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
+import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
 import android.webkit.WebView.HitTestResult;
 import android.widget.EditText;
 import android.widget.Toast;
+import cn.yicha.cache.fuli.R;
 
-import com.yh.web.R;
+import com.yh.util.ScreenShot;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
@@ -43,6 +54,25 @@ import com.yh.web.cache.UpdateTask;
 
 public class MainActivity extends BaseActivity {
 
+	private ThreadPoolExecutor threadPool;
+	private ScheduledExecutorService monitorThreadPool;
+	
+	private static final String baseUA = "yicha.cache.fuli_1.0";
+	public static final int SHOT = 1010;
+	
+	@SuppressLint("HandlerLeak")
+	public Handler mHandler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch (msg.what) {
+			case SHOT:
+				ScreenShot.shotOneBitmap();
+				break;
+			}
+			super.handleMessage(msg);
+		}
+	};
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -75,16 +105,22 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 
+		// 获取UA
+		String ua = getUserAgent(baseUA);
 		// 设置WebClient
 		WebView web = (WebView) findViewById(R.id.webView1);
-		setWebView(web);
+		setWebView(web, ua);
 
 		// // 获取焦点隐藏地址栏
 		// ArrayList<View> views = new ArrayList<View>();
 		// views.add(uText);
 		// views.add(findViewById(R.id.goBtn));
 		// web.setOnFocusChangeListener(new MyFoucusChange(views));
-
+		
+		// 通用线程池
+		threadPool = new ThreadPoolExecutor(1, 2, 60, TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
+		monitorThreadPool = Executors.newScheduledThreadPool(1);
+		
 		// 初始化MIME
 		MIME.initMIME(this);
 		// 初始化过滤器
@@ -92,33 +128,52 @@ public class MainActivity extends BaseActivity {
 		// 初始化缓存策略
 		CachePolicy.initPolicy(this);
 		// 初始化AsyncHttpClient
-		HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
+		// HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
+		HttpUtil.initAsyncHttpClient(this, threadPool, ua + "_hc");
 		// 初始化缓存
 		CacheControl.initCache(this);
 		// 开始监控网络
-		NetMonitor.startJudge();
+		NetMonitor.startJudge(monitorThreadPool);
 		// 开始CPU监控
-		StatMonitor.startJudge();
+		StatMonitor.startJudge(monitorThreadPool);
 		// 开始执行删除过期任务
-		DeleteTask.initShedule(this);
+		DeleteTask.initShedule(this, monitorThreadPool);
 		
 		UpdateTask.initBasic(this);
 		// 开始执行更新配置任务
 		// UpdateTask.initShedule(this);
+		
+		web.loadUrl(this.getString(R.string.defaultUrl));
 	}
 
+	/**
+	 * 获取UA
+	 * @param baseUa
+	 */
+	public String getUserAgent(String baseUa){
+		TelephonyManager tm = (TelephonyManager) this.getBaseContext()
+				.getSystemService(Context.TELEPHONY_SERVICE);
+		String ua = new StringBuffer().append(baseUa).append(",")
+				.append(android.os.Build.MODEL).append(",")
+				.append(android.os.Build.VERSION.SDK_INT).append(",")
+				.append(android.os.Build.VERSION.RELEASE).append(",")
+				.append(tm.getDeviceId()).toString().replaceAll(" +", "_");
+		return ua;
+	}
+	
 	/**
 	 * 设置Web信息
 	 * 
 	 * @param web
 	 */
 	@SuppressLint("SetJavaScriptEnabled")
-	public void setWebView(WebView web) {
+	public void setWebView(WebView web, String ua) {
 		web.setWebViewClient(new MyWebViewClient(this));
 		web.setWebChromeClient(new MyWebChromeClient(this));
 
 		WebSettings set = web.getSettings();
 		set.setJavaScriptEnabled(true);// 启用JS
+		set.setUserAgentString(ua);
 
 		set.setDomStorageEnabled(true);// 启用localStorage
 		String path = this.getApplicationContext()
@@ -161,7 +216,7 @@ public class MainActivity extends BaseActivity {
 		// web 获得焦点
 		web.requestFocus();
 	}
-
+	
 	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
@@ -178,20 +233,15 @@ public class MainActivity extends BaseActivity {
 		switch (item.getItemId()) {
 		case R.id.action_mainpage:
 			WebView web = (WebView) findViewById(R.id.webView1);
-			try {
-				String s = IOUtil.readStream(IOUtil.readInternalFile(this,
-						"main.htm"));
-				if (s == null) {
-					s = IOUtil.readStream(this.getAssets().open("main.htm"));
-				}
-				Log.d("MainPage", s);
-				web.loadDataWithBaseURL(null, s, "text/html", "utf-8", null);
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			web.loadUrl(this.getString(R.string.defaultUrl));
 			return true;
 		case R.id.action_updateconfig:
 			UpdateTask.updateOneTime();
+//			if(ScreenShot.startOrEndShot(this, monitorThreadPool)){
+//				Toast.makeText(this, "开始截图", Toast.LENGTH_SHORT).show();
+//			}else{
+//				Toast.makeText(this, "停止截图", Toast.LENGTH_SHORT).show();
+//			}
 			return true;
 		case R.id.action_download:
 			// 下载URL的数据
@@ -298,5 +348,23 @@ public class MainActivity extends BaseActivity {
 				}
 			}
 		}
+	}
+	
+
+	// 文件上传支持
+	public ValueCallback<Uri> mUploadMessage;
+	public final static int FILECHOOSER_RESULTCODE = 1;
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode,
+	        Intent intent) {
+	    if (requestCode == FILECHOOSER_RESULTCODE) {
+	        if (null == mUploadMessage)
+	            return;
+	        Uri result = intent == null || resultCode != RESULT_OK ? null
+	                : intent.getData();
+	        mUploadMessage.onReceiveValue(result);
+	        mUploadMessage = null;
+	    }
 	}
 }

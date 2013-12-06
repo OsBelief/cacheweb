@@ -4,6 +4,12 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import android.content.Context;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.util.Log;
 
 /**
@@ -38,7 +44,7 @@ public class NetMonitor {
 	private static long byteMax = 102400; // 最大网速(byte/s)
 	private static long packetMax = 200; // 最大发包 (p/s)
 	private static long dropMax = 10; // 最大丢包(p/s)
-	private static long judgeSleep = 5000; // 判断周期(ms)
+	private static long judgeSleep = 50000; // 判断周期(ms)
 
 	/**
 	 * 设置监控的参数，参数为-1则不更改
@@ -80,24 +86,22 @@ public class NetMonitor {
 	/**
 	 * 初始化网络监控
 	 */
-	public static void startJudge() {
+	public static void startJudge(ScheduledExecutorService monitorThreadPool) {
 		// 启动线程定时监控
 		isJudge = true;
-		new Thread(new Runnable() {
+		monitorThreadPool.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
-				while (isJudge) {
-					try {
-						NetMonitor.judgeNetBuzy();
-
-						// 延时
-						Thread.sleep(NetMonitor.judgeSleep);
-					} catch (Exception e) {
-						Log.e("NetInfo", e.getMessage());
+				try {
+					NetMonitor.judgeNetBuzy();
+					if(isJudge){
+						//停止运行
 					}
+				} catch (Exception e) {
+					Log.e("NetInfo", e.getMessage());
 				}
 			}
-		}).start();
+		}, 1000, judgeSleep, TimeUnit.MILLISECONDS);
 	}
 
 	/**
@@ -212,5 +216,29 @@ public class NetMonitor {
 			lock = false;
 		}
 		return null;
+	}
+
+	/**
+	 * 判断当前网络是否可用
+	 * @param context
+	 * @return
+	 */
+	public static boolean isNetworkAvailable(Context context) {
+		ConnectivityManager cm = (ConnectivityManager) context
+				.getSystemService(Context.CONNECTIVITY_SERVICE);
+		if (cm == null) {
+		} else {
+			// 如果仅仅是用来判断网络连接
+			// 则可以使用 cm.getActiveNetworkInfo().isAvailable();
+			NetworkInfo[] info = cm.getAllNetworkInfo();
+			if (info != null) {
+				for (int i = 0; i < info.length; i++) {
+					if (info[i].getState() == NetworkInfo.State.CONNECTED && info[i].isAvailable()) {
+						return true;
+					}
+				}
+			}
+		}
+		return false;
 	}
 }

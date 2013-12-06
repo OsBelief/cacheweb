@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import android.content.Context;
 import android.util.Log;
@@ -21,7 +23,7 @@ public class DeleteTask {
 
 	private static CacheOrm orm = null;
 	private static int everyDelCount = 20;
-	private static long sleepTime = 60000;
+	private static long sleepTime = 600000;
 	private static boolean runFlag = false;
 
 	/**
@@ -29,10 +31,10 @@ public class DeleteTask {
 	 * 
 	 * @param context
 	 */
-	public static void initShedule(Context context) {
+	public static void initShedule(Context context, ScheduledExecutorService monitorThreadPool) {
 		orm = new CacheOrm(context);
 		// 开始任务
-		startDeleteTask();
+		startDeleteTask(monitorThreadPool);
 	}
 
 	/**
@@ -45,7 +47,7 @@ public class DeleteTask {
 	 * @param sleepTime
 	 *            单位ms，每次删除延时，至少1000ms
 	 */
-	public static void initShedule(Context context, int everyDelCount,
+	public static void initShedule(Context context, ScheduledExecutorService monitorThreadPool, int everyDelCount,
 			long sleepTime) {
 		orm = new CacheOrm(context);
 
@@ -56,7 +58,7 @@ public class DeleteTask {
 			DeleteTask.sleepTime = sleepTime;
 		}
 		// 开始任务
-		startDeleteTask();
+		startDeleteTask(monitorThreadPool);
 	}
 
 	/**
@@ -66,59 +68,56 @@ public class DeleteTask {
 	 * @param sleepTime
 	 * @return
 	 */
-	public static void startDeleteTask() {
+	public static void startDeleteTask(
+			ScheduledExecutorService monitorThreadPool) {
 		runFlag = true;
-		new Thread(new Runnable() {
+		monitorThreadPool.scheduleWithFixedDelay(new Runnable() {
 			@Override
 			public void run() {
 				long start, end;
 				// 记录删除次数
 				int i = 0;
-				while (runFlag) {
-					// 如果网络繁忙则咱不进行删除操作
-					if (!NetMonitor.isNetBuzy() && !StatMonitor.isCPUBuzy()) {
-						start = System.currentTimeMillis();
-						try {
-							List<CacheObject> objs = DeleteTask
-									.getExpireCache(everyDelCount);
-							DeleteTask.deleteExpireCache(objs);
-						} catch (Exception e) {
-							Log.e("DeleteTask", e.getMessage());
-						}
-						end = System.currentTimeMillis();
-						Log.i("DeleteTask", "delete cache use time : "
-								+ (end - start));
-					} else {
-						Log.d("DeleteTask", "Net or CPU is buzy, pass delete expire");
-					}
-
-					// 没删除十次缓存获取空文件夹的存在并删除
-					if (++i >= 10 && !NetMonitor.isNetBuzy()) {
-						i = 0;
-
-						start = System.currentTimeMillis();
-						try {
-							List<File> files = DeleteTask
-									.scanEmptyFolders(CacheObject.rootPath);
-							Log.i("DeleteFolder",
-									"result "
-											+ DeleteTask.deleteFolders(files));
-						} catch (Exception e) {
-							Log.e("DeleteTask", e.getMessage());
-						}
-						end = System.currentTimeMillis();
-						Log.i("DeleteTask", "delete empty folder use time : "
-								+ (end - start));
-					}
-
+				// 如果网络繁忙则咱不进行删除操作
+				if (!NetMonitor.isNetBuzy() && !StatMonitor.isCPUBuzy()) {
+					start = System.currentTimeMillis();
 					try {
-						Thread.sleep(DeleteTask.sleepTime);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
+						List<CacheObject> objs = DeleteTask
+								.getExpireCache(everyDelCount);
+						DeleteTask.deleteExpireCache(objs);
+					} catch (Exception e) {
+						Log.e("DeleteTask", e.getMessage());
 					}
+					end = System.currentTimeMillis();
+					Log.i("DeleteTask", "delete cache use time : "
+							+ (end - start));
+				} else {
+					Log.d("DeleteTask",
+							"Net or CPU is buzy, pass delete expire");
+				}
+
+				// 没删除十次缓存获取空文件夹的存在并删除
+				if (++i >= 10 && !NetMonitor.isNetBuzy()) {
+					i = 0;
+
+					start = System.currentTimeMillis();
+					try {
+						List<File> files = DeleteTask
+								.scanEmptyFolders(CacheObject.rootPath);
+						Log.i("DeleteFolder",
+								"result " + DeleteTask.deleteFolders(files));
+					} catch (Exception e) {
+						Log.e("DeleteTask", e.getMessage());
+					}
+					end = System.currentTimeMillis();
+					Log.i("DeleteTask", "delete empty folder use time : "
+							+ (end - start));
+				}
+
+				if (runFlag) {
+					// 退出
 				}
 			}
-		}).start();
+		}, 60000, DeleteTask.sleepTime, TimeUnit.MILLISECONDS);
 	}
 
 	/**

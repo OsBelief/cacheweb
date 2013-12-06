@@ -145,6 +145,35 @@ public class IOUtil {
 			Log.e("writeExternalFile", e.getMessage() + " " + fileName);
 		}
 	}
+	
+	/**
+	 * 写流
+	 * @param fileName
+	 * @param open
+	 */
+	public static void writeExternalFile(String fileName, InputStream is) {
+		try {
+			File file = new File(fileName);
+			File parent = file.getParentFile();
+			if (!parent.exists()) {
+				parent.mkdirs();
+				do{
+					Thread.sleep(2);
+				}
+				while(!parent.exists());
+			}
+			FileOutputStream outputStream = new FileOutputStream(file);
+			byte[] bytes = new byte[2048];
+			int len = -1;
+			while((len = is.read(bytes)) != -1){
+				outputStream.write(bytes, 0, len);
+			}
+			is.close();
+			outputStream.close();
+		} catch (Exception e) {
+			Log.e("writeExternalFile", e.getMessage() + " " + fileName);
+		}
+	}
 
 	/**
 	 * 从外部文件获取输入流
@@ -264,6 +293,30 @@ public class IOUtil {
 		return sb.toString();
 	}
 
+	/**
+	 * 读取文件流，自动判断是内外文件
+	 * 
+	 * @param activity
+	 * @param fileName
+	 * @return
+	 */
+	public static InputStream getFileInputStream(Activity activity, String fileName){
+		if(fileName.startsWith("/")){
+			return IOUtil.readExternalFile(fileName);
+		} else if(fileName.contains("/")){
+			InputStream is = null;
+			try {
+				// is = activity.getAssets().open(fileName);
+				is = IOUtil.readExternalFile(CacheObject.rootPath + fileName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} 
+			Log.d("getInputStream", "Come from inner:" + fileName + " InputStream is null:" + (is == null));
+			return is;
+		}
+		return IOUtil.readInternalFile(activity, fileName);
+	}
+	
 	/**
 	 * 产生WebResourceResponse
 	 * 

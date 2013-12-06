@@ -49,10 +49,10 @@ public class MIME {
 	public static boolean initMIME(String txt) {
 		boolean res = false;
 		try {
-			String lines[] = txt.split("\r\n");
+			String lines[] = txt.split("\n");
 			HashMap<String, String> mimeMapsNew = new HashMap<String, String>(lines.length);
 			for (String line : lines) {
-				String[] infos = line.split("\t");
+				String[] infos = line.trim().split("\t");
 				if (infos.length == 2) {
 					mimeMapsNew.put(infos[0], infos[1]);
 				}

@@ -20,11 +20,60 @@ disCacheUrl:
   - ^http://tbook.yicha.cn/tb/tj.gif.*
   # 评论登录系统
   - ^http://comment.yicha.cn/.*
-  - ^http://passport.yicha.cn.*
   - ^http://i.yicha.cn/ti/newrec.html$
+  # 福利不缓存
+  - ^.*125.39.27.122.*$
+  - ^.*/cmsface/.*$
+  - ^http://fuli.yicha.cn/fuli/catchthief/getBaseMoney.*$
+  - ^http://fuli.yicha.cn/fuli/playCatchThief.do.*$
+  - ^http://fuli.yicha.cn/fuli/conversion/cInforList.do.*$
+  - ^http://fuli.yicha.cn/fuli/conversion/conversion.do.*$
+  - ^http://fuli.yicha.cn/fuli/getGiftList.*$
+  - ^http://fuli.yicha.cn/fuli/getGift.*$
+  - ^http://fuli.yicha.cn/fuli/dcg/guessDcgPos.*$
+  - ^http://fuli.yicha.cn/fuli/playFruitRush.do.*$
+  - ^http://fuli.yicha.cn/fuli/fruitRush/getBaseMoney.*$
+  - ^http://fuli.yicha.cn/fuli/onbet.*$
+  - ^http://fuli.yicha.cn/fuli/getbetList.*$
+  - ^http://fuli.yicha.cn/fuli/getHorseHistory.*$
+  - ^http://fuli.yicha.cn/fuli/getRaceState.*$
+  - ^http://fuli.yicha.cn/fuli/getOnlineNum.*$
+  - ^http://fuli.yicha.cn/fuli/login.*$
+  - ^http://fuli.yicha.cn/fuli/getShuilv.*$
+  - ^http://fuli.yicha.cn/fuli/lt/createRoom.do.*$
+  - ^http://fuli.yicha.cn/fuli/lt/joinRoom.do.*$
+  - ^http://fuli.yicha.cn/fuli/lt/joinGame.*$
+  - ^http://fuli.yicha.cn/fuli/lt/roomList.*$
+  - ^http://fuli.yicha.cn/fuli/lt/online.do.*$
+  - ^http://fuli.yicha.cn/fuli/lt/creathouse.*$
+  - ^http://fuli.yicha.cn/fuli/rps/createRoom.do.*$
+  - ^http://fuli.yicha.cn/fuli/rps/joinRoom.do.*$
+  - ^http://fuli.yicha.cn/fuli/rps/joinGame.do.*$
+  - ^http://fuli.yicha.cn/fuli/rps/roomList.*$
+  - ^http://fuli.yicha.cn/fuli/rps/creathouse.*$
+  - ^http://fuli.yicha.cn/fuli/sge/creathouse.*$
+  - ^http://fuli.yicha.cn/fuli/sge/getMoneyList.*$
+  - ^http://fuli.yicha.cn/fuli/longLoopShitou.*$
+  - ^http://fuli.yicha.cn/fuli/createShitouRoom.*$
+  - ^http://fuli.yicha.cn/fuli/joinShitouRoom.*$
+  - ^http://fuli.yicha.cn/fuli/prepareShitou.*$
+  - ^http://fuli.yicha.cn/fuli/shitou/roomList.*$
+  - ^http://fuli.yicha.cn/fuli/shitou/randomJoin.*$
+  - ^http://fuli.yicha.cn/fuli/shitou/getShuilv.*$
+  - ^http://fuli.yicha.cn/fuli/.{1,10}/\d{1,5}/shitouredirect.*$
+  - ^http://fuli.yicha.cn/fuli/addlistener.*$
+  - ^http://fuli.yicha.cn/fuli/signIn/signIn.do.*$
+  - ^http://fuli.yicha.cn/fuli/qiandao.*$
+  - ^http://fuli.yicha.cn/fuli/zatanguan.*$
+  - ^http://fuli.yicha.cn/fuli/getCurrentScore.*$
+  - ^http://fuli.yicha.cn/fuli/beginXunbao.*$
+  - ^http://fuli.yicha.cn/fuli/stopXunbao.*$
+  - ^http://fuli.yicha.cn/fuli/zjb/guessZjbPos.*$
 
 # URL地址替换
 cacheUrlReplace:
+  - src : ^http://fuli.yicha.cn/?$
+    dest : http://fuli.yicha.cn/fuli/index
   - src : (^http://yicha.mobi/?$|^http://yicha.cn/?$)
     dest : http://page.yicha.cn/tp/i.y
   - src : (^http://yicha.mobi.*|http://page.yicha.cn/tp/i.y\?.*)
@@ -37,9 +86,6 @@ cacheUrlReplace:
 
 # URL的类型
 cacheTypeUrl:
-    bqsg : ^http://misc.baqisanguo.rekoo.net/$
-    djsg : ^http://wyxdjsg.kaikaihd.com/html5/thk/top_xl.htm$
-
     html : .*\.(html|HTML|htm|HTM)(\?[^/]*)?$
     
     js : .*\.(js|JS)(\?[^/]*)?$
@@ -53,11 +99,10 @@ cacheTypeUrl:
     doc : .*\.(doc|DOC)(\?[^/]*)?$
     xls : .*\.(xls|XLS)(\?[^/]*)?$
     mp3 : .*\.(mp3|MP3)(\?[^/]*)?$
-    
-
 
 # 不缓存的类型
 notCacheType:
+  - nfl
   - pdf
   - doc
   - xls
@@ -65,7 +110,7 @@ notCacheType:
 
 # 对指定Host的指定类型不缓存
 hostDisCacheType:
-  - host : fuli.yicha.cn
+  - host : passport.yicha.cn
     types :
       - html
 

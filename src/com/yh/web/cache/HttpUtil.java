@@ -8,14 +8,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ThreadPoolExecutor;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.apache.http.client.params.ClientPNames;
 
 import android.app.Activity;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -29,22 +33,64 @@ public class HttpUtil {
 	// 异步HTTPClient
 	private static AsyncHttpClient client = null;
 	private static String[] allowedContentTypes = null;
-
+	private static Activity activity = null;
+	
+	private static final String COOKIE_KEY = "cookie";
+	private static String cookie = null;
+	private static boolean cookieChanged = false;
+	private static final String COOKIE_URL = "http://passport.yicha.cn/user/login.do?op=login";
+	
 	/**
 	 * 可以定时检查网络是否可用
 	 */
 	private static boolean netAvailable = true;
 
-	public static void initAsyncHttpClient(String ua) {
+	public static void initAsyncHttpClient(Activity act, ThreadPoolExecutor threadPool, String ua) {
+		activity = act;
 		if (client == null) {
 			client = new AsyncHttpClient();
+			client.setThreadPool(threadPool);
 		}
+		// 设置302不跳转
+		client.getHttpClient().getParams().setParameter(ClientPNames.HANDLE_REDIRECTS, false);
+		
 		if (allowedContentTypes == null) {
 			allowedContentTypes = new String[] { ".*" };
 		}
 		client.setUserAgent(ua);
+		// 设置cookie，初始化设置changed为false
+		cookie = IOUtil.readKeyValue(act, COOKIE_KEY, null);
+		cookieChanged = false;
 	}
 
+	public static boolean isCookieChanged() {
+		return cookieChanged;
+	}
+
+	public static void setCookieChanged(boolean cookieChanged) {
+		HttpUtil.cookieChanged = cookieChanged;
+	}
+
+	/**
+	 * 设置cookie
+	 * @param cookie
+	 */
+	public static void setCookie() {
+		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
+		if(cookie != null && !cookie.trim().equals("")){
+			HttpUtil.cookie = cookie;
+			// 存入key-value
+			IOUtil.writeKeyValue(activity, COOKIE_KEY, cookie);
+			client.addHeader("Cookie", cookie);
+			cookieChanged = true;
+			Log.i("SetCookie", cookie);
+		}
+	}
+	
+	public static String getCookie(){
+		return HttpUtil.cookie;
+	}
+	
 	/**
 	 * 判断是否有可用的网络
 	 * 
@@ -279,6 +325,7 @@ public class HttpUtil {
 					}
 				}
 			} catch (Exception e) {
+				e.printStackTrace();
 				Log.e("updateDB", obj.getUrl() + "\t" + e.getMessage());
 			}
 		}
@@ -287,7 +334,12 @@ public class HttpUtil {
 		public void onSuccess(byte[] fileData) {
 			boolean res = false;
 			if (fileData != null && fileData.length > maxAllowByteLen) {
-				IOUtil.writeExternalFile(fileName, fileData);
+				// 以/开头写外部文件，否则写内部文件
+				if(fileName.startsWith("/")){
+					IOUtil.writeExternalFile(fileName, fileData);
+				} else {
+					IOUtil.writeInternalFile(activity, fileName, fileData);
+				}
 				if (act != null) {
 					Toast.makeText(act, "Down Ok, size: " + fileData.length,
 							Toast.LENGTH_LONG).show();

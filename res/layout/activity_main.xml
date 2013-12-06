@@ -5,21 +5,13 @@
     android:animateLayoutChanges="true"
     tools:context=".MainActivity" >
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        style="?android:attr/progressBarStyleHorizontal"
-        android:layout_width="fill_parent"
-        android:layout_height="5dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentTop="true" />
-
     <Button
         android:id="@+id/goBtn"
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_alignParentRight="true"
-        android:layout_below="@+id/progressBar"
         android:onClick="goBtnClick"
+        android:visibility="gone"
         android:text="@string/goText" />
 
     <EditText
@@ -34,6 +26,7 @@
         android:imeOptions="actionGo"
         android:inputType="textUri"
         android:singleLine="true"
+        android:visibility="gone"
         android:text="@string/defaultUrl" />
 
     <WebView
@@ -43,5 +36,14 @@
         android:layout_alignParentLeft="true"
         android:layout_below="@id/uText"
         android:longClickable="true" />
+
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="3dp"
+        android:layout_alignParentLeft="true"
+        android:progressDrawable="@drawable/progress"
+        android:layout_below="@+id/goBtn" />
 
 </RelativeLayout>
