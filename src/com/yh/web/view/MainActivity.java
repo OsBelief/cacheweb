@@ -34,19 +34,17 @@ import android.widget.Toast;
 import cn.yicha.cache.fuli.R;
 
 import com.yh.util.ScreenShot;
-import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
-import com.yh.web.cache.CachePolicy;
 import com.yh.web.cache.HttpUtil;
-import com.yh.web.cache.IOUtil;
-import com.yh.web.cache.MIME;
 import com.yh.web.cache.UpdateTask;
 
 public class MainActivity extends BaseActivity {
 	
 	public static final int SHOT = 1010;
-	
+	public static final String DEFAULT_URL = "http://fuli.yicha.cn/fuli/index";
 	public static String nowUrl = "http://fuli.yicha.cn/fuli/index";
+	
+	private WebView web;
 	
 	@SuppressLint("HandlerLeak")
 	public Handler mHandler = new Handler() {
@@ -66,19 +64,6 @@ public class MainActivity extends BaseActivity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// 第一次启动时将所有配置文件删除
-		if (IOUtil.readBooleanKeyValue(this, "FirstLaunch", true)) {
-			this.deleteFile(CacheFilter.CONFIG_NAME);
-			this.deleteFile(CacheFilter.FILTER_NAME);
-			this.deleteFile(CachePolicy.POLICY_NAME);
-			this.deleteFile(MIME.MIME_NAME);
-			IOUtil.writeBooleanKeyValue(this, "FirstLaunch", false);
-			Log.i("OnCreate",
-					"application is first launch, delete the config file");
-		} else {
-			Log.i("OnCreate", "application is not first launch");
-		}
-
 		// 添加事件，点击GO的时候自动调用GoBtn方法跳到指定URL
 		EditText uText = (EditText) findViewById(R.id.uText);
 		// 安装回车自动加载
@@ -93,19 +78,18 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 
-		// 获取UA
-		
 		// 设置WebClient
-		WebView web = (WebView) findViewById(R.id.webView1);
+		web = (WebView) findViewById(R.id.webView1);
 		setWebView(web, WelcomeActivity.UA);
-
-		// // 获取焦点隐藏地址栏
-		// ArrayList<View> views = new ArrayList<View>();
-		// views.add(uText);
-		// views.add(findViewById(R.id.goBtn));
-		// web.setOnFocusChangeListener(new MyFoucusChange(views));
-		
 		web.loadUrl(nowUrl);
+	}
+	
+	@Override
+	protected void onResume(){
+		super.onResume();
+		if(HttpUtil.isCookieChanged()){
+			web.loadUrl(DEFAULT_URL);
+		}
 	}
 	
 	/**
@@ -272,14 +256,16 @@ public class MainActivity extends BaseActivity {
 				web.goBack();
 				((EditText) findViewById(R.id.uText)).setText(web.getUrl());
 				return true;
-			} else {
+			} else if(web.getUrl().equals(getString(R.string.defaultUrl))){
 				showExitDialog();
 				return true;
+			} else{
+				this.finish();
 			}
 		}
 		return super.onKeyDown(keyCode, event);
 	}
-
+	
 	class MyFoucusChange implements OnFocusChangeListener {
 		List<View> views = new ArrayList<View>();
 
@@ -314,18 +300,18 @@ public class MainActivity extends BaseActivity {
 	    }
 	}
 
-	// 重启自身
+	// 开启一个新的Activity来加载URL
 	public void startNew(String url) {
 		Intent intent = new Intent(this, MainActivity.class);
 		MainActivity.nowUrl = url;
 		this.startActivity(intent);
-		WebView web = (WebView) this.findViewById(R.id.webView1);
-		web.clearCache(false);
-		web.loadUrl("about:blank"); //web.clearView();
-		web.destroyDrawingCache();
-		web.destroy();
-		this.finish();
-		this.onDestroy();
+		
+//		web.clearCache(false);
+//		web.loadUrl("about:blank"); //web.clearView();
+//		web.destroyDrawingCache();
+//		web.destroy();
+//		this.finish();
+//		this.onDestroy();
 //		Intent intent = new Intent(this.getApplicationContext(),
 //				MainActivity.class);
 //		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);

@@ -154,6 +154,19 @@ public class WelcomeActivity extends BaseActivity {
 	 * 初始数据
 	 */
 	private void initDatas(){
+		// 第一次启动时将所有配置文件删除
+		if (IOUtil.readBooleanKeyValue(this, "FirstLaunch", true)) {
+			this.deleteFile(CacheFilter.CONFIG_NAME);
+			this.deleteFile(CacheFilter.FILTER_NAME);
+			this.deleteFile(CachePolicy.POLICY_NAME);
+			this.deleteFile(MIME.MIME_NAME);
+			IOUtil.writeBooleanKeyValue(this, "FirstLaunch", false);
+			Log.i("OnCreate",
+					"application is first launch, delete the config file");
+		} else {
+			Log.i("OnCreate", "application is not first launch");
+		}
+		
 		UA = getUserAgent(baseUA);
 		
 		// 通用线程池

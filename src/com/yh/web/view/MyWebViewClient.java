@@ -25,21 +25,27 @@ import com.yh.web.cache.IOUtil;
  */
 public class MyWebViewClient extends WebViewClient {
 
-	private ExecutorService executor = Executors.newSingleThreadExecutor();
+	private ExecutorService executor;
 
 	private MainActivity act;
-
-	private String errorHtm;
+	private String defaultUrl;
+	
+	private static String errorHtm;
 	
 	// 记录302跳转情况
 	private String pendingUrl;
 
 	public MyWebViewClient(MainActivity act) {
 		this.act = act;
-		try {
-			errorHtm = IOUtil.readStream(act.getAssets().open("error.htm"));
-		} catch (IOException e) {
-			e.printStackTrace();
+		defaultUrl = act.getString(R.string.defaultUrl);
+		executor = Executors.newSingleThreadExecutor();
+		
+		if(errorHtm == null){
+			try {
+				errorHtm = IOUtil.readStream(act.getAssets().open("error.htm"));
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 	}
 
@@ -50,6 +56,15 @@ public class MyWebViewClient extends WebViewClient {
 		String reload = HttpUtil.getToUrl(url);
 		if (reload != null) {
 			url = reload;
+		}
+		if(view.getUrl().equals(defaultUrl) && !url.equals(defaultUrl)){
+			// 开启一个新Activity加载
+			act.startNew(url);
+			return true;
+		} else if(!view.getUrl().equals(defaultUrl) && url.equals(defaultUrl)){
+			// finish当前，返回
+			act.finish();
+			return true;
 		}
 		// return false 交给原生处理
 		return false;
