@@ -92,8 +92,10 @@ public class HttpUtil {
 	 * @param sCookie
 	 */
 	public static void setCookie() {
-		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL)
-				.trim();
+		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
+		if(cookie != null){
+			cookie = cookie.trim();
+		}
 		if (cookie == null || cookie.equals("null") || cookie.equals(sCookie)) {
 			return;
 		}
@@ -101,8 +103,8 @@ public class HttpUtil {
 		// 存入key-value
 		IOUtil.writeKeyValue(activity, COOKIE_KEY, cookie);
 		client.addHeader("Cookie", cookie);
-		Log.i("SetCookie", cookie);
-		Log.i("SetCookie", sCookie);
+		Log.i("SetCookie", "Old: " + sCookie);
+		Log.i("SetCookie", "New: " + cookie);
 		sCookie = cookie;
 		urlCookieChanged.clear();
 	}

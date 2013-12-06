@@ -336,4 +336,17 @@ public class IOUtil {
 		}
 		return new WebResourceResponse(mime, encoding, is);
 	}
+	
+	/**
+	 * 删除文件
+	 * @param fileName
+	 */
+	public static void deleteFile(String fileName){
+		File f = new File(fileName);
+		try{
+			f.deleteOnExit();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
 }

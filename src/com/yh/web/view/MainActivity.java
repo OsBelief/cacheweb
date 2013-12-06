@@ -43,9 +43,10 @@ public class MainActivity extends BaseActivity {
 	public static final int SHOT = 1010;
 	public static final String DEFAULT_URL = "http://fuli.yicha.cn/fuli/index";
 	private static final String URL_KEY = "IURL";
+	protected static final int SETCOOKIE = 1012;
 	
 	// 初始时的URL
-	private String tUrl;
+	public String tUrl;
 	private WebView web;
 	
 	@SuppressLint("HandlerLeak")
@@ -56,7 +57,9 @@ public class MainActivity extends BaseActivity {
 			case SHOT:
 				ScreenShot.shotOneBitmap();
 				break;
-			}
+			case SETCOOKIE:
+				HttpUtil.setCookie();
+			} 
 			super.handleMessage(msg);
 		}
 	};
@@ -86,6 +89,9 @@ public class MainActivity extends BaseActivity {
 		tUrl = getIntent().getStringExtra(URL_KEY);
 		if(tUrl == null){
 			tUrl = DEFAULT_URL;
+		}
+		if(tUrl.equals(DEFAULT_URL)){
+			mHandler.sendEmptyMessageDelayed(SETCOOKIE, 1000);
 		}
 	}
 	

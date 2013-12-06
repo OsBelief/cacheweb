@@ -51,6 +51,10 @@ public class MyWebViewClient extends WebViewClient {
 
 	@Override
 	public boolean shouldOverrideUrlLoading(WebView view, String url) {
+		if(view.getUrl() == null){
+			return false;
+		}
+		
 		Log.i("shouldOverrideUrlLoading", url);
 		((EditText) act.findViewById(R.id.uText)).setText(url);
 		String reload = HttpUtil.getToUrl(url);
@@ -67,8 +71,10 @@ public class MyWebViewClient extends WebViewClient {
 				// 返回首页时设置cookie
 				HttpUtil.setCookie();
 			}
-			act.finish();
-			return true;
+			if(!act.tUrl.equals(defaultUrl)){
+				act.finish();
+				return true;
+			}
 		}
 		// return false 交给原生处理
 		return false;

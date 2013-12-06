@@ -90,10 +90,14 @@ public class CacheControl {
 
 		// html则判断cookie是否变化
 		if (obj.getType().equals("html")) {
-			if(HttpUtil.isCookieChanged(obj.getUrl())){
+			if(HttpUtil.isCookieChanged(obj.getUrl()) && obj.isComeFromCache()){
 				// 设置缓存为false，重新下载
-				orm.delete(obj);
 				obj.setComeFromCache(false);
+				orm.delete(obj);
+				if(CacheObject.useExtern){
+					Log.i("DeleteFile", "delete " + obj.getFileName());
+					IOUtil.deleteFile(obj.getFileName());
+				}
 				// 缓存已更新
 				HttpUtil.setCookieChangedOut(obj.getUrl());
 			}
