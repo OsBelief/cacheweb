@@ -61,7 +61,7 @@ public class MyWebViewClient extends WebViewClient {
 		if (reload != null) {
 			url = reload;
 		}
-		if(view.getUrl().equals(defaultUrl) && !url.equals(defaultUrl)){
+		if(view.getUrl().equals(defaultUrl) && !url.equals(defaultUrl) && url.startsWith("http://fuli.yicha.cn")){
 			// 开启一个新Activity加载
 			act.startNew(url);
 			return true;
