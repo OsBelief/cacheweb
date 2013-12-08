@@ -93,6 +93,7 @@ public class CacheControl {
 			if(HttpUtil.isCookieChanged(obj.getUrl()) && obj.isComeFromCache()){
 				// 设置缓存为false，重新下载
 				obj.setComeFromCache(false);
+				fromCache = false;
 				orm.delete(obj);
 				if(CacheObject.useExtern){
 					Log.i("DeleteFile", "delete " + obj.getFileName());

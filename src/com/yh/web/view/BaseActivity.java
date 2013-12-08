@@ -36,7 +36,8 @@ public class BaseActivity extends Activity {
 	 */
 	public static void exit() {
 		finishAll();
-		// 关把所有activity finish 的话，进程是不会关闭的
+		// 光把所有activity finish 的话，进程是不会关闭的
+		android.os.Process.killProcess(android.os.Process.myPid());
 		System.exit(0);
 	}
 }

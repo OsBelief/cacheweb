@@ -76,6 +76,7 @@ public class HttpUtil {
 		if(change == null){
 			change = true;
 		}
+		Log.i("Cookie", "Get changed: " + url + " " + change);
 		return change;
 	}
 
@@ -85,13 +86,14 @@ public class HttpUtil {
 	 */
 	public static void setCookieChangedOut(String url) {
 		urlCookieChanged.put(url, false);
+		Log.i("Cookie", "Set changed: " +url + " " + false);
 	}
 
 	/**
 	 * 设置cookie
 	 * @param sCookie
 	 */
-	public static void setCookie() {
+	public synchronized static void setCookie() {
 		String cookie = CookieManager.getInstance().getCookie(COOKIE_URL);
 		if(cookie != null){
 			cookie = cookie.trim();
@@ -107,6 +109,7 @@ public class HttpUtil {
 		Log.i("SetCookie", "New: " + cookie);
 		sCookie = cookie;
 		urlCookieChanged.clear();
+		Log.i("Cookie", "All cookie changed true");
 	}
 	
 	public static String getCookie(){

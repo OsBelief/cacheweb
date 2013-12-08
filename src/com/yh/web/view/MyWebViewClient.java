@@ -99,6 +99,9 @@ public class MyWebViewClient extends WebViewClient {
 			Log.d("Redirect(302)", "Detected HTTP redirect " + pendingUrl
 					+ "->" + url);
 			((EditText) act.findViewById(R.id.uText)).setText(url);
+			if(pendingUrl.startsWith("http://passport.yicha.cn/user/loginout") && url.equals(defaultUrl)){
+				HttpUtil.setCookie();
+			}
 			pendingUrl = null;
 		}
 	}
