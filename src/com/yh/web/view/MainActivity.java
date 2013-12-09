@@ -43,6 +43,7 @@ public class MainActivity extends BaseActivity {
 	public static final int SHOT = 1010;
 	public static final String DEFAULT_URL = "http://fuli.yicha.cn/fuli/index";
 	private static final String URL_KEY = "IURL";
+	private static final String REFRESH_KEY = "REFRESH";
 	protected static final int SETCOOKIE = 1012;
 	
 	// 初始时的URL
@@ -102,6 +103,11 @@ public class MainActivity extends BaseActivity {
 		} else{
 			// 添加JS接口
 			jsif.setSecondActivity(this);
+		}
+		
+		boolean refresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
+		if(refresh){
+			HttpUtil.clearAllCookie();
 		}
 	}
 	
@@ -328,6 +334,7 @@ public class MainActivity extends BaseActivity {
 	public void startNew(String url) {
 		Intent intent = new Intent(this, MainActivity.class);
 		intent.putExtra(URL_KEY, url);
+		intent.putExtra(REFRESH_KEY, false);
 		this.startActivity(intent);
 		
 //		web.clearCache(false);
@@ -342,6 +349,7 @@ public class MainActivity extends BaseActivity {
 		Log.i("Activity", "start a new activity :" + url);
 		Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
 		intent.putExtra(URL_KEY, url);
+		intent.putExtra(REFRESH_KEY, true);
 		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		this.getApplicationContext().startActivity(intent);

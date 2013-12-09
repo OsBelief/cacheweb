@@ -124,6 +124,13 @@ public class HttpUtil {
 	}
 	
 	/**
+	 * 所有的都重新加载一次
+	 */
+	public static void clearAllCookie(){
+		urlCookieChanged.clear();
+	}
+	
+	/**
 	 * 判断cookie是否改变
 	 * @param cookie
 	 * @return
