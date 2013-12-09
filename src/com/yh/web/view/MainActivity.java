@@ -97,8 +97,10 @@ public class MainActivity extends BaseActivity {
 		}
 		if(tUrl.equals(DEFAULT_URL)){
 			mHandler.sendEmptyMessageDelayed(SETCOOKIE, 1000);
+			// 添加JS接口
+			jsif.setFirstActivity(this);
 		} else{
-			// 添加接口
+			// 添加JS接口
 			jsif.setSecondActivity(this);
 		}
 	}
