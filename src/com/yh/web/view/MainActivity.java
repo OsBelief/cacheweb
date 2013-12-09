@@ -83,6 +83,9 @@ public class MainActivity extends BaseActivity {
 			}
 		});
 
+		// 初始化基本信息
+		WelcomeActivity.initDatas(this);
+		
 		// 设置WebClient
 		web = (WebView) findViewById(R.id.webView1);
 		setWebView(web, WelcomeActivity.UA);
@@ -323,13 +326,17 @@ public class MainActivity extends BaseActivity {
 //		web.destroy();
 //		this.finish();
 //		this.onDestroy();
-//		Intent intent = new Intent(this.getApplicationContext(),
-//				MainActivity.class);
-//		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-//		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-//		this.getApplicationContext().startActivity(intent);
-//		// for restarting the Activity
-//		android.os.Process.killProcess(android.os.Process.myPid());
-//		System.exit(0);
+	}
+	
+	public void exitAndStartNew(String url){
+		Log.i("Activity", "start a new activity :" + url);
+		Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+		intent.putExtra(URL_KEY, url);
+		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		this.getApplicationContext().startActivity(intent);
+		// for restarting the Activity
+		android.os.Process.killProcess(android.os.Process.myPid());
+		System.exit(0);
 	}
 }

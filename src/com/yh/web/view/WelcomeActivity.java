@@ -26,6 +26,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.Context;
@@ -57,6 +58,8 @@ public class WelcomeActivity extends BaseActivity {
 	private static final String baseUA = "yicha.cache.fuli_1.0";
 	public static String UA = baseUA;
 	
+	public volatile static boolean initData = false;
+	
 	/**
 	 * Handler:跳转到不同界面
 	 */
@@ -75,7 +78,7 @@ public class WelcomeActivity extends BaseActivity {
 				goActivity(GuideActivity.class);
 				break;
 			case INIT_DATA:
-				initDatas();
+				initFirstDatas();
 				break;
 			}
 			super.handleMessage(msg);
@@ -153,7 +156,7 @@ public class WelcomeActivity extends BaseActivity {
 	/**
 	 * 初始数据
 	 */
-	private void initDatas(){
+	private void initFirstDatas(){
 		// 第一次启动时将所有配置文件删除
 		if (IOUtil.readBooleanKeyValue(this, "FirstLaunch", true)) {
 			this.deleteFile(CacheFilter.CONFIG_NAME);
@@ -167,7 +170,18 @@ public class WelcomeActivity extends BaseActivity {
 			Log.i("OnCreate", "application is not first launch");
 		}
 		
-		UA = getUserAgent(baseUA);
+		initDatas(this);
+	}
+	
+	/**
+	 * 初始化信息
+	 */
+	public synchronized static void initDatas(Activity activity){
+		if(initData){
+			return;
+		}
+		
+		UA = getUserAgent(activity, baseUA);
 		
 		// 通用线程池
 		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(1, 2, 60,
@@ -176,34 +190,38 @@ public class WelcomeActivity extends BaseActivity {
 				.newScheduledThreadPool(1);
 
 		// 初始化MIME
-		MIME.initMIME(this);
+		MIME.initMIME(activity);
 		// 初始化过滤器
-		CacheFilter.initFilter(this);
+		CacheFilter.initFilter(activity);
 		// 初始化缓存策略
-		CachePolicy.initPolicy(this);
+		CachePolicy.initPolicy(activity);
 		// 初始化AsyncHttpClient
 		// HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
-		HttpUtil.initAsyncHttpClient(this, threadPool, UA + "_hc");
+		HttpUtil.initAsyncHttpClient(activity, threadPool, UA + "_hc");
 		// 初始化缓存
-		CacheControl.initCache(this);
+		CacheControl.initCache(activity);
 		// 开始监控网络
 		NetMonitor.startJudge(monitorThreadPool);
 		// 开始CPU监控
 		StatMonitor.startJudge(monitorThreadPool);
 		// 开始执行删除过期任务
-		DeleteTask.initShedule(this, monitorThreadPool);
+		DeleteTask.initShedule(activity, monitorThreadPool);
 
-		UpdateTask.initBasic(this);
+		UpdateTask.initBasic(activity);
 		// 开始执行更新配置任务
-		// UpdateTask.initShedule(this);
+		// UpdateTask.initShedule(activity);
+		
+		initData = true;
 	}
 	
 	/**
 	 * 获取UA
+	 * @param activity
 	 * @param baseUa
+	 * @return
 	 */
-	public String getUserAgent(String baseUa){
-		TelephonyManager tm = (TelephonyManager) this.getBaseContext()
+	public static String getUserAgent(Activity activity, String baseUa){
+		TelephonyManager tm = (TelephonyManager) activity.getBaseContext()
 				.getSystemService(Context.TELEPHONY_SERVICE);
 		String ua = new StringBuffer().append(baseUa).append(",")
 				.append(android.os.Build.MODEL).append(",")

@@ -70,6 +70,7 @@ public class MyWebViewClient extends WebViewClient {
 			if(view.getUrl().startsWith("http://passport.yicha.cn")){
 				// 返回首页时设置cookie
 				HttpUtil.setCookie();
+				act.exitAndStartNew(url);
 			}
 			if(!act.tUrl.equals(defaultUrl)){
 				act.finish();
