@@ -107,10 +107,8 @@ public class MyWebViewClient extends WebViewClient {
 			// 已经完成了，设置已经更新
 			HttpUtil.setCookieChangedOut(defaultUrl);
 		} else{
-			view.addJavascriptInterface(new MyJsInterface(), "jsif");
-			String goBackBind = "javascript:(function(){window.history.go=function(k){alert(556);};alert(222);})()";
+			String goBackBind = "javascript:(function(){window.history.go=function(k){window.jsif.historyGo(k)};})()";
 			view.loadUrl(goBackBind);
-			view.loadUrl("javascript:(function(){alert(1211); window.jsif.gotos(\"sss\");alert(111);})()");
 		}
 	}
 	

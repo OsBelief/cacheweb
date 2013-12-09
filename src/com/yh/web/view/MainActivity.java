@@ -49,6 +49,8 @@ public class MainActivity extends BaseActivity {
 	public String tUrl;
 	private WebView web;
 	
+	private static MyJsInterface jsif = new MyJsInterface();
+	
 	@SuppressLint("HandlerLeak")
 	public Handler mHandler = new Handler() {
 		@Override
@@ -95,6 +97,9 @@ public class MainActivity extends BaseActivity {
 		}
 		if(tUrl.equals(DEFAULT_URL)){
 			mHandler.sendEmptyMessageDelayed(SETCOOKIE, 1000);
+		} else{
+			// 添加接口
+			jsif.setSecondActivity(this);
 		}
 	}
 	
@@ -160,6 +165,9 @@ public class MainActivity extends BaseActivity {
 		});
 		// web 获得焦点
 		web.requestFocus();
+		
+		// 添加java js事件
+		web.addJavascriptInterface(jsif, "jsif");
 	}
 	
 	@Override
