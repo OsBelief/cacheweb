@@ -123,7 +123,7 @@ public class MyWebViewClient extends WebViewClient {
     }
 
 	// 计算RES被访问多少次
-	private int i = 0;
+	private volatile static int i = 0;
 	/**
 	 * 通过Future在指定时间内获取数据
 	 */
@@ -141,6 +141,9 @@ public class MyWebViewClient extends WebViewClient {
 			res = future.get(1, TimeUnit.SECONDS);
 			if(res != null){
 				Log.i("ResCount", String.valueOf(i++));
+				if(i == 510){
+					act.mHandler.sendEmptyMessage(MainActivity.RESTART);
+				}
 			}
 		} catch (Exception e) {
 			future.cancel(true);

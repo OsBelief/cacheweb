@@ -42,16 +42,20 @@ public class MainActivity extends BaseActivity {
 	
 	public static final int SHOT = 1010;
 	public static final String DEFAULT_URL = "http://fuli.yicha.cn/fuli/index";
-	private static final String URL_KEY = "IURL";
-	private static final String REFRESH_KEY = "REFRESH";
+	public static final String URL_KEY = "IURL";
+	public static final String REFRESH_KEY = "REFRESH";
 	protected static final int SETCOOKIE = 1012;
 	protected static final int HISTORY_GO = 1013;
+	public static final int RESTART = 1014;
 	
 	// 初始时的URL
 	public String tUrl;
 	private WebView web;
 	
 	private static MyJsInterface jsif = new MyJsInterface();
+	
+	// 记录当前主页所在Activity
+	public static MainActivity nowMainAct;
 	
 	@SuppressLint("HandlerLeak")
 	public Handler mHandler = new Handler() {
@@ -72,7 +76,9 @@ public class MainActivity extends BaseActivity {
 					}
 				}
 				break;
-			} 
+			case RESTART:
+				exitAndStartNew(DEFAULT_URL);
+			}
 			super.handleMessage(msg);
 		}
 	};
@@ -110,6 +116,7 @@ public class MainActivity extends BaseActivity {
 			mHandler.sendEmptyMessageDelayed(SETCOOKIE, 1000);
 			// 添加JS接口
 			jsif.setFirstActivity(this);
+			nowMainAct = this;
 		} else{
 			// 添加JS接口
 			jsif.setSecondActivity(this);
