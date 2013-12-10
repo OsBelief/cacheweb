@@ -22,6 +22,8 @@ public class CacheControl {
 	
 	public static String defaultUrl;
 	
+	public static boolean isFirst = true;
+	
 	/**
 	 * 初始化缓存ORM
 	 * 
@@ -43,6 +45,9 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
+		if(url.startsWith("http://passport.yicha.cn/user/loginJson")){
+			HttpUtil.clearAllCookie();
+		}
 		// 获取转换的URL
 		String urlb = url;
 		url = HttpUtil.getToUrl(url);
@@ -55,13 +60,14 @@ public class CacheControl {
 		}
 		
 		// 主页cookie为null则使用main.htm
-		if (defaultUrl.equals(url) && HttpUtil.getCookie() == null) {
+		if (defaultUrl.equals(url) && HttpUtil.getCookie() == null && isFirst) {
 			WebResourceResponse res = null;
 			try {
 				InputStream is = context.getAssets().open("main.htm");
 				Log.i("getResource", "use main.htm, cookie is null");
 				res = IOUtil.generateResource(
 						MIME.getMimeFromType("htm"), null, is);
+				isFirst = false;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
