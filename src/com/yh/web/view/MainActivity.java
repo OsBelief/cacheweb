@@ -45,6 +45,7 @@ public class MainActivity extends BaseActivity {
 	private static final String URL_KEY = "IURL";
 	private static final String REFRESH_KEY = "REFRESH";
 	protected static final int SETCOOKIE = 1012;
+	protected static final int HISTORY_GO = 1013;
 	
 	// 初始时的URL
 	public String tUrl;
@@ -62,6 +63,15 @@ public class MainActivity extends BaseActivity {
 				break;
 			case SETCOOKIE:
 				HttpUtil.setCookie();
+				break;
+			case HISTORY_GO:
+				if(web != null){
+					if(web.canGoBack()){
+						int steps = msg.arg1;
+						web.goBackOrForward(steps);
+					}
+				}
+				break;
 			} 
 			super.handleMessage(msg);
 		}

@@ -1,10 +1,8 @@
 package com.yh.web.view;
 
-import cn.yicha.cache.fuli.R;
-import android.app.Activity;
+import android.os.Message;
 import android.util.Log;
 import android.webkit.JavascriptInterface;
-import android.webkit.WebView;
 
 /**
  * JS条用Java接口
@@ -14,17 +12,17 @@ import android.webkit.WebView;
  */
 public class MyJsInterface {
 	
-	private Activity factivity;
-	private Activity sactivity;
+	private MainActivity factivity;
+	private MainActivity sactivity;
 	
 	public MyJsInterface(){
 	}
 	
-	public void setFirstActivity(Activity activity){
+	public void setFirstActivity(MainActivity activity){
 		this.factivity = activity;
 	}
 	
-	public void setSecondActivity(Activity activity){
+	public void setSecondActivity(MainActivity activity){
 		this.sactivity = activity;
 	}
 	
@@ -35,10 +33,10 @@ public class MyJsInterface {
 			sactivity.finish();
 			sactivity = null;
 		} else if(factivity != null){
-			WebView web = (WebView) factivity.findViewById(R.id.webView1);
-			if(web.canGoBack()){
-				web.goBackOrForward(i);
-			}
+			Message msg = new Message();
+			msg.what = MainActivity.HISTORY_GO;
+			msg.arg1 = i;
+			factivity.mHandler.sendMessageDelayed(msg , 1);
 		}
 	}
 
