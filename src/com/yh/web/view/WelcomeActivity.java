@@ -275,5 +275,6 @@ public class WelcomeActivity extends BaseActivity {
 		Intent intent = new Intent(WelcomeActivity.this, cls);
 		WelcomeActivity.this.startActivity(intent);
 		WelcomeActivity.this.finish();
+		overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 	}
 }

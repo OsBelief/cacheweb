@@ -13,5 +13,6 @@
     <string name="defaultUrl">http://fuli.yicha.cn/fuli/index</string>
     <string name="title_activity_welcome">易查福利</string>
     <string name="title_activity_guide">提示页</string>
+	<drawable name="bkcolor">#FFFFFF</drawable>
 
 </resources>

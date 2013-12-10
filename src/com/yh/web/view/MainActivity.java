@@ -346,7 +346,7 @@ public class MainActivity extends BaseActivity {
 		intent.putExtra(URL_KEY, url);
 		intent.putExtra(REFRESH_KEY, false);
 		this.startActivity(intent);
-		
+		overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 //		web.clearCache(false);
 //		web.loadUrl("about:blank"); //web.clearView();
 //		web.destroyDrawingCache();
