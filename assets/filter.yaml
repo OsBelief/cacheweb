@@ -102,6 +102,7 @@ cacheTypeUrl:
 
 # 不缓存的类型
 notCacheType:
+  - html
   - nfl
   - pdf
   - doc

@@ -45,6 +45,9 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
+		WebResourceResponse res = null;
+		
+		// 任何登录链接重置Cookie
 		if(url.startsWith("http://passport.yicha.cn/user/login")){
 			CookieManagers.clearAllCookie();
 		}
@@ -59,24 +62,9 @@ public class CacheControl {
 			return null;
 		}
 		
-		// 主页cookie为null则使用main.htm
-		if (defaultUrl.equals(url)){
-			if(CookieManagers.getCookie() == null || isFirst) {
-				WebResourceResponse res = null;
-				try {
-					InputStream is = context.getAssets().open("main.htm");
-					Log.i("getResource", "use main.htm, cookie is null");
-					res = IOUtil.generateResource(
-							MIME.getMimeFromType("htm"), null, is);
-					isFirst = false;
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-				return res;
-			} else {
-				Log.i("getResource", "DefaultUrl need update | " + url);
-				return null;
-			}
+		// 如果是主页单独判断
+		if (defaultUrl.equals(url)) {
+			return getMainPageResponse(context, url);
 		}
 		
 		boolean fromCache = true;
@@ -98,28 +86,7 @@ public class CacheControl {
 			// 如果转换的URL为null，则表示不需要缓存
 			return null;
 		}
-
-		// html则判断cookie是否变化
-		if (obj.getType().equals("html")) {
-			if(!defaultUrl.equals(url)){
-				Log.i("getResource", "Discache not defaultUrl html | " + url);
-				return null;
-			}
-			if(CookieManagers.isCookieChanged(obj.getUrl()) && obj.isComeFromCache()){
-				// 设置缓存为false，重新下载
-				obj.setComeFromCache(false);
-				fromCache = false;
-				orm.delete(obj);
-				if(CacheObject.useExtern){
-					Log.i("DeleteFile", "delete " + obj.getFileName());
-					IOUtil.deleteFile(obj.getFileName());
-				}
-				// 缓存已更新
-				CookieManagers.setCookieChangedOut(obj.getUrl());
-			}
-		}
 		
-		WebResourceResponse res = null;
 		if (obj.getMime().startsWith("image")) {
 			// 图片处理
 			res = getImage(context, obj, null);
@@ -150,7 +117,41 @@ public class CacheControl {
 	}
 
 	/**
-	 * 获取默认信息
+	 * 获取主页的数据，从缓存取，从main.htm取
+	 * @param context
+	 * @param url
+	 * @return
+	 */
+	public static WebResourceResponse getMainPageResponse(Context context, String url){
+		CacheObject obj = new CacheObject(url);
+		// cookie改变直接返回
+		if (CookieManagers.isCookieChanged(url)) {
+			orm.delete(obj);
+			Log.i("getResource", "Main cookie change | " + url);
+			return null;
+		}
+		// 从缓存中取
+		WebResourceResponse res = getDefaultInfo(context, obj, null, false);
+		if (res == null) {
+			try {
+				// 否则从main.htm中获取
+				InputStream is = context.getAssets().open("main.htm");
+				Log.i("getResource",
+						"Use main.htm, Cookie is not change and Cache is not exist | " + url);
+				res = IOUtil.generateResource(MIME.getMimeFromType("htm"),
+						null, is);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		} else {
+			Log.i("getResource", "From Cache | " + obj.getType() + " "
+					+ obj.getMime() + " | " + url);
+		}
+		return res;
+	}
+	
+	/**
+	 * 获取默认信息，如果不存在或过期则下载
 	 * 
 	 * @param context
 	 * @param obj
@@ -159,6 +160,20 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getDefaultInfo(Context context,
 			CacheObject obj, String encoding) {
+		return getDefaultInfo(context, obj, encoding, true);
+	}
+	
+	/**
+	 * 获取默认信息
+	 * 
+	 * @param context
+	 * @param obj
+	 * @param encoding
+	 * @param needDown 如果为false则不会下载，否则根据情况下载
+	 * @return
+	 */
+	public static WebResourceResponse getDefaultInfo(Context context,
+			CacheObject obj, String encoding, boolean needDown) {
 		// 是否需要更新缓存
 		boolean needUpdate = false;
 		// 返回结果
@@ -189,7 +204,7 @@ public class CacheControl {
 			Log.i("getDefaultInfo", "Need Down | " + obj.getUrl());
 			needUpdate = true;
 		}
-		if (needUpdate) {
+		if (needDown && needUpdate) {
 			// 更新缓存
 			HttpUtil.downUrlToFile(null, obj);
 		}
