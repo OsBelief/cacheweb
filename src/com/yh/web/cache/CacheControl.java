@@ -46,7 +46,7 @@ public class CacheControl {
 	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
 		if(url.startsWith("http://passport.yicha.cn/user/loginJson")){
-			HttpUtil.clearAllCookie();
+			CookieManagers.clearAllCookie();
 		}
 		// 获取转换的URL
 		String urlb = url;
@@ -60,7 +60,7 @@ public class CacheControl {
 		}
 		
 		// 主页cookie为null则使用main.htm
-		if (defaultUrl.equals(url) && HttpUtil.getCookie() == null && isFirst) {
+		if (defaultUrl.equals(url) && CookieManagers.getCookie() == null && isFirst) {
 			WebResourceResponse res = null;
 			try {
 				InputStream is = context.getAssets().open("main.htm");
@@ -96,7 +96,7 @@ public class CacheControl {
 
 		// html则判断cookie是否变化
 		if (obj.getType().equals("html")) {
-			if(HttpUtil.isCookieChanged(obj.getUrl()) && obj.isComeFromCache()){
+			if(CookieManagers.isCookieChanged(obj.getUrl()) && obj.isComeFromCache()){
 				// 设置缓存为false，重新下载
 				obj.setComeFromCache(false);
 				fromCache = false;
@@ -106,7 +106,7 @@ public class CacheControl {
 					IOUtil.deleteFile(obj.getFileName());
 				}
 				// 缓存已更新
-				HttpUtil.setCookieChangedOut(obj.getUrl());
+				CookieManagers.setCookieChangedOut(obj.getUrl());
 			}
 		}
 		

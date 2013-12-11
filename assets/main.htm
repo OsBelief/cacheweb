@@ -43,6 +43,7 @@
 	 		$("#dialog_login").css("top",scrollTop+"px");
 	 		this.refreshYz();
 	 		$("#dialog_login").show();
+	 		tongJI("福利首页注册弹框显示","at=fuli_indexregistFrame");
 	 	}
 	 	Login.hide=function(){
 	 		$("#dialog_login").hide();
@@ -110,6 +111,7 @@
 		});
 		$("#login_dialog_close").click(function(){
 			Login.hide();
+			tongJI("福利首页注册弹框关闭按钮","at=fuli_registcloseButton");
 		});
 		$("#login_button").click(function(){
 			var username = $("#login_username").val();
@@ -132,6 +134,9 @@
 			},true);
 		});
 		$("#registbutton").click(function(){
+			setTimeout(function(){
+				tongJI("福利首页注册弹框注册按钮","at=fuli_indexregistButton");
+			},10);
 			var username = $("#regist_username").val();
 			var yzcode = $("#regist_yzcode").val();
 			if(username==""||yzcode==""){
@@ -393,7 +398,7 @@
     <div class="center1">用户回馈区</div>
     <div class="" style="box-flex: 1; -moz-box-flex: 1; -webkit-box-flex: 1;"><!-- <a style="text-decoration: underline;color: #A86842;float:right;margin-right: 4px;" href="liPin?at=giftmore">查看更多奖品>></a> --></div>
 </div>
-<div class="liucheng_div">
+<!-- <div class="liucheng_div">
 	<div class="liucheng-img horizontal_center"><img src="images/liucheng.jpg"/></div>
 	<div class="liucheng-font-frame horizontal_center">
 		<div class="liucheng-font horizontal_center">
@@ -403,7 +408,7 @@
 			<div class="liucheng-font4 horizontal_center">兑奖</div>
 		</div>
 	</div>
-</div>
+</div> -->
 <div class="gift-gold-div">
 	<div class="gift-gold-title horizontal_center">
 		<div class="gift-gold-title-left horizontal_start">
@@ -412,7 +417,7 @@
 			</div>
 			<div class="gold-font horizontal_start">
 				<div class="gold-font-biti">金币秒杀专场</div>
-				<div class="gold-font-time">(12:00/18:00)</div>
+				<div class="gold-font-time">(11:00/17:00)</div>
 			</div>
 		</div>
 		<div class="gift-gold-title-right horizontal_end">
@@ -519,8 +524,8 @@
 			}
 		}
 		//var giftHtmlModel='<div id="giftmodel_@index" class="prize_box" onclick><span class="brooch"><img  src="images/brooch.png" /></span><span class="clock"><img  src="images/clock.png" /></span><span class=" jiang_time2"><font id="giftfont_@index">奖品兑换倒计时：</font><span class="jiang_red" id="daojishi_day_@index"></span><span class="jiang_brown">天</span><span class="jiang_red" id="daojishi_hours_@index"></span><span class="jiang_brown">时</span><span class="jiang_red" id="daojishi_min_@index"></span><span class="jiang_brown">分</span><span class="jiang_red" id="daojishi_sec_@index"></span><span class="jiang_brown">秒</span></span><br /><span class="jiang_black">奖品：<span class="jiang_red">@giftname</span></span><br /><span class="jiang_black">库存：<span class="jiang_red" id="shengyu_gift">@maxNumber</span></span><span class="jiang_black2">已兑换：<span class="jiang_red" >@currentNumber</span></span><br><span class="jiang_black">兑换需要：<span class="jiang_red" >@money</span></span><div class="horizontal_center"><div id="getGiftButton_@index" class="change_btn getGiftButton" onclick giftid="@giftId" moneytype="@moneytype">立即兑换</div></div><div>';
-		var goldGiftHtml='<div id="giftmodel_@index" giftid="@giftId" payType="@payType" giftname="@giftname" moneytype="@moneytype" class="gold-gift-frame-div getGiftButton"><div class="gold-gift-frame"><div class="gift-name horizontal_start"><font class="gift-name-font">@giftname</font></div><div class="gift-img horizontal_center"><img src="@imgurl"/></div><div class="gift-price horizontal_center"><font class="gift-price-font">价格：@price</font></div><div class="gift-time horizontal_center"><font class="gift-time-font" id="gold-time_@index"></font></div></div></div>';
-		var diamondGiftHtml='<div id="giftmodel_@index" class="diamond-gift-frame-div"><div class="gold-gift-frame-div" style="height: 110px;margin: auto;width:100%;"><div class="gold-gift-frame"><div class="gift-name horizontal_start"><font class="gift-name-font">@giftname</font></div><div class="gift-img horizontal_center"><img src="@imgurl"/></div><div class="gift-price horizontal_center"><font class="gift-price-font">价格：@price</font></div></div></div><div class="diamond-gift-button-frame horizontal_center"><div class="diamond-gift-button horizontal_center getGiftButton" giftid="@giftId" moneytype="@moneytype" id="getGiftButton_@index" giftname="@giftname" payType="@payType">立即兑换</div></div></div>';
+		var goldGiftHtml='<div id="giftmodel_@index" giftid="@giftId" prizeId="@prizeId" payType="@payType" giftname="@giftname" moneytype="@moneytype" class="gold-gift-frame-div getGiftButton"><div class="gold-gift-frame"><div class="gift-name horizontal_start"><font class="gift-name-font">@giftname</font></div><div class="gift-img horizontal_center"><img src="@imgurl"/></div><div class="gift-price horizontal_center"><font class="gift-price-font">价格：@price</font></div><div class="gift-time horizontal_center"><font class="gift-time-font" id="gold-time_@index"></font></div></div></div>';
+		var diamondGiftHtml='<div id="giftmodel_@index" class="diamond-gift-frame-div"><div class="gold-gift-frame-div" style="height: 110px;margin: auto;width:100%;"><div class="gold-gift-frame"><div class="gift-name horizontal_start"><font class="gift-name-font">@giftname</font></div><div class="gift-img horizontal_center"><img src="@imgurl"/></div><div class="gift-price horizontal_center"><font class="gift-price-font">价格：@price</font></div></div></div><div class="diamond-gift-button-frame horizontal_center"><div class="diamond-gift-button horizontal_center getGiftButton" prizeId="@prizeId" giftid="@giftId" moneytype="@moneytype" id="getGiftButton_@index" giftname="@giftname" payType="@payType">立即兑换</div></div></div>';
 		$("#gistList").html("");
 		
 		function daojishi(time,index,callback){
@@ -574,6 +579,7 @@
 						}
 					}
 					var giftId = oneGiftObj.id;
+					var prizeId = oneGiftObj.prizeId;
 					var currentNumber = oneGiftObj.currentNumber;
 					var maxNumber = oneGiftObj.maxNumber;
 					var baseNum = oneGiftObj.baseNum;
@@ -586,7 +592,7 @@
 					var kucun=maxNumber-currentNumber;
 					var giftHtml = (payType?diamondGiftHtml:goldGiftHtml).replaceAll("@giftname",giftname)
 												.replace("@imgurl",imgUrl)
-												.replaceAll("@index",i).replace("@giftId",giftId).replace("@price",money).replace("@moneytype",moneytype).replace("@payType",payType);
+												.replaceAll("@index",i).replace("@giftId",giftId).replace("@prizeId",prizeId).replace("@price",money).replace("@moneytype",moneytype).replace("@payType",payType);
 					(payType?$("#diamond-gift"):$("#gold-gift")).append(giftHtml);
 					//周期临时判断
 					var isCycle = oneGiftObj.isCycle;
@@ -679,10 +685,21 @@
 			var moneytype = $(this).attr("moneytype");
 			var reason = $(this).attr("reason");
 			if(reason==null){
+				if(moneytype=="金币"){
+					if(typeof newMsgObj!="undefined"&&newMsgObj.send_flag==0){
+						var up = $(this).offset().top;
+						$("#dialog_yanzheng").css("top",up+"px");
+						$("#dialog_yz_title").html("兑奖失败");
+						$("#dialog_yz_content").html("您还未验证手机，暂不能兑奖。");
+						$("#dialog_yanzheng").show();
+						return ;
+					}
+				}
 				showDialog("兑奖","您将花费一定"+moneytype+"兑奖，是否确认",true,"duijiang",giftId+"__"+this.id);
 				var giftname = $(this).attr("giftname");
 				var payType = $(this).attr("payType");
-				tongJI("福利礼品中心立即兑换","at=lipin_getgiftButton&moneyType="+payType+"&giftId="+giftId);
+				var prizeId = $(this).attr("prizeId");
+				tongJI("福利礼品中心立即兑换","at=lipin_getgiftButton&moneyType="+payType+"&giftId="+prizeId);
 			}else{
 				showDialog("兑奖",reason,false);
 			}

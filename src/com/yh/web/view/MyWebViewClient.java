@@ -17,6 +17,7 @@ import android.widget.EditText;
 
 import cn.yicha.cache.fuli.R;
 import com.yh.web.cache.CacheControl;
+import com.yh.web.cache.CookieManagers;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.IOUtil;
 
@@ -69,7 +70,7 @@ public class MyWebViewClient extends WebViewClient {
 			// finish当前，返回
 			if(view.getUrl().startsWith("http://passport.yicha.cn")){
 				// 返回首页时设置cookie
-				HttpUtil.setCookie();
+				CookieManagers.setCookie();
 				act.exitAndStartNew(url);
 			}
 			if(!act.tUrl.equals(defaultUrl)){
@@ -103,9 +104,9 @@ public class MyWebViewClient extends WebViewClient {
 			pendingUrl = null;
 		}
 		if(url.equals(defaultUrl)){
-			HttpUtil.setCookie();
+			CookieManagers.setCookie();
 			// 已经完成了，设置已经更新
-			HttpUtil.setCookieChangedOut(defaultUrl);
+			CookieManagers.setCookieChangedOut(defaultUrl);
 		} else{
 			String goBackBind = "javascript:(function(){window.history.go=function(k){window.jsif.historyGo(k)};})()";
 			view.loadUrl(goBackBind);

@@ -49,6 +49,7 @@ public class GlobalException implements UncaughtExceptionHandler {
 			// 将异常抛出，则应用会弹出异常对话框.这里先注释掉
 			// defaultExceptionHandler.uncaughtException(thread, exception);
 			
+			exception.printStackTrace();
 			// 显示退出提示框
 			showRestartDialog(MainActivity.nowMainAct, exception.getMessage());
 		}

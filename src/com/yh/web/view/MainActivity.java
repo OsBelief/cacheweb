@@ -35,6 +35,7 @@ import cn.yicha.cache.fuli.R;
 
 import com.yh.util.ScreenShot;
 import com.yh.web.cache.CacheObject;
+import com.yh.web.cache.CookieManagers;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.UpdateTask;
 
@@ -66,7 +67,7 @@ public class MainActivity extends BaseActivity {
 				ScreenShot.shotOneBitmap();
 				break;
 			case SETCOOKIE:
-				HttpUtil.setCookie();
+				CookieManagers.setCookie();
 				break;
 			case HISTORY_GO:
 				if(web != null){
@@ -124,14 +125,14 @@ public class MainActivity extends BaseActivity {
 		
 		boolean refresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
 		if(refresh){
-			HttpUtil.clearAllCookie();
+			CookieManagers.clearAllCookie();
 		}
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
-		if(web.getUrl() == null || HttpUtil.isCookieChanged(tUrl)){
+		if(web.getUrl() == null || CookieManagers.isCookieChanged(tUrl)){
 			web.loadUrl(tUrl);
 		}
 	}
