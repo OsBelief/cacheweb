@@ -12,6 +12,7 @@ import android.webkit.WebView;
 import cn.yicha.cache.fuli.R;
 
 import com.yh.web.cache.db.CacheOrm;
+import com.yh.web.view.MainActivity;
 
 /**
  * @author gudh 缓存控制策略
@@ -21,8 +22,6 @@ public class CacheControl {
 	public static CacheOrm orm = null;
 	
 	public static String defaultUrl;
-	
-	public static boolean isFirst = true;
 	
 	/**
 	 * 初始化缓存ORM
@@ -63,11 +62,6 @@ public class CacheControl {
 			return null;
 		}
 		
-		// 如果是主页单独判断
-		if (defaultUrl.equals(url)) {
-			return getMainPageResponse(context, url);
-		}
-		
 		boolean fromCache = true;
 		// 查询数据库是否有缓存
 		CacheObject obj = orm.queryByUrl(url);
@@ -75,6 +69,13 @@ public class CacheControl {
 			obj = new CacheObject(url);
 			fromCache = false;
 		}
+		
+		// 如果是主页单独判断，仅对第一次取缓存操作
+		if (MainActivity.isFirst && defaultUrl.equals(url)) {
+			MainActivity.isFirst = false;
+			return getMainPageResponse(context, obj);
+		}
+				
 		if (!CacheFilter.passHostFilter(obj)) {
 			Log.i("getResource", "DisCache host type url | " + urlb);
 			// 如果转换的URL为null，则表示不需要缓存
@@ -123,8 +124,8 @@ public class CacheControl {
 	 * @param url
 	 * @return
 	 */
-	public static WebResourceResponse getMainPageResponse(Context context, String url){
-		CacheObject obj = new CacheObject(url);
+	public static WebResourceResponse getMainPageResponse(Context context, CacheObject obj){
+		String url = obj.getUrl();
 		// cookie改变直接返回
 		if (CacheCookieManager.isCookieChanged(url)) {
 			orm.delete(obj);

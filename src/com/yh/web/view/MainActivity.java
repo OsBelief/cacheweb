@@ -55,6 +55,9 @@ public class MainActivity extends BaseActivity {
 	private static MyJsInterface jsif = new MyJsInterface();
 	private static HtmlInterface htmif = new HtmlInterface();
 	
+	// 记录是否是第一次
+	public static boolean isFirst = true;
+	
 	// 记录当前主页所在Activity
 	public static MainActivity nowMainAct;
 	
@@ -123,6 +126,7 @@ public class MainActivity extends BaseActivity {
 		boolean refresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
 		if(refresh){
 			CacheCookieManager.setCookieChanged(DEFAULT_URL, true);
+			isFirst = false;
 		}
 	}
 	

@@ -69,7 +69,8 @@ public class MyWebViewClient extends WebViewClient {
 		} else if(!view.getUrl().equals(defaultUrl) && url.equals(defaultUrl)){
 			// finish当前，返回
 			if(view.getUrl().startsWith("http://passport.yicha.cn/user/login")){
-				act.exitAndStartNew(url);
+				CacheCookieManager.setCookieChanged(url, true);
+				// act.exitAndStartNew(url);
 			}
 			if(!act.tUrl.equals(defaultUrl)){
 				act.finish();
