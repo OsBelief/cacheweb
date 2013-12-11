@@ -372,6 +372,7 @@ public class MainActivity extends BaseActivity {
 		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
 		this.getApplicationContext().startActivity(intent);
 		// for restarting the Activity
+		BaseActivity.exit();
 		android.os.Process.killProcess(android.os.Process.myPid());
 		System.exit(0);
 	}

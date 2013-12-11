@@ -68,7 +68,7 @@ public class MyWebViewClient extends WebViewClient {
 			return true;
 		} else if(!view.getUrl().equals(defaultUrl) && url.equals(defaultUrl)){
 			// finish当前，返回
-			if(view.getUrl().startsWith("http://passport.yicha.cn")){
+			if(view.getUrl().startsWith("http://passport.yicha.cn/user/login")){
 				// 返回首页时设置cookie
 				CookieManagers.setCookie();
 				act.exitAndStartNew(url);

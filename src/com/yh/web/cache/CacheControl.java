@@ -45,7 +45,7 @@ public class CacheControl {
 	 */
 	public static WebResourceResponse getResource(Context context, WebView web,
 			String url) {
-		if(url.startsWith("http://passport.yicha.cn/user/loginJson")){
+		if(url.startsWith("http://passport.yicha.cn/user/login")){
 			CookieManagers.clearAllCookie();
 		}
 		// 获取转换的URL
@@ -96,6 +96,10 @@ public class CacheControl {
 
 		// html则判断cookie是否变化
 		if (obj.getType().equals("html")) {
+			if(!defaultUrl.equals(url)){
+				Log.i("getResource", "Discache not defaultUrl html | " + url);
+				return null;
+			}
 			if(CookieManagers.isCookieChanged(obj.getUrl()) && obj.isComeFromCache()){
 				// 设置缓存为false，重新下载
 				obj.setComeFromCache(false);

@@ -311,7 +311,7 @@ public class IOUtil {
 			} catch (Exception e) {
 				e.printStackTrace();
 			} 
-			Log.d("getInputStream", "Come from inner:" + fileName + " InputStream is null:" + (is == null));
+			Log.d("getInputStream", "Come from inner:" + fileName + " InputStream: " + (is == null ? "" : "not ") + "null");
 			return is;
 		}
 		return IOUtil.readInternalFile(activity, fileName);
