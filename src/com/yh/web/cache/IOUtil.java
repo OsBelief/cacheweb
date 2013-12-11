@@ -293,6 +293,15 @@ public class IOUtil {
 		return sb.toString();
 	}
 
+	public static void writeFileBytes(Context activity, String fileName, byte[] fileData){
+		// 以/开头写外部文件，否则写内部文件
+		if(fileName.startsWith("/")){
+			IOUtil.writeExternalFile(fileName, fileData);
+		} else {
+			IOUtil.writeInternalFile(activity, fileName, fileData);
+		}
+	}
+
 	/**
 	 * 读取文件流，自动判断是内外文件
 	 * 

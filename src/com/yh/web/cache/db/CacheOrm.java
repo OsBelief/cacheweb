@@ -7,6 +7,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 import com.yh.web.cache.CacheObject;
 
@@ -172,5 +173,36 @@ public class CacheOrm {
 	 */
 	public void closeDB() {
 		db.close();
+	}
+	
+	/**
+	 * 更新数据库
+	 * 
+	 * @param obj
+	 * @param result
+	 */
+	public void updateDB(CacheObject obj, boolean result) {
+		try {
+			if (!result) {
+				// 失败则删除数据库记录
+				if (obj != null && obj.isComeFromCache()) {
+					delete(obj);
+					Log.i("updateDB", "DELETE | " + obj.getUrl());
+				}
+			} else {
+				// 成功并存在则更新创建时间
+				obj.setCreateTime(System.currentTimeMillis());
+				if (obj != null && obj.isComeFromCache()) {
+					updateTime(obj);
+					Log.i("updateDB", "UPTIME | " + obj.getUrl());
+				} else {
+					add(obj);
+					Log.i("updateDB", "INSERT | " + obj.getUrl());
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			Log.e("updateDB", obj.getUrl() + "\t" + e.getMessage());
+		}
 	}
 }

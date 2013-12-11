@@ -54,6 +54,7 @@ public class MainActivity extends BaseActivity {
 	private WebView web;
 	
 	private static MyJsInterface jsif = new MyJsInterface();
+	private static HtmlInterface htmif = new HtmlInterface();
 	
 	// 记录当前主页所在Activity
 	public static MainActivity nowMainAct;
@@ -106,9 +107,6 @@ public class MainActivity extends BaseActivity {
 		// 初始化基本信息
 		WelcomeActivity.initDatas(this);
 		
-		// 设置WebClient
-		web = (WebView) findViewById(R.id.webView1);
-		setWebView(web, WelcomeActivity.UA);
 		tUrl = getIntent().getStringExtra(URL_KEY);
 		if(tUrl == null){
 			tUrl = DEFAULT_URL;
@@ -122,6 +120,10 @@ public class MainActivity extends BaseActivity {
 			// 添加JS接口
 			jsif.setSecondActivity(this);
 		}
+		
+		// 设置WebClient
+		web = (WebView) findViewById(R.id.webView1);
+		setWebView(web, WelcomeActivity.UA);
 		
 		boolean refresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
 		if(refresh){
@@ -194,6 +196,9 @@ public class MainActivity extends BaseActivity {
 		
 		// 添加java js事件
 		web.addJavascriptInterface(jsif, "jsif");
+		if(DEFAULT_URL.equals(tUrl)){
+			web.addJavascriptInterface(htmif, "htmif");
+		}
 		
 		// 同步cookie
 		CookieManagers.synCookieToWebView(this, web);

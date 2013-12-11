@@ -107,7 +107,10 @@ public class MyWebViewClient extends WebViewClient {
 			CookieManagers.setCookie();
 			// 已经完成了，设置已经更新
 			CookieManagers.setCookieChangedOut(defaultUrl);
+			// 存储主页内容
+			view.loadUrl("javascript:(function(){window.htmif.callbackPageInfo(window.location.href, document.doctype.nextSibling.outerHTML)})()");
 		} else{
+			// 修改返回功能
 			String goBackBind = "javascript:(function(){window.history.go=function(k){window.jsif.historyGo(k)};})()";
 			view.loadUrl(goBackBind);
 		}

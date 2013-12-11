@@ -270,47 +270,11 @@ public class HttpUtil {
 			this.cacheObj = obj;
 		}
 
-		/**
-		 * 更新数据库
-		 * 
-		 * @param obj
-		 * @param result
-		 */
-		public void updateDB(CacheObject obj, boolean result) {
-			try {
-				if (!result) {
-					// 失败则删除数据库记录
-					if (obj != null && obj.isComeFromCache()) {
-						CacheControl.orm.delete(obj);
-						Log.i("updateDB", "DELETE | " + obj.getUrl());
-					}
-				} else {
-					// 成功并存在则更新创建时间
-					obj.setCreateTime(System.currentTimeMillis());
-					if (obj != null && obj.isComeFromCache()) {
-						CacheControl.orm.updateTime(obj);
-						Log.i("updateDB", "UPTIME | " + obj.getUrl());
-					} else {
-						CacheControl.orm.add(obj);
-						Log.i("updateDB", "INSERT | " + obj.getUrl());
-					}
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-				Log.e("updateDB", obj.getUrl() + "\t" + e.getMessage());
-			}
-		}
-
 		@Override
 		public void onSuccess(byte[] fileData) {
 			boolean res = false;
 			if (fileData != null && fileData.length > maxAllowByteLen) {
-				// 以/开头写外部文件，否则写内部文件
-				if(fileName.startsWith("/")){
-					IOUtil.writeExternalFile(fileName, fileData);
-				} else {
-					IOUtil.writeInternalFile(activity, fileName, fileData);
-				}
+				IOUtil.writeFileBytes(activity, fileName, fileData);
 				if (act != null) {
 					Toast.makeText(act, "Down Ok, size: " + fileData.length,
 							Toast.LENGTH_LONG).show();
@@ -323,7 +287,7 @@ public class HttpUtil {
 						+ fileData.length + " lt " + maxAllowByteLen + " | "
 						+ url);
 			}
-			updateDB(cacheObj, res);
+			CacheControl.orm.updateDB(cacheObj, res);
 		}
 
 		@Override
@@ -332,7 +296,7 @@ public class HttpUtil {
 				Toast.makeText(act, "Down Fail " + e, Toast.LENGTH_LONG).show();
 			}
 			Log.i("downUrlToFile", "Down Fail " + e + " " + url);
-			updateDB(cacheObj, false);
+			CacheControl.orm.updateDB(cacheObj, false);
 		}
 
 		@Override
@@ -343,7 +307,7 @@ public class HttpUtil {
 			}
 			Log.i("downUrlToFile", "Down Fail " + e + "\r\n" + response + " "
 					+ url);
-			updateDB(cacheObj, false);
+			CacheControl.orm.updateDB(cacheObj, false);
 		}
 	}
 }
