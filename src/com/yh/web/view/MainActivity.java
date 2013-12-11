@@ -35,7 +35,7 @@ import cn.yicha.cache.fuli.R;
 
 import com.yh.util.ScreenShot;
 import com.yh.web.cache.CacheObject;
-import com.yh.web.cache.CookieManagers;
+import com.yh.web.cache.CacheCookieManager;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.UpdateTask;
 
@@ -45,7 +45,6 @@ public class MainActivity extends BaseActivity {
 	public static final String DEFAULT_URL = "http://fuli.yicha.cn/fuli/index";
 	public static final String URL_KEY = "IURL";
 	public static final String REFRESH_KEY = "REFRESH";
-	protected static final int SETCOOKIE = 1012;
 	protected static final int HISTORY_GO = 1013;
 	public static final int RESTART = 1014;
 	
@@ -66,9 +65,6 @@ public class MainActivity extends BaseActivity {
 			switch (msg.what) {
 			case SHOT:
 				ScreenShot.shotOneBitmap();
-				break;
-			case SETCOOKIE:
-				CookieManagers.setCookie();
 				break;
 			case HISTORY_GO:
 				if(web != null){
@@ -112,7 +108,6 @@ public class MainActivity extends BaseActivity {
 			tUrl = DEFAULT_URL;
 		}
 		if(tUrl.equals(DEFAULT_URL)){
-			mHandler.sendEmptyMessageDelayed(SETCOOKIE, 1000);
 			// 添加JS接口
 			jsif.setFirstActivity(this);
 			nowMainAct = this;
@@ -127,14 +122,14 @@ public class MainActivity extends BaseActivity {
 		
 		boolean refresh = getIntent().getBooleanExtra(REFRESH_KEY, false);
 		if(refresh){
-			CookieManagers.clearAllCookie();
+			CacheCookieManager.setCookieChanged(DEFAULT_URL, true);
 		}
 	}
 	
 	@Override
 	protected void onResume(){
 		super.onResume();
-		if(web.getUrl() == null || CookieManagers.isCookieChanged(tUrl)){
+		if(web.getUrl() == null || CacheCookieManager.isCookieChanged(tUrl)){
 			web.loadUrl(tUrl);
 		}
 	}
@@ -199,9 +194,6 @@ public class MainActivity extends BaseActivity {
 		if(DEFAULT_URL.equals(tUrl)){
 			web.addJavascriptInterface(htmif, "htmif");
 		}
-		
-		// 同步cookie
-		CookieManagers.synCookieToWebView(this, web);
 	}
 	
 	@Override

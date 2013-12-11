@@ -17,7 +17,7 @@ import android.widget.EditText;
 
 import cn.yicha.cache.fuli.R;
 import com.yh.web.cache.CacheControl;
-import com.yh.web.cache.CookieManagers;
+import com.yh.web.cache.CacheCookieManager;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.IOUtil;
 
@@ -69,8 +69,6 @@ public class MyWebViewClient extends WebViewClient {
 		} else if(!view.getUrl().equals(defaultUrl) && url.equals(defaultUrl)){
 			// finish当前，返回
 			if(view.getUrl().startsWith("http://passport.yicha.cn/user/login")){
-				// 返回首页时设置cookie
-				CookieManagers.setCookie();
 				act.exitAndStartNew(url);
 			}
 			if(!act.tUrl.equals(defaultUrl)){
@@ -104,9 +102,8 @@ public class MyWebViewClient extends WebViewClient {
 			pendingUrl = null;
 		}
 		if(url.equals(defaultUrl)){
-			CookieManagers.setCookie();
 			// 已经完成了，设置已经更新
-			CookieManagers.setCookieChangedOut(defaultUrl);
+			CacheCookieManager.setCookieChanged(url, false);
 			// 存储主页内容
 			view.loadUrl("javascript:(function(){window.htmif.callbackPageInfo(window.location.href, document.doctype.nextSibling.outerHTML)})()");
 		} else{

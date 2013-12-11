@@ -12,7 +12,6 @@ import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
 import com.yh.web.cache.CachePolicy;
-import com.yh.web.cache.CookieManagers;
 import com.yh.web.cache.DeleteTask;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.IOUtil;
@@ -200,7 +199,7 @@ public class WelcomeActivity extends BaseActivity {
 		// HttpUtil.initAsyncHttpClient(web.getSettings().getUserAgentString());
 		HttpUtil.initAsyncHttpClient(activity, threadPool, UA + "_hc");
 		// 初始化Cookie信息
-		CookieManagers.initCookieManager(activity);
+		// CookieManagers.initCookieManager(activity);
 		// 初始化缓存
 		CacheControl.initCache(activity);
 		// 开始监控网络

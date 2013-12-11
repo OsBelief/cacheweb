@@ -2,7 +2,6 @@ package com.yh.web.view;
 
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheObject;
-import com.yh.web.cache.CookieManagers;
 import com.yh.web.cache.IOUtil;
 
 import android.util.Log;
@@ -32,6 +31,5 @@ public class HtmlInterface {
 		}
 		// 更新数据库
 		CacheControl.orm.updateDB(obj, res);
-		CookieManagers.setCookieChangedOut(url);
 	}
 }

@@ -49,7 +49,8 @@ public class CacheControl {
 		
 		// 任何登录链接重置Cookie
 		if(url.startsWith("http://passport.yicha.cn/user/login")){
-			CookieManagers.clearAllCookie();
+			Log.i("ChangeCookie", "change url | " + url);
+			CacheCookieManager.setCookieChanged(defaultUrl, true);
 		}
 		// 获取转换的URL
 		String urlb = url;
@@ -125,7 +126,7 @@ public class CacheControl {
 	public static WebResourceResponse getMainPageResponse(Context context, String url){
 		CacheObject obj = new CacheObject(url);
 		// cookie改变直接返回
-		if (CookieManagers.isCookieChanged(url)) {
+		if (CacheCookieManager.isCookieChanged(url)) {
 			orm.delete(obj);
 			Log.i("getResource", "Main cookie change | " + url);
 			return null;
@@ -201,11 +202,11 @@ public class CacheControl {
 				needUpdate = true;
 			}
 		} else {
-			Log.i("getDefaultInfo", "Need Down | " + obj.getUrl());
 			needUpdate = true;
 		}
 		if (needDown && needUpdate) {
 			// 更新缓存
+			Log.i("getDefaultInfo", "Need Down | " + obj.getUrl());
 			HttpUtil.downUrlToFile(null, obj);
 		}
 		return res;
