@@ -60,18 +60,23 @@ public class CacheControl {
 		}
 		
 		// 主页cookie为null则使用main.htm
-		if (defaultUrl.equals(url) && CookieManagers.getCookie() == null && isFirst) {
-			WebResourceResponse res = null;
-			try {
-				InputStream is = context.getAssets().open("main.htm");
-				Log.i("getResource", "use main.htm, cookie is null");
-				res = IOUtil.generateResource(
-						MIME.getMimeFromType("htm"), null, is);
-				isFirst = false;
-			} catch (IOException e) {
-				e.printStackTrace();
+		if (defaultUrl.equals(url)){
+			if(CookieManagers.getCookie() == null || isFirst) {
+				WebResourceResponse res = null;
+				try {
+					InputStream is = context.getAssets().open("main.htm");
+					Log.i("getResource", "use main.htm, cookie is null");
+					res = IOUtil.generateResource(
+							MIME.getMimeFromType("htm"), null, is);
+					isFirst = false;
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+				return res;
+			} else {
+				Log.i("getResource", "DefaultUrl need update | " + url);
+				return null;
 			}
-			return res;
 		}
 		
 		boolean fromCache = true;

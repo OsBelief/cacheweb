@@ -194,6 +194,9 @@ public class MainActivity extends BaseActivity {
 		
 		// 添加java js事件
 		web.addJavascriptInterface(jsif, "jsif");
+		
+		// 同步cookie
+		CookieManagers.synCookieToWebView(this, web);
 	}
 	
 	@Override

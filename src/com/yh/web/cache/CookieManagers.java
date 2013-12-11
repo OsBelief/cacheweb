@@ -5,6 +5,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import android.app.Activity;
 import android.util.Log;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
+import android.webkit.WebView;
 
 import com.yh.web.view.MainActivity;
 
@@ -141,5 +143,22 @@ public class CookieManagers {
 	public static String getCookie() {
 		return sCookie;
 	}
-
+	
+	/**
+	 * 同步COOKIE到WebView
+	 * @param act
+	 * @param web
+	 */
+	public static void synCookieToWebView(Activity act, WebView web) {
+		sCookie = IOUtil.readKeyValue(act, COOKIE_KEY, null);
+		if(sCookie == null){
+			return;
+		}
+		CookieSyncManager.createInstance(act);
+		CookieManager cookieManager = CookieManager.getInstance();
+		cookieManager.setAcceptCookie(true);
+		cookieManager.removeSessionCookie();
+		cookieManager.setCookie(MainActivity.DEFAULT_URL, sCookie);
+		CookieSyncManager.getInstance().sync();
+	}
 }
