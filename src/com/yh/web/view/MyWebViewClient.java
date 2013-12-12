@@ -33,6 +33,11 @@ public class MyWebViewClient extends WebViewClient {
 	
 	private static String errorHtm;
 	
+	// 运行的最大RES次数，防止jni错误，到达指定数量时便重启
+	private final static int allowMaxRes = 510;
+	// 计算RES被访问多少次
+	private volatile static int resUseCount = 0;
+	
 	// 记录302跳转情况
 	private String pendingUrl;
 
@@ -67,11 +72,15 @@ public class MyWebViewClient extends WebViewClient {
 			act.startNew(url);
 			return true;
 		} else if(!view.getUrl().equals(defaultUrl) && url.equals(defaultUrl)){
-			// finish当前，返回
+			// 首页有65个资源，为了首页加载重启，先判断
+			if(resUseCount > allowMaxRes - 65){
+				act.mHandler.sendEmptyMessage(MainActivity.RESTART);
+			}
 			if(view.getUrl().startsWith("http://passport.yicha.cn/user/login")){
 				CacheCookieManager.setCookieChanged(url, true);
 				// act.exitAndStartNew(url);
 			}
+			// finish当前，返回
 			if(!act.tUrl.equals(defaultUrl)){
 				act.finish();
 				return true;
@@ -124,8 +133,6 @@ public class MyWebViewClient extends WebViewClient {
 		view.loadDataWithBaseURL(null, htm, "text/html", "utf-8", null);
     }
 
-	// 计算RES被访问多少次
-	private volatile static int i = 0;
 	/**
 	 * 通过Future在指定时间内获取数据
 	 */
@@ -142,8 +149,9 @@ public class MyWebViewClient extends WebViewClient {
 			// 为1秒
 			res = future.get(1, TimeUnit.SECONDS);
 			if(res != null){
-				Log.i("ResCount", String.valueOf(i++));
-				if(i == 510){
+				Log.i("ResCount", String.valueOf(resUseCount++));
+				if(resUseCount == allowMaxRes){
+					// 重启防止jni错误
 					act.mHandler.sendEmptyMessage(MainActivity.RESTART);
 				}
 			}

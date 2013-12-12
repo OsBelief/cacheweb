@@ -369,12 +369,19 @@ public class MainActivity extends BaseActivity {
 	
 	public void exitAndStartNew(String url){
 		Log.i("Activity", "start a new activity :" + url);
-		Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+//		Intent intent = new Intent(this.getApplicationContext(), MainActivity.class);
+//		intent.putExtra(URL_KEY, url);
+//		intent.putExtra(REFRESH_KEY, true);
+//		// intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//		intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
+//		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//		this.getApplicationContext().startActivity(intent);
+		Intent intent = getBaseContext().getPackageManager()
+				.getLaunchIntentForPackage(getBaseContext().getPackageName());
 		intent.putExtra(URL_KEY, url);
 		intent.putExtra(REFRESH_KEY, true);
-		intent.setFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK);
-		intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-		this.getApplicationContext().startActivity(intent);
+		intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+		startActivity(intent);
 		// for restarting the Activity
 		BaseActivity.exit();
 		android.os.Process.killProcess(android.os.Process.myPid());

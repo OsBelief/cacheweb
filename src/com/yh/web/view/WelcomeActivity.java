@@ -88,9 +88,18 @@ public class WelcomeActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_welcome);
-
-		init();
+		
+		Intent intent = getIntent();
+		boolean ref = intent.getBooleanExtra(MainActivity.REFRESH_KEY, false);
+		if(ref){
+			// 重新启动时传入参数
+			Intent intent1 = new Intent(WelcomeActivity.this, MainActivity.class);
+			intent1.putExtras(intent);
+			WelcomeActivity.this.startActivity(intent1);
+		}else{
+			setContentView(R.layout.activity_welcome);
+			init();
+		}
 	}
 
 	/**
