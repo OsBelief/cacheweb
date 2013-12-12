@@ -34,7 +34,6 @@ import android.widget.Toast;
 import cn.yicha.cache.fuli.R;
 
 import com.yh.util.ScreenShot;
-import com.yh.web.cache.CacheObject;
 import com.yh.web.cache.CacheCookieManager;
 import com.yh.web.cache.HttpUtil;
 import com.yh.web.cache.UpdateTask;
@@ -145,6 +144,13 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 	
+	@Override
+	public void finish(){
+		canFinish = false;
+		Log.i("Acitivty", "update canFinish: " + canFinish);
+		super.finish();
+	}
+	
 	/**
 	 * 设置Web信息
 	 * 
@@ -222,27 +228,24 @@ public class MainActivity extends BaseActivity {
 		// Handle item selection
 		switch (item.getItemId()) {
 		case R.id.action_mainpage:
-			WebView web = (WebView) findViewById(R.id.webView1);
-			web.loadUrl(this.getString(R.string.defaultUrl));
+			// 显示主页
+			if(canFinish){
+				this.finish();
+			} else{
+				CacheCookieManager.setCookieChanged(DEFAULT_URL, true);
+				web.loadUrl(DEFAULT_URL);
+			}
 			return true;
 		case R.id.action_updateconfig:
+			// 更新配置
 			UpdateTask.updateOneTime();
-//			if(ScreenShot.startOrEndShot(this, monitorThreadPool)){
-//				Toast.makeText(this, "开始截图", Toast.LENGTH_SHORT).show();
-//			}else{
-//				Toast.makeText(this, "停止截图", Toast.LENGTH_SHORT).show();
-//			}
 			return true;
-		case R.id.action_download:
-			// 下载URL的数据
-			String url = ((EditText) findViewById(R.id.uText)).getText()
-					.toString();
-			String fileName = CacheObject.getCacheFileName(url);
-
-			HttpUtil.downUrlToFile(this, url, fileName);
-
+		case R.id.action_checkversion:
+			// 检查版本更新
+			
 			return true;
-		case R.id.action_settings:
+		case R.id.action_showhide:
+			// 显示或隐藏地址栏
 			if (findViewById(R.id.uText).getVisibility() == View.GONE) {
 				findViewById(R.id.uText).setVisibility(View.VISIBLE);
 				findViewById(R.id.goBtn).setVisibility(View.VISIBLE);
@@ -251,7 +254,12 @@ public class MainActivity extends BaseActivity {
 				findViewById(R.id.goBtn).setVisibility(View.GONE);
 			}
 			return true;
+		case R.id.action_about:
+			// 关于
+			about();
+			return true;
 		case R.id.action_eixt:
+			// 退出
 			exit();
 			return true;
 		default:
@@ -259,6 +267,22 @@ public class MainActivity extends BaseActivity {
 		}
 	}
 
+	/**
+	 * 显示关于提示
+	 */
+	protected void about() {
+		Builder builder = new Builder(this);
+		builder.setMessage("	易查福利客户端，是基于缓存开发的一个客户端，相比浏览器能节省流量，加快访问速度，方便启动和管理。\n\n	欢迎你的使用！");
+		builder.setTitle("易查福利客户端");
+		builder.setPositiveButton("确定", new OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				dialog.dismiss();
+			}
+		});
+		builder.create().show();
+	}
+	
 	/**
 	 * 显示退出提示
 	 */

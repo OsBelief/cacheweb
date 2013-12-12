@@ -2,10 +2,10 @@
 <resources>
 
     <string name="app_name">易查福利</string>
-    <string name="action_mainpage">首页</string>
+    <string name="action_mainpage">福利首页</string>
     <string name="action_download">下载</string>
     <string name="action_updateconfig">更新配置</string>
-    <string name="action_settings">显示/隐藏</string>
+    <string name="action_showhide">地址栏</string>
     <string name="action_exit">退出</string>
     <string name="hello_world">Hello world!</string>
     <string name="goText">GO</string>
@@ -14,5 +14,8 @@
     <string name="title_activity_welcome">易查福利</string>
     <string name="title_activity_guide">提示页</string>
 	<drawable name="bkcolor">#FFFFFF</drawable>
-
+	<string name="show_welcome">欢迎使用易查福利</string>
+	<string name="action_checkversion">检测新版本</string>
+	<string name="action_about">关于</string>
+	
 </resources>

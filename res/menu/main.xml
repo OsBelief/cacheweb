@@ -4,26 +4,37 @@
         android:id="@+id/action_mainpage"
         android:orderInCategory="100"
         android:showAsAction="never"
+        android:icon="@drawable/main"
         android:title="@string/action_mainpage" />
     <item
-        android:id="@+id/action_download"
+        android:id="@+id/action_checkversion"
         android:orderInCategory="100"
         android:showAsAction="never"
-        android:title="@string/action_download" />
+        android:icon="@drawable/down"
+        android:title="@string/action_checkversion" />
     <item
         android:id="@+id/action_updateconfig"
         android:orderInCategory="100"
         android:showAsAction="never"
+        android:icon="@drawable/update"
         android:title="@string/action_updateconfig" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_showhide"
         android:orderInCategory="100"
-        android:showAsAction="never"  
-        android:title="@string/action_settings" />
+        android:showAsAction="never"
+        android:icon="@drawable/show"
+        android:title="@string/action_showhide" />
+    <item
+        android:id="@+id/action_about"
+        android:orderInCategory="100"
+        android:showAsAction="never"
+        android:icon="@drawable/about"
+        android:title="@string/action_about" />
     <item
         android:id="@+id/action_eixt"
         android:orderInCategory="100"
         android:showAsAction="never"
+        android:icon="@drawable/exit"
         android:title="@string/action_exit" />
 
 </menu>

@@ -124,6 +124,7 @@ public class UpdateTask {
 			@Override
 			public void run() {
 				Looper.prepare();
+				Log.i("UpdateConfig", "update once, NET buzy:" + NetMonitor.isNetBuzy() + "  CPU buzy:" + StatMonitor.isCPUBuzy());
 				if (!NetMonitor.isNetBuzy() && !StatMonitor.isCPUBuzy()) {
 					long start = System.currentTimeMillis();
 					try {

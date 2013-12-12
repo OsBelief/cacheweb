@@ -44,7 +44,7 @@ public class NetMonitor {
 	private static long byteMax = 102400; // 最大网速(byte/s)
 	private static long packetMax = 200; // 最大发包 (p/s)
 	private static long dropMax = 10; // 最大丢包(p/s)
-	private static long judgeSleep = 50000; // 判断周期(ms)
+	private static long judgeSleep = 10000; // 判断周期(ms)
 
 	/**
 	 * 设置监控的参数，参数为-1则不更改
@@ -101,7 +101,7 @@ public class NetMonitor {
 					Log.e("NetInfo", e.getMessage());
 				}
 			}
-		}, 1000, judgeSleep, TimeUnit.MILLISECONDS);
+		}, 5000, judgeSleep, TimeUnit.MILLISECONDS);
 	}
 
 	/**
