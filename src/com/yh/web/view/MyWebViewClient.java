@@ -36,6 +36,7 @@ public class MyWebViewClient extends WebViewClient {
 	
 	// 运行的最大RES次数，防止jni错误，到达指定数量时便重启
 	private final static int allowMaxRes = 510;
+	private final static int mainPageCount = 60;
 	// 计算RES被访问多少次
 	private volatile static int resUseCount = 0;
 	
@@ -64,7 +65,7 @@ public class MyWebViewClient extends WebViewClient {
 		
 		Log.i("shouldOverrideUrlLoading", url);
 		// 首页有65个资源，为了首页加载重启，先判断
-		if(url.equals(defaultUrl) && resUseCount > allowMaxRes - 65){
+		if(url.equals(defaultUrl) && resUseCount > allowMaxRes - mainPageCount){
 			Message msg = new Message();
 			msg.what = MainActivity.RESTART;
 			msg.obj = view.getUrl();
@@ -161,7 +162,7 @@ public class MyWebViewClient extends WebViewClient {
 			res = future.get(1, TimeUnit.SECONDS);
 			if(res != null){
 				Log.i("ResCount", String.valueOf(resUseCount++));
-				if(resUseCount == 100){
+				if(resUseCount == allowMaxRes){
 					// 重启防止jni错误
 					Message msg = new Message();
 					msg.what = MainActivity.RESTART;
