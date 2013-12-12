@@ -50,7 +50,7 @@ public class MainActivity extends BaseActivity {
 	
 	// 初始时的URL
 	public String tUrl;
-	private WebView web;
+	public WebView web;
 	
 	private static MyJsInterface jsif = new MyJsInterface();
 	private static HtmlInterface htmif = new HtmlInterface();
@@ -60,6 +60,8 @@ public class MainActivity extends BaseActivity {
 	
 	// 记录当前主页所在Activity
 	public static MainActivity nowMainAct;
+	
+	public static boolean canFinish = false;
 	
 	@SuppressLint("HandlerLeak")
 	public Handler mHandler = new Handler() {
@@ -78,7 +80,12 @@ public class MainActivity extends BaseActivity {
 				}
 				break;
 			case RESTART:
-				exitAndStartNew(DEFAULT_URL);
+				String url = DEFAULT_URL;
+				Object obj = msg.obj;
+				if(obj != null){
+					url = (String)obj;
+				}
+				exitAndStartNew(url);
 			}
 			super.handleMessage(msg);
 		}
@@ -311,7 +318,12 @@ public class MainActivity extends BaseActivity {
 			} else if(DEFAULT_URL.equals(web.getUrl())){
 				showExitDialog();
 				return true;
-			} else{
+			} else if(!canFinish){
+				// 位于栈底返回直接加载主页
+				this.tUrl = DEFAULT_URL;
+				web.loadUrl(DEFAULT_URL);
+				return true;
+			} else {
 				this.finish();
 			}
 		}
@@ -359,6 +371,10 @@ public class MainActivity extends BaseActivity {
 		intent.putExtra(REFRESH_KEY, false);
 		this.startActivity(intent);
 		overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+		
+		// 有启动新的Activity则可以finish了
+		canFinish = true;
+		Log.i("Acitivty", "update canFinish: " + canFinish);
 //		web.clearCache(false);
 //		web.loadUrl("about:blank"); //web.clearView();
 //		web.destroyDrawingCache();

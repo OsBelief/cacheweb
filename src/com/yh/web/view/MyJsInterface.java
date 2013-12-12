@@ -30,8 +30,17 @@ public class MyJsInterface {
 	public void historyGo(int i){
 		Log.d("JSInterface", "historyGo:" + i);
 		if(sactivity != null){
-			sactivity.finish();
-			sactivity = null;
+			if(MainActivity.canFinish){
+				sactivity.finish();
+				sactivity = null;
+			} else{
+				// 切换为主Activity
+				factivity = sactivity;
+				sactivity = null;
+				// 先修改tUrl再load
+				factivity.tUrl = MainActivity.DEFAULT_URL;
+				factivity.web.loadUrl(MainActivity.DEFAULT_URL);
+			}
 		} else if(factivity != null){
 			Message msg = new Message();
 			msg.what = MainActivity.HISTORY_GO;

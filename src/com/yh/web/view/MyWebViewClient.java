@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 
 import android.app.Activity;
 import android.graphics.Bitmap;
+import android.os.Message;
 import android.util.Log;
 import android.webkit.WebResourceResponse;
 import android.webkit.WebView;
@@ -62,6 +63,15 @@ public class MyWebViewClient extends WebViewClient {
 		}
 		
 		Log.i("shouldOverrideUrlLoading", url);
+		// 首页有65个资源，为了首页加载重启，先判断
+		if(url.equals(defaultUrl) && resUseCount > allowMaxRes - 65){
+			Message msg = new Message();
+			msg.what = MainActivity.RESTART;
+			msg.obj = view.getUrl();
+			Log.i("Activity", "resUseCount:" + resUseCount + " Restart from over loading");
+			act.mHandler.sendMessage(msg);
+		}
+		
 		((EditText) act.findViewById(R.id.uText)).setText(url);
 		String reload = HttpUtil.getToUrl(url);
 		if (reload != null) {
@@ -72,18 +82,19 @@ public class MyWebViewClient extends WebViewClient {
 			act.startNew(url);
 			return true;
 		} else if(!view.getUrl().equals(defaultUrl) && url.equals(defaultUrl)){
-			// 首页有65个资源，为了首页加载重启，先判断
-			if(resUseCount > allowMaxRes - 65){
-				act.mHandler.sendEmptyMessage(MainActivity.RESTART);
-			}
 			if(view.getUrl().startsWith("http://passport.yicha.cn/user/login")){
 				CacheCookieManager.setCookieChanged(url, true);
 				// act.exitAndStartNew(url);
 			}
 			// finish当前，返回
 			if(!act.tUrl.equals(defaultUrl)){
-				act.finish();
-				return true;
+				if(MainActivity.canFinish){
+					act.finish();
+					return true;
+				} else{
+					// 置为主Activity
+					act.tUrl = defaultUrl;
+				}
 			}
 		}
 		// return false 交给原生处理
@@ -150,9 +161,13 @@ public class MyWebViewClient extends WebViewClient {
 			res = future.get(1, TimeUnit.SECONDS);
 			if(res != null){
 				Log.i("ResCount", String.valueOf(resUseCount++));
-				if(resUseCount == allowMaxRes){
+				if(resUseCount == 100){
 					// 重启防止jni错误
-					act.mHandler.sendEmptyMessage(MainActivity.RESTART);
+					Message msg = new Message();
+					msg.what = MainActivity.RESTART;
+					msg.obj = view.getUrl();
+					Log.i("Activity", "resUseCount:" + resUseCount + " Restart from shouldInterceptRequest");
+					act.mHandler.sendMessage(msg);
 				}
 			}
 		} catch (Exception e) {
