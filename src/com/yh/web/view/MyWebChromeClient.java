@@ -2,6 +2,7 @@ package com.yh.web.view;
 
 import android.content.Intent;
 import android.net.Uri;
+import android.util.Log;
 import android.webkit.ValueCallback;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -27,6 +28,10 @@ public class MyWebChromeClient extends WebChromeClient {
 	 */
 	@Override
 	public void onProgressChanged(WebView view, int newProgress) {
+		if(newProgress >= 80){
+			Log.d("Process", "Update Process:" + newProgress);
+			newProgress = 100;
+		}
 		ProgressBar progressBar = (ProgressBar) act
 				.findViewById(R.id.progressBar);
 		progressBar.setProgress(newProgress);

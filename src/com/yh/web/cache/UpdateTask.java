@@ -350,8 +350,10 @@ public class UpdateTask {
 	
 	/**
 	 * 开启一个线程检测版本更新
+	 * @param activity
+	 * @param arg1 参数为0如果没有更新则不提示，为1没有更新也需要提示
 	 */
-	public static void checkNewestVersion(final MainActivity activity){
+	public static void checkNewestVersion(final MainActivity activity, final int arg1){
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -359,6 +361,7 @@ public class UpdateTask {
 				Message msg = new Message();
 				msg.what = MainActivity.NEWVERSION;
 				msg.obj = newVersionInfos;
+				msg.arg1 = arg1;
 				activity.mHandler.sendMessage(msg);
 			}
 		}).start();

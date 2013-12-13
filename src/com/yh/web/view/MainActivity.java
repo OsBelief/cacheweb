@@ -93,7 +93,7 @@ public class MainActivity extends BaseActivity {
 				break;
 			case NEWVERSION:
 				String[] newVersionInfos = (String[]) msg.obj;
-				callBackUpdateDialog(newVersionInfos);
+				callBackUpdateDialog(newVersionInfos, msg.arg1);
 				break;
 			case UPDATE_CONFIG:
 				String strMsg = (String) msg.obj;
@@ -134,6 +134,9 @@ public class MainActivity extends BaseActivity {
 			// 添加JS接口
 			jsif.setFirstActivity(this);
 			nowMainAct = this;
+			
+			// 第一次启动时检测版本更新
+			UpdateTask.checkNewestVersion(this, 0);
 		} else{
 			// 添加JS接口
 			jsif.setSecondActivity(this);
@@ -268,7 +271,7 @@ public class MainActivity extends BaseActivity {
 			return true;
 		case R.id.action_checkversion:
 			// 检查版本更新
-			UpdateTask.checkNewestVersion(this);
+			UpdateTask.checkNewestVersion(this, 1);
 			return true;
 		case R.id.action_showhide:
 			// 显示或隐藏地址栏
@@ -337,8 +340,9 @@ public class MainActivity extends BaseActivity {
 	/**
 	 * 显示更新对话框
 	 * @param versionInfos
+	 * @param needShow
 	 */
-	protected void callBackUpdateDialog(String[] versionInfos) {
+	protected void callBackUpdateDialog(String[] versionInfos, int needShow) {
 		if(versionInfos != null){
 			String version = getNowVersion();
 			if(version.equals(versionInfos[0])){
@@ -346,6 +350,11 @@ public class MainActivity extends BaseActivity {
 				versionInfos = null;
 			}
 		}
+		if(needShow == 0 && versionInfos == null){
+			// 如果第一次运行，并且没有更新则不提示了
+			return;
+		}
+		
 		Builder builder = new Builder(this);
 		builder.setTitle("易查福利更新");
 		if(versionInfos == null){
@@ -359,14 +368,14 @@ public class MainActivity extends BaseActivity {
 		} else{
 			builder.setMessage(versionInfos[1]);
 			final String url = versionInfos[2];
-			builder.setPositiveButton("确认", new OnClickListener() {
+			builder.setPositiveButton("立即更新", new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					MainActivity.this.web.loadUrl(url);
 					dialog.dismiss();
 				}
 			});
-			builder.setNegativeButton("取消", new OnClickListener() {
+			builder.setNegativeButton("稍候更新", new OnClickListener() {
 				@Override
 				public void onClick(DialogInterface dialog, int which) {
 					dialog.dismiss();

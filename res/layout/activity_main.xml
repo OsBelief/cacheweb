@@ -13,14 +13,14 @@
         android:layout_alignParentRight="true"
         android:onClick="goBtnClick"
         android:visibility="gone"
+        android:textColor="#000000"
         android:text="@string/goText" />
 
     <EditText
         android:id="@+id/uText"
         android:layout_width="fill_parent"
         android:layout_height="40dp"
-        android:layout_alignBaseline="@+id/goBtn"
-        android:layout_alignBottom="@+id/goBtn"
+        android:layout_alignTop="@+id/goBtn"
         android:layout_toLeftOf="@+id/goBtn"
         android:ellipsize="end"
         android:hint="@string/urlHint"
@@ -28,6 +28,7 @@
         android:inputType="textUri"
         android:singleLine="true"
         android:visibility="gone"
+        android:textColor="#000000"
         android:text="@string/defaultUrl" />
 
     <WebView
@@ -42,7 +43,7 @@
         android:id="@+id/progressBar"
         style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="fill_parent"
-        android:layout_height="3dp"
+        android:layout_height="2dp"
         android:layout_alignParentLeft="true"
         android:progressDrawable="@drawable/progress"
         android:layout_below="@+id/goBtn" />
