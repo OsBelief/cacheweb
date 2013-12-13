@@ -50,6 +50,7 @@ public class MainActivity extends BaseActivity {
 	protected static final int HISTORY_GO = 1013;
 	public static final int RESTART = 1014;
 	public static final int NEWVERSION = 1015;
+	public static final int UPDATE_CONFIG = 1016;
 	
 	// 初始时的URL
 	public String tUrl;
@@ -89,9 +90,15 @@ public class MainActivity extends BaseActivity {
 					url = (String)obj;
 				}
 				exitAndStartNew(url);
+				break;
 			case NEWVERSION:
 				String[] newVersionInfos = (String[]) msg.obj;
 				callBackUpdateDialog(newVersionInfos);
+				break;
+			case UPDATE_CONFIG:
+				String strMsg = (String) msg.obj;
+				Toast.makeText(MainActivity.this, strMsg, Toast.LENGTH_LONG).show();
+				break;
 			}
 			super.handleMessage(msg);
 		}
@@ -257,7 +264,7 @@ public class MainActivity extends BaseActivity {
 			return true;
 		case R.id.action_updateconfig:
 			// 更新配置
-			UpdateTask.updateOneTime();
+			UpdateTask.updateOneTime(this);
 			return true;
 		case R.id.action_checkversion:
 			// 检查版本更新

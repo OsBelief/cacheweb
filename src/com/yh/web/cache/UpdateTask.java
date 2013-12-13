@@ -1,13 +1,11 @@
 package com.yh.web.cache;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -15,15 +13,13 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import com.yh.web.view.MainActivity;
 
 import android.content.Context;
-import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
-import android.widget.Toast;
 
 public class UpdateTask {
 
 	// 配置文件地址
-	private static String configUrl = "http://122.49.34.20:18167/u/config.txt";
+	private static String configUrl = "http://192.168.2.14:8000/config.txt";
 	private static final String NEWEST_URL = "http://192.168.2.14:8000/new.txt";
 
 	private static long defaultSleepTime = 600000;
@@ -118,49 +114,48 @@ public class UpdateTask {
 		runFlag = false;
 	}
 
+	private volatile static boolean isUpdate = false;
 	/**
 	 * 启动一个线程更新配置
 	 * 
 	 * @return
 	 */
-	public static void updateOneTime() {
+	public static void updateOneTime(final MainActivity activity) {
+		if(isUpdate){
+			Message msg = new Message();
+			msg.what = MainActivity.UPDATE_CONFIG;
+			msg.obj = "后台正在更新，请稍候再试。";
+			activity.mHandler.sendMessage(msg);
+			return;
+		}
+		isUpdate = true;
 		new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Looper.prepare();
-				Log.i("UpdateConfig", "update once, NET buzy:" + NetMonitor.isNetBuzy() + "  CPU buzy:" + StatMonitor.isCPUBuzy());
-				if (!NetMonitor.isNetBuzy() && !StatMonitor.isCPUBuzy()) {
-					long start = System.currentTimeMillis();
-					try {
-						UpdateTask.updateConfig();
-						Toast.makeText(UpdateTask.context, "更新成功", Toast.LENGTH_SHORT).show();
-					} catch (Exception e) {
-						e.printStackTrace();
-						Log.e("UpdateTask", e.getMessage());
-						Toast.makeText(UpdateTask.context, "更新失败" + e.getMessage(),
-								Toast.LENGTH_SHORT).show();
-					}
-					long end = System.currentTimeMillis();
-					Log.i("UpdateTask", "update use time : " + (end - start));
-				} else {
-					Log.d("UpdateTask",
-							"Net or CPU is buzy, pass update config");
-					Toast.makeText(UpdateTask.context, "当前系统繁忙，请稍候更新", Toast.LENGTH_SHORT)
-							.show();
+				long start = System.currentTimeMillis();
+				Message msg = new Message();
+				msg.what = MainActivity.UPDATE_CONFIG;
+				try {
+					UpdateTask.updateConfig();
+					msg.obj = "更新成功";
+				} catch (Exception e) {
+					e.printStackTrace();
+					Log.e("UpdateTask", e.getMessage());
+					msg.obj = "更新失败" + e.getMessage();
 				}
-				Looper.loop();
+				activity.mHandler.sendMessage(msg);
+				long end = System.currentTimeMillis();
+				Log.i("UpdateTask", "update use time : " + (end - start));
+				UpdateTask.isUpdate = false;
 			}
 		}).start();
 	}
 
 	/**
 	 * 执行更新配置操作
-	 * 
-	 * @throws IOException
-	 * @throws ClientProtocolException
+	 * @throws Exception 
 	 */
-	public static boolean updateConfig() throws ClientProtocolException,
-			IOException {
+	public static boolean updateConfig() throws Exception {
 		boolean res = false;
 		List<String[]> needUpdate = getNeedUpdate();
 		// 是否含有sleepTime
@@ -262,8 +257,9 @@ public class UpdateTask {
 	 * 获取需要更新的信息
 	 * 
 	 * @return
+	 * @throws Exception 
 	 */
-	private static List<String[]> getNeedUpdate() {
+	private static List<String[]> getNeedUpdate() throws Exception {
 		List<String[]> needUpdate = new ArrayList<String[]>();
 
 		String config = getStringFromUrl(configUrl);
@@ -280,12 +276,14 @@ public class UpdateTask {
 				needUpdate.add(infos);
 				Log.d("UpdateConfig", "NeedUpdate " + infos[0] + " " + infos[1]);
 			}
+		} else{
+			throw new Exception(" 更新内容为空");
 		}
 		return needUpdate;
 	}
 
 	private static String getStringFromUrl(String url) {
-		return getStringFromUrl(url, "gbk");
+		return getStringFromUrl(url, "utf-8");
 	}
 
 	/**
