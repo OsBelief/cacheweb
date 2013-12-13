@@ -25,6 +25,7 @@ import android.view.View;
 import android.view.View.OnFocusChangeListener;
 import android.view.View.OnKeyListener;
 import android.view.View.OnLongClickListener;
+import android.webkit.DownloadListener;
 import android.webkit.ValueCallback;
 import android.webkit.WebSettings;
 import android.webkit.WebView;
@@ -203,6 +204,18 @@ public class MainActivity extends BaseActivity {
 				return false;
 			}
 		});
+		// 监听下载文件
+		web.setDownloadListener(new DownloadListener() {
+			@Override
+			public void onDownloadStart(String url, String userAgent,
+					String contentDisposition, String mimetype,
+					long contentLength) {
+				Uri uri = Uri.parse(url);
+				Intent intent = new Intent(Intent.ACTION_VIEW, uri);
+				startActivity(intent);
+			}
+		});
+		
 		// web 获得焦点
 		web.requestFocus();
 		
@@ -280,6 +293,7 @@ public class MainActivity extends BaseActivity {
 				dialog.dismiss();
 			}
 		});
+		builder.setIcon(R.drawable.info);
 		builder.create().show();
 	}
 	
@@ -303,6 +317,7 @@ public class MainActivity extends BaseActivity {
 				dialog.dismiss();
 			}
 		});
+		builder.setIcon(R.drawable.confirm);
 		builder.create().show();
 	}
 
