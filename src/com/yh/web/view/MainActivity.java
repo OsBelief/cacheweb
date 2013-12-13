@@ -12,6 +12,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -47,6 +49,7 @@ public class MainActivity extends BaseActivity {
 	public static final String REFRESH_KEY = "REFRESH";
 	protected static final int HISTORY_GO = 1013;
 	public static final int RESTART = 1014;
+	public static final int NEWVERSION = 1015;
 	
 	// 初始时的URL
 	public String tUrl;
@@ -86,6 +89,9 @@ public class MainActivity extends BaseActivity {
 					url = (String)obj;
 				}
 				exitAndStartNew(url);
+			case NEWVERSION:
+				String[] newVersionInfos = (String[]) msg.obj;
+				callBackUpdateDialog(newVersionInfos);
 			}
 			super.handleMessage(msg);
 		}
@@ -255,7 +261,7 @@ public class MainActivity extends BaseActivity {
 			return true;
 		case R.id.action_checkversion:
 			// 检查版本更新
-			
+			UpdateTask.checkNewestVersion(this);
 			return true;
 		case R.id.action_showhide:
 			// 显示或隐藏地址栏
@@ -321,6 +327,49 @@ public class MainActivity extends BaseActivity {
 		builder.create().show();
 	}
 
+	/**
+	 * 显示更新对话框
+	 * @param versionInfos
+	 */
+	protected void callBackUpdateDialog(String[] versionInfos) {
+		if(versionInfos != null){
+			String version = getNowVersion();
+			if(version.equals(versionInfos[0])){
+				// 版本一致，则设更新信息为null
+				versionInfos = null;
+			}
+		}
+		Builder builder = new Builder(this);
+		builder.setTitle("易查福利更新");
+		if(versionInfos == null){
+			builder.setMessage("当前系统是最新版，不需要更新。");
+			builder.setPositiveButton("确认", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+		} else{
+			builder.setMessage(versionInfos[1]);
+			final String url = versionInfos[2];
+			builder.setPositiveButton("确认", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					MainActivity.this.web.loadUrl(url);
+					dialog.dismiss();
+				}
+			});
+			builder.setNegativeButton("取消", new OnClickListener() {
+				@Override
+				public void onClick(DialogInterface dialog, int which) {
+					dialog.dismiss();
+				}
+			});
+		}
+		builder.setIcon(R.drawable.confirm);
+		builder.create().show();
+	}
+	
 	/**
 	 * 单击Go按钮
 	 * 
@@ -441,5 +490,21 @@ public class MainActivity extends BaseActivity {
 		BaseActivity.exit();
 		android.os.Process.killProcess(android.os.Process.myPid());
 		System.exit(0);
+	}
+	
+	/**
+	 * 获取版本号
+	 * @return
+	 */
+	public String getNowVersion() {
+	    try {
+	        PackageManager manager = this.getPackageManager();
+	        PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+	        String version = info.versionName;
+	        return version;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return this.getString(R.string.can_not_find_version_name);
+	    }
 	}
 }

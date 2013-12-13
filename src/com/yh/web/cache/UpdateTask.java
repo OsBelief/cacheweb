@@ -12,8 +12,11 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
 
+import com.yh.web.view.MainActivity;
+
 import android.content.Context;
 import android.os.Looper;
+import android.os.Message;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,6 +24,7 @@ public class UpdateTask {
 
 	// 配置文件地址
 	private static String configUrl = "http://122.49.34.20:18167/u/config.txt";
+	private static final String NEWEST_URL = "http://192.168.2.14:8000/new.txt";
 
 	private static long defaultSleepTime = 600000;
 	private static long sleepTime = 10000;
@@ -303,7 +307,7 @@ public class UpdateTask {
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				// 获得输入流
 				InputStream in = response.getEntity().getContent();
-				result = IOUtil.readStream(in, "gbk");
+				result = IOUtil.readStream(in, charSet);
 				Log.v("UpdateConfig", "request " + url + " "
 						+ response.getStatusLine().getReasonPhrase());
 			} else {
@@ -317,4 +321,49 @@ public class UpdateTask {
 		}
 		return result;
 	}
+	
+	/**
+	 * 获取最新版本号和下载地址
+	 * 
+	 * @return 返回最新版本、更新内容、最新地址，如果为null则表示请求失败
+	 */
+	public static String[] getNewestVersionInfos(){
+		String content = getStringFromUrl(NEWEST_URL, "utf-8");
+		if(content == null){
+			return null;
+		}
+		// 以=-=-=-区分信息
+		String[] versionInfos = content.split("=-=-=-");
+		versionInfos[0] = versionInfos[0].trim();
+		versionInfos[2] = versionInfos[2].trim();
+		
+		// 检测信息是否合法
+		if(versionInfos.length < 3){
+			return null;
+		}
+		if(!versionInfos[0].matches("(\\d+\\.)+\\d")){
+			return null;
+		}
+		if(!versionInfos[2].matches("http.*")){
+			return null;
+		}
+		return versionInfos;
+	}
+	
+	/**
+	 * 开启一个线程检测版本更新
+	 */
+	public static void checkNewestVersion(final MainActivity activity){
+		new Thread(new Runnable() {
+			@Override
+			public void run() {
+				String[] newVersionInfos = getNewestVersionInfos();
+				Message msg = new Message();
+				msg.what = MainActivity.NEWVERSION;
+				msg.obj = newVersionInfos;
+				activity.mHandler.sendMessage(msg);
+			}
+		}).start();
+	}
+	
 }

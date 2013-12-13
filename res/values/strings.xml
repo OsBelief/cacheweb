@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="can_not_find_version_name">unknow</string>
+    
     <string name="app_name">易查福利</string>
     <string name="action_mainpage">福利首页</string>
     <string name="action_download">下载</string>
