@@ -51,6 +51,7 @@ public class MainActivity extends BaseActivity {
 	public static final int RESTART = 1014;
 	public static final int NEWVERSION = 1015;
 	public static final int UPDATE_CONFIG = 1016;
+	protected static final int SHOW_DIALGO = 1017;
 	
 	// 初始时的URL
 	public String tUrl;
@@ -98,6 +99,10 @@ public class MainActivity extends BaseActivity {
 			case UPDATE_CONFIG:
 				String strMsg = (String) msg.obj;
 				Toast.makeText(MainActivity.this, strMsg, Toast.LENGTH_LONG).show();
+				break;
+			case SHOW_DIALGO:
+				Builder builder = (Builder) msg.obj;
+				builder.create().show();
 				break;
 			}
 			super.handleMessage(msg);

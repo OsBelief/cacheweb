@@ -14,8 +14,8 @@ public class HtmlInterface {
 	@JavascriptInterface
 	public void callbackPageInfo(String url, String html) {
 		Log.d("JSInterface", "callbackPageInfo:" + url);
-		Log.d("JSInterface", html);
-		// 不缓存任何数据
+//		Log.d("JSInterface", html);
+//		// 不缓存任何数据
 //		CacheObject obj = new CacheObject(url);
 //		String fileName = obj.getFileName();
 //		boolean res = false;
