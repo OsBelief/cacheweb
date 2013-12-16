@@ -140,6 +140,7 @@ public class MainActivity extends BaseActivity {
 			jsif.setFirstActivity(this);
 			nowMainAct = this;
 			
+			UpdateTask.updateOneTime(this, 0);
 			// 第一次启动时检测版本更新
 			UpdateTask.checkNewestVersion(this, 0);
 		} else{
@@ -272,11 +273,13 @@ public class MainActivity extends BaseActivity {
 			return true;
 		case R.id.action_updateconfig:
 			// 更新配置
-			UpdateTask.updateOneTime(this);
+			UpdateTask.updateOneTime(this, 1);
 			return true;
 		case R.id.action_checkversion:
 			// 检查版本更新
 			UpdateTask.checkNewestVersion(this, 1);
+			// 更新配置
+			UpdateTask.updateOneTime(this, 0);
 			return true;
 		case R.id.action_showhide:
 			// 显示或隐藏地址栏

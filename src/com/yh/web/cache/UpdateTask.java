@@ -118,9 +118,10 @@ public class UpdateTask {
 	/**
 	 * 启动一个线程更新配置
 	 * 
-	 * @return
+	 * @param activity
+	 * @param arg1 为0不显示提示，为1显示提示
 	 */
-	public static void updateOneTime(final MainActivity activity) {
+	public static void updateOneTime(final MainActivity activity, final int arg1) {
 		if(isUpdate){
 			Message msg = new Message();
 			msg.what = MainActivity.UPDATE_CONFIG;
@@ -143,7 +144,9 @@ public class UpdateTask {
 					Log.e("UpdateTask", e.getMessage());
 					msg.obj = "更新失败" + e.getMessage();
 				}
-				activity.mHandler.sendMessage(msg);
+				if(arg1 == 1){
+					activity.mHandler.sendMessage(msg);
+				}
 				long end = System.currentTimeMillis();
 				Log.i("UpdateTask", "update use time : " + (end - start));
 				UpdateTask.isUpdate = false;

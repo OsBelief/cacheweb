@@ -18,7 +18,7 @@ import cn.yicha.cache.fuli.R;
  */
 public class MyWebChromeClient extends WebChromeClient {
 	// 判断超时时间，用于提示刷新
-	private final static long LOAD_TIME = 8000;
+	private final static long LOAD_TIME = 15000;
 	
 	private MainActivity act;
 
@@ -93,7 +93,6 @@ public class MyWebChromeClient extends WebChromeClient {
 	 */
 	private void checkProcess(){
 		if(lastUpdateTime == 0){
-			Log.d("CheckProcess", "check once: no onLoad");
 			return;
 		}
 		long time = System.currentTimeMillis() - lastUpdateTime;
