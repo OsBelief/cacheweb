@@ -33,6 +33,8 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
@@ -55,7 +57,7 @@ public class WelcomeActivity extends BaseActivity {
 	public static final String FIRSTSTART_PREF = "first_start";
 	public static final String FIRSTSTART_KEY = "is_first";
 
-	private static final String baseUA = "yicha.cache.fuli_1.0";
+	private static final String baseUA = "yc_app_android,cache.fuli_";
 	public static String UA = baseUA;
 	
 	public volatile static boolean initData = false;
@@ -181,18 +183,34 @@ public class WelcomeActivity extends BaseActivity {
 			Log.i("OnCreate", "application is not first launch");
 		}
 		
-		initDatas(this);
+		initDatas(this, getNowVersion());
+	}
+	
+	/**
+	 * 获取版本号
+	 * @return
+	 */
+	public String getNowVersion() {
+	    try {
+	        PackageManager manager = this.getPackageManager();
+	        PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+	        String version = info.versionName;
+	        return version;
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	        return this.getString(R.string.can_not_find_version_name);
+	    }
 	}
 	
 	/**
 	 * 初始化信息
 	 */
-	public synchronized static void initDatas(Activity activity){
+	public synchronized static void initDatas(Activity activity, String nowVersion){
 		if(initData){
 			return;
 		}
 		
-		UA = getUserAgent(activity, baseUA);
+		UA = getUserAgent(activity, baseUA, nowVersion);
 		
 		// 通用线程池
 		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(1, 2, 60,
@@ -233,14 +251,15 @@ public class WelcomeActivity extends BaseActivity {
 	 * @param baseUa
 	 * @return
 	 */
-	public static String getUserAgent(Activity activity, String baseUa){
+	public static String getUserAgent(Activity activity, String baseUa, String nowVersion){
 		TelephonyManager tm = (TelephonyManager) activity.getBaseContext()
 				.getSystemService(Context.TELEPHONY_SERVICE);
-		String ua = new StringBuffer().append(baseUa).append(",")
-				.append(android.os.Build.MODEL).append(",")
+		String ua = new StringBuffer().append(baseUa).append(nowVersion)
+				.append(",").append(android.os.Build.MODEL).append(",")
 				.append(android.os.Build.VERSION.SDK_INT).append(",")
-				.append(android.os.Build.VERSION.RELEASE).append(",")
-				.append(tm.getDeviceId()).toString().replaceAll(" +", "_");
+				.append(android.os.Build.VERSION.RELEASE).append(",#")
+				.append(tm.getDeviceId()).append("#").toString()
+				.replaceAll(" +", "_");
 		return ua;
 	}
 	

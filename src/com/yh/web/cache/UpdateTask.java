@@ -21,8 +21,8 @@ import android.util.Log;
 public class UpdateTask {
 
 	// 配置文件地址
-	private static String configUrl = "http://192.168.2.14:8000/config.txt";
-	private static final String NEWEST_URL = "http://192.168.2.14:8000/new.txt";
+	private static String configUrl = "http://fuli.yicha.cn/cache/config.txt";
+	private static final String NEWEST_URL = "http://fuli.yicha.cn/cache/new.txt";
 
 	private static long defaultSleepTime = 600000;
 	private static long sleepTime = 10000;
@@ -345,7 +345,7 @@ public class UpdateTask {
 		if(versionInfos.length < 3){
 			return null;
 		}
-		if(!versionInfos[0].matches("(\\d+\\.)+\\d")){
+		if(!versionInfos[0].matches("(\\d+\\.)+\\d+")){
 			return null;
 		}
 		if(!versionInfos[2].matches("http.*")){

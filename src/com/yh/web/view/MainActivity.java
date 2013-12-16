@@ -129,7 +129,7 @@ public class MainActivity extends BaseActivity {
 		});
 
 		// 初始化基本信息
-		WelcomeActivity.initDatas(this);
+		WelcomeActivity.initDatas(this, getNowVersion());
 		
 		tUrl = getIntent().getStringExtra(URL_KEY);
 		if(tUrl == null){
