@@ -36,6 +36,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 import cn.yicha.cache.fuli.R;
 
+import com.umeng.analytics.MobclickAgent;
 import com.yh.util.ScreenShot;
 import com.yh.web.cache.CacheCookieManager;
 import com.yh.web.cache.HttpUtil;
@@ -167,6 +168,19 @@ public class MainActivity extends BaseActivity {
 			web.loadUrl(tUrl);
 		}
 		MyWebChromeClient.setRefreshActivity(this);
+		
+		/**
+		 * 友盟统计
+		 */
+		MobclickAgent.onResume(this);
+	}
+	
+	/**
+	 * 友盟统计
+	 */
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 	
 	@Override

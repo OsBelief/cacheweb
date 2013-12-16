@@ -40,6 +40,9 @@
             android:label="@string/title_activity_guide"
             android:theme="@android:style/Theme.NoTitleBar.Fullscreen" >
         </activity>
+        
+        <meta-data android:value="52aeb6cd56240b08a020ff08" android:name="UMENG_APPKEY"></meta-data>
+		<meta-data android:value="YichaWeb" android:name="UMENG_CHANNEL"/>
     </application>
 
 </manifest>

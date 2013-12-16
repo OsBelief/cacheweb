@@ -3,6 +3,8 @@ package com.yh.web.view;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.umeng.analytics.MobclickAgent;
+
 import cn.yicha.cache.fuli.R;
 
 import android.os.Bundle;
@@ -104,4 +106,19 @@ public class GuideActivity extends BaseActivity implements OnPageChangeListener 
 		setCurrentDot(arg0);
 	}
 
+	/**
+	 * 友盟统计
+	 */
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	
+	/**
+	 * 友盟统计
+	 */
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
+	}
 }

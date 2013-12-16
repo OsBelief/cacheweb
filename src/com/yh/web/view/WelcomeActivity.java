@@ -8,6 +8,7 @@ import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import com.umeng.analytics.MobclickAgent;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
 import com.yh.web.cache.CacheObject;
@@ -308,5 +309,21 @@ public class WelcomeActivity extends BaseActivity {
 		WelcomeActivity.this.startActivity(intent);
 		// WelcomeActivity.this.finish();
 		overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
+	}
+	
+	/**
+	 * 友盟统计
+	 */
+	public void onResume() {
+		super.onResume();
+		MobclickAgent.onResume(this);
+	}
+	
+	/**
+	 * 友盟统计
+	 */
+	public void onPause() {
+		super.onPause();
+		MobclickAgent.onPause(this);
 	}
 }
