@@ -19,30 +19,38 @@ import cn.yicha.cache.fuli.R;
 public class MyWebChromeClient extends WebChromeClient {
 	// 判断超时时间，用于提示刷新
 	private final static long LOAD_TIME = 15000;
+	// 进度超过80%直接置为100
+	private final static long PROCESS_MAX = 80;
 	
+	// 显示进度的Activity
 	private MainActivity act;
+	
+	// 上次进度改变时间，为0表示没有url在加载
+	public volatile static long lastUpdateTime = 0;
+	public static MainActivity nowAct = null;
+	
+	static{
+		// 开启线程检测连接问题
+				new Thread(new Runnable() {
+					@Override
+					public void run() {
+						while(true){
+							if(nowAct != null){
+								checkProcess(nowAct);
+							}
+							try {
+								Thread.sleep(1000);
+							} catch (InterruptedException e) {
+								e.printStackTrace();
+							}
+						}
+					}
+				}).start();
+	}
 
 	public MyWebChromeClient(MainActivity act) {
 		this.act = act;
-		
-		// 开启线程检测连接问题
-		new Thread(new Runnable() {
-			@Override
-			public void run() {
-				while(true){
-					checkProcess();
-					try {
-						Thread.sleep(1000);
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		}).start();
 	}
-
-	// 上次进度改变时间，为0表示没有url在加载
-	private volatile long lastUpdateTime = 0;
 	
 	/**
 	 * 进度条
@@ -59,7 +67,8 @@ public class MyWebChromeClient extends WebChromeClient {
 			lastUpdateTime = System.currentTimeMillis();
 		}
 		
-		if(newProgress >= 80){
+		if(newProgress >= PROCESS_MAX){
+			lastUpdateTime = 0;
 			Log.d("Process", "Update Process:" + newProgress);
 			newProgress = 100;
 		}
@@ -88,27 +97,37 @@ public class MyWebChromeClient extends WebChromeClient {
 		openFileChooser(uploadMsg);
 	}
 	
+	
+	/**
+	 * 设置当前要监控进度的activity
+	 * @param act
+	 * @return
+	 */
+	public static void setRefreshActivity(MainActivity act){
+		nowAct = act;
+		lastUpdateTime = 0;
+	}
 	/**
 	 * 检测加载情况，判断是否显示提示
 	 */
-	private void checkProcess(){
+	private static void checkProcess(MainActivity act){
 		if(lastUpdateTime == 0){
 			return;
 		}
 		long time = System.currentTimeMillis() - lastUpdateTime;
 		if(time > LOAD_TIME){
 			Log.d("CheckProcess", "show dialog, time:" + time);
-			showRefreshDialog();
+			showRefreshDialog(act);
 		} else{
 			Log.d("CheckProcess", "time not exceed, time:" + time);
 		}
 	}
 	// 标志同一时刻仅有一个显示对话框
-	private volatile boolean isRefresing = false;
+	private volatile static boolean isRefresing = false;
 	/**
 	 * 显示刷新提示
 	 */
-	protected void showRefreshDialog() {
+	protected static void showRefreshDialog(final MainActivity act) {
 		if(isRefresing){
 			return;
 		}

@@ -17,12 +17,14 @@
         android:orderInCategory="100"
         android:showAsAction="never"
         android:icon="@drawable/update"
+        android:visible="false"
         android:title="@string/action_updateconfig" />
     <item
         android:id="@+id/action_showhide"
         android:orderInCategory="100"
         android:showAsAction="never"
         android:icon="@drawable/show"
+        android:visible="false"
         android:title="@string/action_showhide" />
     <item
         android:id="@+id/action_about"

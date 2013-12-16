@@ -165,12 +165,14 @@ public class MainActivity extends BaseActivity {
 		if(web.getUrl() == null || CacheCookieManager.isCookieChanged(tUrl)){
 			web.loadUrl(tUrl);
 		}
+		MyWebChromeClient.setRefreshActivity(this);
 	}
 	
 	@Override
 	public void finish(){
 		canFinish = false;
 		Log.i("Acitivty", "update canFinish: " + canFinish);
+		MyWebChromeClient.setRefreshActivity(null);
 		super.finish();
 	}
 	
