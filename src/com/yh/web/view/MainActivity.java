@@ -140,9 +140,10 @@ public class MainActivity extends BaseActivity {
 			jsif.setFirstActivity(this);
 			nowMainAct = this;
 			
-			UpdateTask.updateOneTime(this, 0);
 			// 第一次启动时检测版本更新
 			UpdateTask.checkNewestVersion(this, 0);
+			// 更新配置
+			UpdateTask.updateOneTime(this, 0);
 		} else{
 			// 添加JS接口
 			jsif.setSecondActivity(this);

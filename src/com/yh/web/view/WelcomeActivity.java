@@ -220,7 +220,7 @@ public class WelcomeActivity extends BaseActivity {
 		// 开始执行删除过期任务
 		DeleteTask.initShedule(activity, monitorThreadPool);
 
-		UpdateTask.initBasic(activity);
+		UpdateTask.initBasic(activity, UA + "_update_hc");
 		// 开始执行更新配置任务
 		// UpdateTask.initShedule(activity);
 		

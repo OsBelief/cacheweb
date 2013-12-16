@@ -8,7 +8,9 @@ import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpProtocolParams;
 
 import com.yh.web.view.MainActivity;
 
@@ -34,8 +36,10 @@ public class UpdateTask {
 	/**
 	 * 初始化基本数据
 	 */
-	public static void initBasic(Context context){
+	public static void initBasic(Context context, String ua){
 		getClient = new DefaultHttpClient();
+		HttpProtocolParams.setUserAgent(getClient.getParams(), ua);
+		ConnManagerParams.setTimeout(getClient.getParams(), 5000);
 		UpdateTask.context = context;
 	}
 	
@@ -44,8 +48,8 @@ public class UpdateTask {
 	 * 
 	 * @param context
 	 */
-	public static void initShedule(Context context) {
-		initBasic(context);
+	public static void initShedule(Context context, String ua) {
+		initBasic(context, ua);
 		// 开始任务
 		startUpdateTask();
 	}
@@ -58,8 +62,8 @@ public class UpdateTask {
 	 * @param sleepTime
 	 *            单位ms，每次删除延时，至少1000ms
 	 */
-	public static void initShedule(Context context, long sleepTime) {
-		initBasic(context);
+	public static void initShedule(Context context, String ua, long sleepTime) {
+		initBasic(context, ua);
 		if (sleepTime >= 1000) {
 			UpdateTask.sleepTime = sleepTime;
 		}
@@ -296,19 +300,18 @@ public class UpdateTask {
 	 * @param charSet
 	 * @return
 	 */
-	private static String getStringFromUrl(String url, String charSet) {
+	private synchronized static String getStringFromUrl(String url, String charSet) {
 		// 得到HttpGet对象
 		String result = null;
 		try {
 			HttpGet request = new HttpGet(url);
-			request.addHeader("User-Agent", request.getHeaders("User-Agent")
-					+ " - YichaWeb");
 			HttpResponse response = getClient.execute(request);
 			// 判断请求是否成功
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				// 获得输入流
 				InputStream in = response.getEntity().getContent();
 				result = IOUtil.readStream(in, charSet);
+				in.close();
 				Log.v("UpdateConfig", "request " + url + " "
 						+ response.getStatusLine().getReasonPhrase());
 			} else {
