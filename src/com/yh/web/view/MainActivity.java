@@ -221,7 +221,7 @@ public class MainActivity extends BaseActivity {
 		// 先用缓存，缓存没有请求网络
 
 		set.setSupportZoom(true); // 设置是否支持缩放
-		set.setBuiltInZoomControls(true); // 设置是否显示内建缩放工具
+		// set.setBuiltInZoomControls(true); // 设置是否显示内建缩放工具
 		// set.setSavePassword(true); //设置是否保存密码
 
 		// 监听长按事件
