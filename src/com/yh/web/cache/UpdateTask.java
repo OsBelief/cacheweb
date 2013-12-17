@@ -1,7 +1,9 @@
 package com.yh.web.cache;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.http.HttpResponse;
@@ -10,10 +12,12 @@ import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpProtocolParams;
 
 import com.yh.web.view.MainActivity;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.Message;
 import android.util.Log;
@@ -32,14 +36,23 @@ public class UpdateTask {
 
 	// 只需更新，不许内存处理的数据
 	private static String[] updateList = new String[] { "main.htm" };
-
+	
+	// 默认版本更新时间
+	private static final String DEFAULT_EDITOR = "20131217133420";
+	private static final String CONFIG_EDITOR = "configEditor";
+	
 	/**
 	 * 初始化基本数据
 	 */
 	public static void initBasic(Context context, String ua){
 		getClient = new DefaultHttpClient();
 		HttpProtocolParams.setUserAgent(getClient.getParams(), ua);
+		// 从连接池中取连接的超时时间
 		ConnManagerParams.setTimeout(getClient.getParams(), 5000);
+        // 连接超时
+        HttpConnectionParams.setConnectionTimeout(getClient.getParams(), 5000);
+        // 请求超时
+        HttpConnectionParams.setSoTimeout(getClient.getParams(), 5000);
 		UpdateTask.context = context;
 	}
 	
@@ -272,17 +285,36 @@ public class UpdateTask {
 		String config = getStringFromUrl(configUrl);
 		if (config != null) {
 			String[] lines = config.split("\n");
+			
+			String editorOld = IOUtil.readKeyValue((Activity) context, CONFIG_EDITOR, DEFAULT_EDITOR);
+			Log.d("UpdateConfig", "lastVersion:" + editorOld);
+			String newestVersion = null;
 			for (String line : lines) {
 				if (line.startsWith("#") || line.trim().equals("")) {
 					continue;
 				}
 				String infos[] = line.split("---");
-				if (infos.length != 2) {
+				if (infos.length != 3) {
 					continue;
 				}
-				needUpdate.add(infos);
-				Log.d("UpdateConfig", "NeedUpdate " + infos[0] + " " + infos[1]);
+				
+				String editorNew = infos[0].replaceAll("_", "");
+				Log.d("UpdateConfig", "nowVersion:" + editorNew + " " + line);
+				char[] oldCharArray = editorOld.toCharArray();
+				char[] newCharArray = editorNew.toCharArray();
+				for (int j = 0, size = oldCharArray.length; j < size; j++) {
+					if (newCharArray[j] > oldCharArray[j]) {
+						newestVersion = editorNew;
+						needUpdate.add(Arrays.copyOfRange(infos, 1, 3));
+						Log.d("UpdateConfig", "NeedUpdate " + line);
+						break;
+					} else if(newCharArray[j] < oldCharArray[j]) {
+						break;
+					}
+				}
 			}
+			// 更新完以后,再记录最新版本
+			IOUtil.writeKeyValue((Activity) context, CONFIG_EDITOR, newestVersion);
 		} else{
 			throw new Exception(" 更新内容为空");
 		}
@@ -303,15 +335,15 @@ public class UpdateTask {
 	private synchronized static String getStringFromUrl(String url, String charSet) {
 		// 得到HttpGet对象
 		String result = null;
+		InputStream in = null;
 		try {
 			HttpGet request = new HttpGet(url);
 			HttpResponse response = getClient.execute(request);
+			in = response.getEntity().getContent();
 			// 判断请求是否成功
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				// 获得输入流
-				InputStream in = response.getEntity().getContent();
 				result = IOUtil.readStream(in, charSet);
-				in.close();
 				Log.v("UpdateConfig", "request " + url + " "
 						+ response.getStatusLine().getReasonPhrase());
 			} else {
@@ -322,6 +354,14 @@ public class UpdateTask {
 			Log.v("UpdateConfig",
 					e.getMessage() == null ? "get url fail" : e.getMessage());
 			e.printStackTrace();
+		} finally{
+			if(in != null){
+				try {
+					in.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
 		}
 		return result;
 	}
