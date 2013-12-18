@@ -313,8 +313,10 @@ public class UpdateTask {
 					}
 				}
 			}
-			// 更新完以后,再记录最新版本
-			IOUtil.writeKeyValue((Activity) context, CONFIG_EDITOR, newestVersion);
+			if(newestVersion != null){
+				// 更新完以后,再记录最新版本
+				IOUtil.writeKeyValue((Activity) context, CONFIG_EDITOR, newestVersion);
+			}
 		} else{
 			throw new Exception(" 更新内容为空");
 		}
