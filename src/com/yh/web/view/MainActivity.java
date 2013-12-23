@@ -440,7 +440,7 @@ public class MainActivity extends BaseActivity {
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		WebView web = (WebView) findViewById(R.id.webView1);
 		if ((keyCode == KeyEvent.KEYCODE_BACK)) {
-			if (web.canGoBack()) {
+			if (web.canGoBack() && !DEFAULT_URL.equals(web.getUrl())) {
 				web.goBack();
 				((EditText) findViewById(R.id.uText)).setText(web.getUrl());
 				return true;
