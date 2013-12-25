@@ -763,6 +763,10 @@
 
 <div class="new-game-list vertical_center">
 	<div class="new-game-list-row horizontal_center">
+		<div class="new-game-list-lie vertical_center jinhuabutton" moneyType="1" game="爆金花" onclick>
+			<div class="lie-up"><img src="images/jinhua/poker_icon_zuanshi.png"/></div>
+			<div class="lie-bottom vertical_center"><font>爆金花</font></div>
+		</div>
 		<div class="new-game-list-lie vertical_center shitou_act" id="shitou_act_2" game="猜拳钻石场" baseScore="2" onclick>
 			<div class="lie-up"><img src="images/shitou/stone_game2.png"/></div>
 			<div class="lie-bottom horizontal_center"><font>猜拳2钻</font></div>
@@ -773,11 +777,7 @@
 		</div>
 		<div class="new-game-list-lie vertical_center shitou_act" id="shitou_act_10" game="猜拳钻石场" baseScore="10" onclick>
 			<div class="lie-up"><img src="images/shitou/stone_game10.png"/></div>
-			<div class="lie-bottom horizontal_center"><font>猜拳10钻</font></div>
-		</div>
-		<div class="new-game-list-lie vertical_center stonebutton" game="石头剪子布" onclick>
-			<div class="lie-up"><img src="images/stone_game.png"/></div>
-			<div class="lie-bottom horizontal_center"><font>猜拳金币</font></div>
+			<div class="lie-bottom horizontal_center"><font>猜拳10钻/font></div>
 		</div>
 	</div>
 	<div class="new-game-list-row horizontal_center">
@@ -826,8 +826,14 @@
 		    	})
 		    </script>
 		</div>
-		<div class="new-game-list-lie vertical_center"></div>
-		<div class="new-game-list-lie vertical_center"></div>
+		<div class="new-game-list-lie vertical_center stonebutton" game="石头剪子布" onclick>
+			<div class="lie-up"><img src="images/stone_game.png"/></div>
+			<div class="lie-bottom horizontal_center"><font>猜拳金币</font></div>
+		</div>
+		<div class="new-game-list-lie vertical_center jinhuabutton" moneyType="0" game="爆金花" onclick>
+			<div class="lie-up"><img src="images/jinhua/poker_icon2.png"/></div>
+			<div class="lie-bottom vertical_center"><font>爆金花</font><font style="font-size:12px;display:block;">(金币场)</font></div>
+		</div>
 		<div class="new-game-list-lie vertical_center"></div>
 	</div>
 </div>
@@ -928,6 +934,15 @@
     			//self.location="xunbao";
     		},400);
 			tongJI("福利寻宝","at=joinXunbao");
+		});
+		$(".jinhuabutton").click(function(){
+			var _this = this;
+			var moneyType=$(this).attr("moneyType")||"0";
+			setTimeout(function(){
+    			Login.loginCheck($(_this),"joinJinhuaRoom?moneyType="+moneyType);
+    			//self.location="xunbao";
+    		},400);
+			tongJI("福利爆金花","at=joinBaojinhua");
 		});
 	})();
 	

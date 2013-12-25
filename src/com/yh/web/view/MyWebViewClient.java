@@ -62,6 +62,10 @@ public class MyWebViewClient extends WebViewClient {
 		if(view.getUrl() == null){
 			return false;
 		}
+		// 禁止进入首页
+		if(url.startsWith("http://yicha")){
+			return true;
+		}
 		
 		Log.i("shouldOverrideUrlLoading", url);
 		// 首页有65个资源，为了首页加载重启，先判断
