@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity {
 	private static HtmlInterface htmif = new HtmlInterface();
 	
 	// 记录是否是第一次
-	public static boolean isFirst = true;
+	public static boolean isFirst = false;
 	
 	// 记录当前主页所在Activity
 	public static MainActivity nowMainAct;

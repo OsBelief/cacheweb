@@ -125,7 +125,7 @@ public class WelcomeActivity extends BaseActivity {
 				FIRSTSTART_PREF, MODE_PRIVATE);
 		boolean isFirstIn = preferences.getBoolean(FIRSTSTART_KEY, true);
 		// 程序仅在第一次安装启动时用缓存main.htm
-		MainActivity.isFirst = isFirstIn;
+		// MainActivity.isFirst = isFirstIn;
 
 		if (!isFirstIn) {
 			// 使用Handler的postDelayed方法，1秒后执行跳转到MainActivity
