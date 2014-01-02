@@ -2,7 +2,6 @@ package com.yh.web.view;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.app.AlertDialog.Builder;
@@ -35,8 +34,6 @@ import android.webkit.WebView.HitTestResult;
 import android.widget.EditText;
 import android.widget.Toast;
 import cn.yicha.cache.fuli.R;
-
-import com.cache.resource.CacheResource;
 import com.umeng.analytics.MobclickAgent;
 import com.yh.util.ScreenShot;
 import com.yh.web.cache.CacheCookieManager;
@@ -349,7 +346,6 @@ public class MainActivity extends BaseActivity {
 		builder.setPositiveButton("确认", new OnClickListener() {
 			@Override
 			public void onClick(DialogInterface dialog, int which) {
-				CacheResource.writeStaticUrl(CacheResource.urlSet);
 				dialog.dismiss();
 				exit();
 			}

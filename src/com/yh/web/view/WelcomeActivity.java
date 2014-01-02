@@ -39,6 +39,11 @@ import android.content.pm.PackageManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 
 /**
  * 启动时Activity
@@ -51,7 +56,7 @@ public class WelcomeActivity extends BaseActivity {
 	private static final int GO_GUIDE = 1001;
 	private static final int GO_COPY = 1002;
 	private static final int INIT_DATA = 1003;
-	
+
 	// 延迟1秒
 	private static final long DELAY_MILLIS = 1000;
 
@@ -60,9 +65,11 @@ public class WelcomeActivity extends BaseActivity {
 
 	private static final String baseUA = "yc_app_android,cache.fuli_";
 	public static String UA = baseUA;
-	
+
 	public volatile static boolean initData = false;
 	
+	private ProgressBar copyPB;
+
 	/**
 	 * Handler:跳转到不同界面
 	 */
@@ -91,15 +98,16 @@ public class WelcomeActivity extends BaseActivity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
+
 		Intent intent = getIntent();
 		boolean ref = intent.getBooleanExtra(MainActivity.REFRESH_KEY, false);
-		if(ref){
+		if (ref) {
 			// 重新启动时传入参数
-			Intent intent1 = new Intent(WelcomeActivity.this, MainActivity.class);
+			Intent intent1 = new Intent(WelcomeActivity.this,
+					MainActivity.class);
 			intent1.putExtras(intent);
 			WelcomeActivity.this.startActivity(intent1);
-		}else{
+		} else {
 			setContentView(R.layout.activity_welcome);
 			init();
 		}
@@ -108,21 +116,21 @@ public class WelcomeActivity extends BaseActivity {
 	/**
 	 * 判断网络是否可用，并进入主界面
 	 */
-	public void init(){
-		if(NetMonitor.isNetworkAvailable(this)){
+	public void init() {
+		if (NetMonitor.isNetworkAvailable(this)) {
 			initEntry();
-		}else{
+		} else {
 			showNetUnavailable();
 		}
 	}
-	
+
 	/**
 	 * 进入
 	 */
 	private void initEntry() {
 		// 判断是否是第一次运行
-		SharedPreferences preferences = getSharedPreferences(
-				FIRSTSTART_PREF, MODE_PRIVATE);
+		SharedPreferences preferences = getSharedPreferences(FIRSTSTART_PREF,
+				MODE_PRIVATE);
 		boolean isFirstIn = preferences.getBoolean(FIRSTSTART_KEY, true);
 		// 程序仅在第一次安装启动时用缓存main.htm
 		// MainActivity.isFirst = isFirstIn;
@@ -132,11 +140,13 @@ public class WelcomeActivity extends BaseActivity {
 			mHandler.sendEmptyMessageDelayed(GO_HOME, DELAY_MILLIS);
 		} else {
 			// 开始拷贝
+			copyPB = (ProgressBar) findViewById(R.id.progressbar_copy);
+			copyPB.setVisibility(View.VISIBLE);
 			copyInitFile();
 		}
 		mHandler.sendEmptyMessageDelayed(INIT_DATA, 1);
 	}
-	
+
 	/**
 	 * 拷贝初始化文件到sd卡
 	 */
@@ -147,30 +157,46 @@ public class WelcomeActivity extends BaseActivity {
 				try {
 					char[] xx = { '0', '1', '2', '3', '4', '5', '6', '7', '8',
 							'9', 'a', 'b', 'c', 'd', 'e', 'f' };
+					int sum = 0;
 					for (char x : xx) {
 						String base = "cfile/" + x;
-						String[] cfiles = WelcomeActivity.this.getAssets().list(base);
+						String[] cfiles = WelcomeActivity.this.getAssets()
+								.list(base);
+						sum += cfiles.length;
+					}
+					Log.i("the number of files", String.valueOf(sum));
+					copyPB.setProgress(0);
+					copyPB.setMax(sum);
+					int progress = 0;
+					for (char x : xx) {
+						String base = "cfile/" + x;
+						String[] cfiles = WelcomeActivity.this.getAssets()
+								.list(base);
 						base = base + "/";
 						for (String file : cfiles) {
 							String tofile = CacheObject.rootPath + base + file;
 							Log.d("InitFile", "copy to " + tofile);
-							IOUtil.writeExternalFile(tofile, WelcomeActivity.this.getAssets()
-									.open(base + file));
+							IOUtil.writeExternalFile(
+									tofile,
+									WelcomeActivity.this.getAssets().open(
+											base + file));
+							copyPB.setProgress(++progress);
 						}
 					}
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
 				// 进入引导页
-				WelcomeActivity.this.mHandler.sendEmptyMessageDelayed(GO_GUIDE, 0);
+				WelcomeActivity.this.mHandler.sendEmptyMessageDelayed(GO_GUIDE,
+						0);
 			}
 		}).start();
 	}
-	
+
 	/**
 	 * 初始数据
 	 */
-	private void initFirstDatas(){
+	private void initFirstDatas() {
 		// 第一次启动时将所有配置文件删除
 		if (IOUtil.readBooleanKeyValue(this, "FirstLaunch", true)) {
 			this.deleteFile(CacheFilter.CONFIG_NAME);
@@ -183,36 +209,38 @@ public class WelcomeActivity extends BaseActivity {
 		} else {
 			Log.i("OnCreate", "application is not first launch");
 		}
-		
+
 		initDatas(this, getNowVersion());
 	}
-	
+
 	/**
 	 * 获取版本号
+	 * 
 	 * @return
 	 */
 	public String getNowVersion() {
-	    try {
-	        PackageManager manager = this.getPackageManager();
-	        PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
-	        String version = info.versionName;
-	        return version;
-	    } catch (Exception e) {
-	        e.printStackTrace();
-	        return this.getString(R.string.can_not_find_version_name);
-	    }
+		try {
+			PackageManager manager = this.getPackageManager();
+			PackageInfo info = manager.getPackageInfo(this.getPackageName(), 0);
+			String version = info.versionName;
+			return version;
+		} catch (Exception e) {
+			e.printStackTrace();
+			return this.getString(R.string.can_not_find_version_name);
+		}
 	}
-	
+
 	/**
 	 * 初始化信息
 	 */
-	public synchronized static void initDatas(Activity activity, String nowVersion){
-		if(initData){
+	public synchronized static void initDatas(Activity activity,
+			String nowVersion) {
+		if (initData) {
 			return;
 		}
-		
+
 		UA = getUserAgent(activity, baseUA, nowVersion);
-		
+
 		// 通用线程池
 		ThreadPoolExecutor threadPool = new ThreadPoolExecutor(1, 2, 60,
 				TimeUnit.SECONDS, new SynchronousQueue<Runnable>());
@@ -242,17 +270,19 @@ public class WelcomeActivity extends BaseActivity {
 		UpdateTask.initBasic(activity, UA + "_update_hc");
 		// 开始执行更新配置任务
 		// UpdateTask.initShedule(activity);
-		
+
 		initData = true;
 	}
-	
+
 	/**
 	 * 获取UA
+	 * 
 	 * @param activity
 	 * @param baseUa
 	 * @return
 	 */
-	public static String getUserAgent(Activity activity, String baseUa, String nowVersion){
+	public static String getUserAgent(Activity activity, String baseUa,
+			String nowVersion) {
 		TelephonyManager tm = (TelephonyManager) activity.getBaseContext()
 				.getSystemService(Context.TELEPHONY_SERVICE);
 		String ua = new StringBuffer().append(baseUa).append(nowVersion)
@@ -263,7 +293,7 @@ public class WelcomeActivity extends BaseActivity {
 				.replaceAll(" +", "_");
 		return ua;
 	}
-	
+
 	/**
 	 * 显示网络不可用
 	 */
@@ -275,18 +305,19 @@ public class WelcomeActivity extends BaseActivity {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
 						try {
-							Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing");
-		                    field.setAccessible(true);   
-		                    field.set(dialog, false);
+							Field field = dialog.getClass().getSuperclass()
+									.getDeclaredField("mShowing");
+							field.setAccessible(true);
+							field.set(dialog, false);
 						} catch (NoSuchFieldException e) {
 							e.printStackTrace();
 						} catch (IllegalArgumentException e) {
 							e.printStackTrace();
 						} catch (IllegalAccessException e) {
 							e.printStackTrace();
-						}   
+						}
 						init();
-						
+
 					}
 				})
 				.setNegativeButton("退出", new DialogInterface.OnClickListener() {
@@ -310,7 +341,7 @@ public class WelcomeActivity extends BaseActivity {
 		// WelcomeActivity.this.finish();
 		overridePendingTransition(R.anim.in_from_right, R.anim.out_to_left);
 	}
-	
+
 	/**
 	 * 友盟统计
 	 */
@@ -318,7 +349,7 @@ public class WelcomeActivity extends BaseActivity {
 		super.onResume();
 		MobclickAgent.onResume(this);
 	}
-	
+
 	/**
 	 * 友盟统计
 	 */
