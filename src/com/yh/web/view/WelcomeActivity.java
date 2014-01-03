@@ -7,7 +7,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.SynchronousQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-
 import com.umeng.analytics.MobclickAgent;
 import com.yh.web.cache.CacheControl;
 import com.yh.web.cache.CacheFilter;
@@ -20,10 +19,9 @@ import com.yh.web.cache.MIME;
 import com.yh.web.cache.NetMonitor;
 import com.yh.web.cache.StatMonitor;
 import com.yh.web.cache.UpdateTask;
-
 import cn.yicha.cache.fuli.R;
-
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.annotation.SuppressLint;
@@ -40,10 +38,7 @@ import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.View;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ProgressBar;
-import android.widget.RelativeLayout;
 
 /**
  * 启动时Activity
@@ -56,6 +51,7 @@ public class WelcomeActivity extends BaseActivity {
 	private static final int GO_GUIDE = 1001;
 	private static final int GO_COPY = 1002;
 	private static final int INIT_DATA = 1003;
+	private static final int UPDATE_PROCESS = 1004;
 
 	// 延迟1秒
 	private static final long DELAY_MILLIS = 1000;
@@ -78,6 +74,9 @@ public class WelcomeActivity extends BaseActivity {
 		@Override
 		public void handleMessage(Message msg) {
 			switch (msg.what) {
+			case UPDATE_PROCESS:
+				copyPB.setProgress(msg.arg1);
+				break;
 			case GO_COPY:
 				copyInitFile();
 				break;
@@ -134,19 +133,25 @@ public class WelcomeActivity extends BaseActivity {
 		boolean isFirstIn = preferences.getBoolean(FIRSTSTART_KEY, true);
 		// 程序仅在第一次安装启动时用缓存main.htm
 		// MainActivity.isFirst = isFirstIn;
-
-		if (!isFirstIn) {
-			// 使用Handler的postDelayed方法，1秒后执行跳转到MainActivity
-			mHandler.sendEmptyMessageDelayed(GO_HOME, DELAY_MILLIS);
+		//检查SD卡是否可用
+		String state = Environment.getExternalStorageState();
+		if(Environment.MEDIA_MOUNTED.equals(state)) {
+			if (!isFirstIn) {
+				// 使用Handler的postDelayed方法，1秒后执行跳转到MainActivity
+				mHandler.sendEmptyMessageDelayed(GO_HOME, DELAY_MILLIS);
+			} else {
+				// 开始拷贝
+				copyPB = (ProgressBar) findViewById(R.id.progressbar_copy);
+				copyPB.setVisibility(View.VISIBLE);
+				copyPB.setProgress(0);
+				copyInitFile();
+			}
 		} else {
-			// 开始拷贝
-			copyPB = (ProgressBar) findViewById(R.id.progressbar_copy);
-			copyPB.setVisibility(View.VISIBLE);
-			copyInitFile();
+			showSDUnavailable();
 		}
 		mHandler.sendEmptyMessageDelayed(INIT_DATA, 1);
 	}
-
+	
 	/**
 	 * 拷贝初始化文件到sd卡
 	 */
@@ -165,7 +170,6 @@ public class WelcomeActivity extends BaseActivity {
 						sum += cfiles.length;
 					}
 					Log.i("the number of files", String.valueOf(sum));
-					copyPB.setProgress(0);
 					copyPB.setMax(sum);
 					int progress = 0;
 					for (char x : xx) {
@@ -180,7 +184,10 @@ public class WelcomeActivity extends BaseActivity {
 									tofile,
 									WelcomeActivity.this.getAssets().open(
 											base + file));
-							copyPB.setProgress(++progress);
+							Message msg = mHandler.obtainMessage();
+							msg.what = UPDATE_PROCESS;
+							msg.arg1 = ++progress;
+							mHandler.sendMessage(msg);
 						}
 					}
 				} catch (IOException e) {
@@ -293,7 +300,20 @@ public class WelcomeActivity extends BaseActivity {
 				.replaceAll(" +", "_");
 		return ua;
 	}
-
+	/**
+	 * 显示SD卡不可用
+	 */
+	private void showSDUnavailable() {
+		AlertDialog.Builder builder = new Builder(this);
+		builder.setMessage("SD卡不可用，易查福利需要SD卡的支持，请插入SD卡后重试。")
+				.setTitle("SD卡读写异常")
+				.setNegativeButton("确定", new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog, int which) {
+						BaseActivity.exit();
+					}
+				}).setCancelable(false).create().show();
+	}
 	/**
 	 * 显示网络不可用
 	 */
